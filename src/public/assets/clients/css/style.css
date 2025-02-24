@@ -1,0 +1,12 @@
+h1 {
+    text-align: center;
+}
+h2 {
+    color: brown;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+}
