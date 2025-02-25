@@ -16,7 +16,7 @@ WORKDIR /app
 # If your composer.json file defines scripts that run during dependency installation and
 # reference your application source files, uncomment the line below to copy all the files
 # into this layer.
-# COPY . .
+COPY . .
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a bind mounts to composer.json and composer.lock to avoid having to copy them
@@ -75,8 +75,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Copy the app dependencies from the previous install stage.
 COPY --from=deps app/vendor/ /var/www/html/vendor
-# Copy the app files from the app directory.
 
+# Uncomment the lines below if your app uses compiled assets
+# COPY --from=deps /usr/bin/composer /usr/bin/composer
+
+# Copy the app files from the app directory.
 COPY ./src /var/www/html
 
 # Switch to a non-privileged user (defined in the base image) that the app will run under.

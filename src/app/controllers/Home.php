@@ -6,10 +6,10 @@ class Home extends Controller{
         $this->model_home = $this->model('HomeModel');
     }
     public function index() {
-        $this->data['sub_content']['user'] = $this->model_home->getList();
+        $this->data['content']['user'] = $this->model_home->getList();
         $this->data['page_title'] = 'Trang chủ';
-        $this->data['content'] = 'home/index';
-        $this->render('layouts/client_layout', $this->data);
+        $this->data['view'] = 'home/index';
+        $this->renderUser($this->data);
     }
     public function detail($id='', $slug='') {
         echo 'id: ',$id.'<br/>'.'slug: '.$slug. '<br/>';

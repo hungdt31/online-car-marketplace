@@ -9,11 +9,17 @@ class Controller {
         }
         return $model;
     }
-    public function render($view, $data=[]) {
+    public function render($_view, $data=[]) {
         // echo '<pre>'.print_r($data, true).'</pre>';
         extract($data);
-        if (file_exists(_DIR_ROOT.'/app/views/'.$view.'.php')) {
-            require_once _DIR_ROOT.'/app/views/'.$view.'.php';
+        if (file_exists(_DIR_ROOT.'/app/views/'.$_view.'.php')) {
+            require_once _DIR_ROOT.'/app/views/'.$_view.'.php';
         }
+    }
+    public function renderUser ($data=[]) {
+        $this->render('layouts/user', $data);
+    }
+    public function renderAdmin ($data=[]) {
+        $this->render('layouts/admin', $data);
     }
 }

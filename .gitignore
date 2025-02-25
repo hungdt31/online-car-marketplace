@@ -1,2 +1,6 @@
+.vscode
 db/
 README.Docker.md
+vendor
+default.env
+override.env

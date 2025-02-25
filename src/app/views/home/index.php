@@ -17,6 +17,7 @@
         ];
     }
 ?>
+
 <div class="container mt-3">
     <div class="row row-cols-1 row-cols-sm-2 g-4"> <!-- Bắt đầu với 1 cột và chuyển sang 2 cột khi SM -->
         <?php
