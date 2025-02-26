@@ -9,19 +9,19 @@ class Mailer
     private $mail = null;
     public function __construct()
     {
-        $mail = new PHPMailer(true);
+        $this->mail = new PHPMailer(true);
         // Cấu hình server SMTP
-        $mail->isSMTP();
-        $mail->Host       = getenv('EMAIL_HOST'); 
-        $mail->SMTPAuth   = true;
-        $mail->Username   = getenv('EMAIL_USERNAME');   // Thay bằng email thật
-        $mail->Password   = getenv('EMAIL_PASSWORD');   // Thay bằng mật khẩu thật
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = getenv('EMAIL_PORT'); 
+        $this->mail->isSMTP();
+        $this->mail->Host       = getenv('EMAIL_HOST'); 
+        $this->mail->SMTPAuth   = true;
+        $this->mail->Username   = getenv('EMAIL_USERNAME');   // Thay bằng email thật
+        $this->mail->Password   = getenv('EMAIL_PASSWORD');   // Thay bằng mật khẩu thật
+        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mail->Port       = getenv('EMAIL_PORT'); 
     }
-    public function getInstance()
+    public static function getInstance()
     {
-        if (!isset($this->instance)) {
+        if (self::$instance == null) {
             self::$instance = new Mailer();
         }
         return self::$instance;
@@ -31,15 +31,28 @@ class Mailer
         try {
             $mailer = self::getInstance();
             // Người gửi
+            echo $sendFrom['address'];
+            echo $sendFrom['name'];
+            // Người nhận
+            echo $to['address'];
+            echo $to['name'];
+            // Người nhận phản hồi
+            echo $replyTo['address'];
+            echo $replyTo['name'];
+            // Gửi email
+            echo $subject;
+            echo $body;
+            echo $altbody;
             $mailer->mail->setFrom($sendFrom['address'], $sendFrom['name']);
             $mailer->mail->addAddress($to['address'], $to['name']);
-            $mailer->mail->addReplyTo($replyTo['address'], $replyTo['name']);
+            $mailer->mail->addReplyTo($replyTo['address'], $replyTo['name']);       
             // Nội dung email
             $mailer->mail->isHTML(true);
             $mailer->mail->Subject = $subject;
             $mailer->mail->Body    = $body;
             $mailer->mail->AltBody = $altbody;
             $mailer->mail->send();
+            echo '<pre>'.print_r($mailer->mail, true).'</pre>';
         }
         catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$e->getMessage()}";

@@ -29,7 +29,7 @@ class App {
         $url = $this->getUrl();
         $url = $this->__routes->handleRoute($url);
 
-//        echo $url;
+    //    echo $url;
         $urlArr = array_filter(explode('/', $url));
         $urlArr = array_values($urlArr);
 //        echo '<pre>'.print_r($urlArr, true).'</pre>';
@@ -103,6 +103,6 @@ class App {
     }
     public function loadError($name='404')
     {
-        require_once 'errors/'.$name.'.php';
+        require_once _DIR_ROOT .'/public/errors/'.$name.'.php';
     }
 }

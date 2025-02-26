@@ -6,7 +6,6 @@ class Product extends Controller{
         $this->model_product = $this->model('ProductModel');
     }
     public function index(){
-        
         $this->renderUser([
             'page_title' => 'Trang sản phẩm',
             'view' => 'products/index',
@@ -14,11 +13,6 @@ class Product extends Controller{
                 'title' => 'Danh mục sản phẩm'
             ]
         ]);
-        echo '
-        <script type="text/javascript">
-            toastr.success("Gửi mail thành công");
-            </script>
-            ';
     }
     public function list_product()
     {
@@ -44,13 +38,23 @@ class Product extends Controller{
         ]);
     }
     public function sendMail() {
-        print_r($_POST);
-        echo '
-        <script type="text/javascript">
-            toastr.success("Gửi mail thành công");
-            </script>
-            ';  
-        echo 'Gửi mail thành công';
-        header('Location: /san-pham');
+        $email = $_POST['email'];
+        $subject = $_POST['subject'];
+        $message = $_POST['message'];
+        Mailer::send(
+            [
+                'address' => getenv('EMAIL_USERNAME'),
+                'name' => 'Admin'
+            ],
+            [
+                'address' => $email,
+                'name' => 'User'
+            ],
+            [
+                'address' => $email,
+            ],
+            $subject,
+            $message
+        );
     }
 }

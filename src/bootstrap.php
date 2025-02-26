@@ -1,4 +1,6 @@
 <?php
+// Định nghĩa _DIR_ROOT là đường dẫn thư mục chứa file hiện tại.
+// dirname(__FILE__) trả về thư mục cha của file chứa đoạn code này.
 if (!defined('_DIR_ROOT')) {
     define('_DIR_ROOT', dirname(__FILE__));
 }
@@ -10,8 +12,8 @@ if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
     $web_root = 'http://'.$_SERVER['HTTP_HOST'];
 }
 
-$lastPart = basename(_DIR_ROOT);
-$web_root = $web_root.'/'.$lastPart;
+// $lastPart = basename(_DIR_ROOT);
+// $web_root = $web_root.'/'.$lastPart;
 
 if (!defined('_WEB_ROOT')) {
     define('_WEB_ROOT', $web_root);

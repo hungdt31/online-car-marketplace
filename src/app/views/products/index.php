@@ -18,7 +18,7 @@
         border-radius: 3px;
     }
 
-    button[type="submit"] {
+    .form-container button {
         width: 100%;
         padding: 10px;
         background: #0074A2;
@@ -34,57 +34,54 @@
         gap: 10px;
         margin: 10px 0;
     }
-</style>
-<!-- <?php
-if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
-    $subject = $_POST['subject'];
-    $message = $_POST['message'];
-    $response = null;
-    if (!empty($email) && !empty($subject) && !empty($message)) {
-        $response = "<p>Email Sent Successfully!</p>";
-        $response .= "<p><strong>Email:</strong> $email</p>";
-        $response .= "<p><strong>Subject:</strong> $subject</p>";
-        $response .= "<p><strong>Message:</strong> $message</p>";
-    } else {
-        $response = Mailer::send(
-            [
-                'address' => getenv('EMAIL_USERNAME'),
-                'name' => 'Admin'
-            ],
-            [
-                'address' => $email,
-                'name' => 'User'
-            ],
-            [
-                'address' => getenv('EMAIL_USERNAME'),
-                'name' => 'Admin'
-            ],
-            $subject,
-            $message
-        );
-        if (!empty($response)) {
-            echo '<p>Sent mail successufully!</p>';
-        } else {
-            echo '<p>Failed to send mail!</p>';
-        }
-    }
-}
-?> -->
-</head>
 
+    .response-message {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+</style>
 
 <div class="form-container">
     <h3>Send an email to yourself</h3>
-    <form method="post" action="./product/sendMail">
+    <form id="emailForm">
         <input type="email" name="email" placeholder="Enter your email" required />
         <input type="text" name="subject" placeholder="Enter a subject" required />
         <textarea name="message" placeholder="Enter your message" rows="4" required></textarea>
         <div class="group-button">
-            <button type="submit" name="submit">Submit</button>
-            <button type="reset" name="reset">Reset</button>
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
         </div>
     </form>
-
-
+    <div id="responseMessage" class="response-message"></div>
 </div>
+
+<script>
+document.getElementById("emailForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Ngăn trang load lại
+
+    let formData = new FormData(this);
+    let xhr = new XMLHttpRequest();
+    let submitButton = this.querySelector("button[type='submit']");
+    let responseMessage = document.getElementById("responseMessage");
+
+    // Hiển thị trạng thái loading
+    submitButton.disabled = true;
+    submitButton.innerText = "Sending...";
+
+    xhr.open("POST", "product/sendMail", true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            submitButton.disabled = false;
+            submitButton.innerText = "Submit"; // Khôi phục nút
+
+            if (xhr.status === 200) {
+                responseMessage.innerHTML = "<p style='color: green;'>Email Sent Successfully!</p>";
+            } else {
+                responseMessage.innerHTML = "<p style='color: red;'>Failed to send mail!</p>";
+            }
+        }
+    };
+
+    xhr.send(formData);
+});
+</script>
