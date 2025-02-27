@@ -1,3 +1,3 @@
 <div class="border-top mt-3">
-    <p class="text-primary m-3">Liên hệ: koikoidth12@gmail.com</p>
+    <p class="m-3">Contact: <span class="text-primary">koikoidth12@gmail.com</span></p>
 </div>

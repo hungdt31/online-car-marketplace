@@ -3,12 +3,16 @@
  * inheritance from class model
  */
 class HomeModel extends Model {
-    protected $_table = 'users';
     protected $_data = [
         'Item 1',
         'Item 2',
         'Item 3',
     ];
+    public function __construct()
+    {
+        parent::__construct();
+        $this->_table = 'users';
+    }
     public function getList() {
         $sql = "SELECT * FROM $this->_table";
         $result = $this->db->execute($sql);

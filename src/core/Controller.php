@@ -11,6 +11,9 @@ class Controller {
     }
     public function render($_view, $data=[]) {
         // echo '<pre>'.print_r($data, true).'</pre>';
+        if (!isset($data['content'])) {
+            $data['content'] = [];
+        }
         extract($data);
         if (file_exists(_DIR_ROOT.'/app/views/'.$_view.'.php')) {
             require_once _DIR_ROOT.'/app/views/'.$_view.'.php';

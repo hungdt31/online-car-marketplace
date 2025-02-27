@@ -14,3 +14,4 @@ VALUES
 ('Alice', 'Johnson', 'alice.johnson@example.com'),
 ('Bob', 'Brown', 'bob.brown@example.com');
 SELECT * FROM users;
+

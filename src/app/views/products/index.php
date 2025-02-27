@@ -1,87 +1,23 @@
-<style>
-    .form-container {
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        width: 300px;
-        text-align: center;
-        margin: 20px auto;
-    }
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button>
 
-    input,
-    textarea {
-        width: 100%;
-        margin: 5px 0;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
-
-    .form-container button {
-        width: 100%;
-        padding: 10px;
-        background: #0074A2;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-
-    .group-button {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        margin: 10px 0;
-    }
-
-    .response-message {
-        margin-top: 10px;
-        font-weight: bold;
-    }
-</style>
-
-<div class="form-container">
-    <h3>Send an email to yourself</h3>
-    <form id="emailForm">
-        <input type="email" name="email" placeholder="Enter your email" required />
-        <input type="text" name="subject" placeholder="Enter a subject" required />
-        <textarea name="message" placeholder="Enter your message" rows="4" required></textarea>
-        <div class="group-button">
-            <button type="submit">Submit</button>
-            <button type="reset">Reset</button>
-        </div>
-    </form>
-    <div id="responseMessage" class="response-message"></div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
-
-<script>
-document.getElementById("emailForm").addEventListener("submit", function(event) {
-    event.preventDefault(); // Ngăn trang load lại
-
-    let formData = new FormData(this);
-    let xhr = new XMLHttpRequest();
-    let submitButton = this.querySelector("button[type='submit']");
-    let responseMessage = document.getElementById("responseMessage");
-
-    // Hiển thị trạng thái loading
-    submitButton.disabled = true;
-    submitButton.innerText = "Sending...";
-
-    xhr.open("POST", "product/sendMail", true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            submitButton.disabled = false;
-            submitButton.innerText = "Submit"; // Khôi phục nút
-
-            if (xhr.status === 200) {
-                responseMessage.innerHTML = "<p style='color: green;'>Email Sent Successfully!</p>";
-            } else {
-                responseMessage.innerHTML = "<p style='color: red;'>Failed to send mail!</p>";
-            }
-        }
-    };
-
-    xhr.send(formData);
-});
-</script>

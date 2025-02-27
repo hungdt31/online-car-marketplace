@@ -36,7 +36,7 @@
             <?php
         }
         ?>
-        <?php
+        <!-- <?php
             if(isset($_POST['button1'])) {
                 echo "This is Button1 that is selected";
             }
@@ -50,6 +50,6 @@
         
         <input type="submit" name="button2"
                 value="Button2"/>
-        </form>
+        </form> -->
     </div>
 </div>

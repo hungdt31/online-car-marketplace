@@ -49,16 +49,22 @@ class Database
         $db_config = array_filter($config['database']);
         return $db_config;
     }
-    public function execute($sql)
+    public function execute($sql, $params = [], $single = false)
     {
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $exception) {
+            $stmt->execute($params); // Truyền tham số để tránh SQL Injection
+    
+            // Nếu là truy vấn SELECT
+            if (stripos(trim($sql), 'SELECT') === 0) {
+                return $single ? $stmt->fetch(PDO::FETCH_ASSOC) : $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+    
+            // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
+            return $stmt->rowCount();
+        } catch (PDOException $exception) {
             error_log($exception->getMessage(), 3, "error.log"); // Ghi log lỗi vào file
-            include_once 'app/errors/disconnect_db.php';
             return false;
         }
-    }
+    }    
 }

@@ -6,10 +6,13 @@ class Home extends Controller{
         $this->model_home = $this->model('HomeModel');
     }
     public function index() {
-        $this->data['content']['user'] = $this->model_home->getList();
-        $this->data['page_title'] = 'Trang chủ';
-        $this->data['view'] = 'home/index';
-        $this->renderUser($this->data);
+        $this->renderUser([
+            'page_title' => 'Home',
+            'view' => 'home/index',
+            'content' => [
+                'user' => $this->model_home->getList()
+            ]
+        ]);
     }
     public function detail($id='', $slug='') {
         echo 'id: ',$id.'<br/>'.'slug: '.$slug. '<br/>';
@@ -21,5 +24,11 @@ class Home extends Controller{
     public function search() {
         $keyword = $_GET['keyword'];
         echo 'Keyword: '.$keyword;
+    }
+    public function contact() {
+        $this->renderUser([
+            'page_title' => 'Contact us',
+            'view' => 'home/contact'
+        ]);
     }
 }

@@ -7,6 +7,7 @@
     border-radius: 5px; 
     bottom: 10px;
     right: 10px;
+    max-width: 300px;
 ">
-    Nội dung không tồn tại trên database
+    <?= $error ?>
 </p>

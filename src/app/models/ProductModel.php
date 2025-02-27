@@ -1,6 +1,5 @@
 <?php
 class ProductModel {
-    protected $_table = 'product';
     protected $_data = [];
     public function __construct() {
         $this->_data = [
