@@ -1,22 +1,113 @@
+<style>
+    .modal-body input,
+    select {
+        margin-top: 10px;
+    }
+
+    .action-btn {
+        min-width: 100px;
+    }
+</style>
 <div class="modal-header">
     <h1 class="modal-title fs-5" id="carDetailModalLabel">
-        <span id="carName" class="text-info"><?= htmlspecialchars($car['name'] ?? 'N/A') ?></span>
+        <?php if ($getToUpdate): ?>
+            <div class="input-group">
+                <input type="text" class="form-control p-2" name="name" value="<?= $car['name'] ?? '' ?>" aria-describedby="inputGroup-sizing-default">
+            </div>
+        <?php else: ?>
+            <span id="carName">
+                <?= htmlspecialchars($car['name'] ?? 'N/A') ?>
+            </span>
+            <div class="lead" style="font-size: medium;">
+                <i class="bi bi-pin-map"></i>
+                <em id="carLocation">
+                    <?= htmlspecialchars($car['location'] ?? 'N/A') ?>
+                </em>
+            </div>
+        <?php endif; ?>
     </h1>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
+<?php if ($getToUpdate): ?>
+    <div class="p-3">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><strong>Location</strong></div>
+            </div>
+            <input type="text" class="form-control" id="inlineFormInputGroup" value="<?= $car['location'] ?? '' ?>" name="location">
+        </div>
+    </div>
+<?php endif; ?>
 <div class="modal-body">
     <div class="container">
-        <div class="row">
-            <p class="col-6"><strong>Fuel Type:</strong> <?= htmlspecialchars($car['fuel_type'] ?? 'N/A') ?></p>
-            <p class="col-6"><strong>Mileage:</strong> <?= htmlspecialchars($car['mileage'] ?? 'N/A') ?></p>
+        <div class="row mb-3">
+            <div class="col-6">
+                <label for="fuel_type"><strong>Fuel Type</strong></label>
+                <?php if ($getToUpdate): ?>
+                    <select class="form-control" id="fuel_type" name="fuel_type">
+                        <option value="Petrol" <?= ($car['fuel_type'] ?? '') === 'Petrol' ? 'selected' : '' ?>>Petrol</option>
+                        <option value="Diesel" <?= ($car['fuel_type'] ?? '') === 'Diesel' ? 'selected' : '' ?>>Diesel</option>
+                        <option value="Electric" <?= ($car['fuel_type'] ?? '') === 'Electric' ? 'selected' : '' ?>>Electric</option>
+                        <option value="Hybrid" <?= ($car['fuel_type'] ?? '') === 'Hybrid' ? 'selected' : '' ?>>Hybrid</option>
+                    </select>
+                <?php else: ?>
+                    <p><?= htmlspecialchars($car['fuel_type'] ?? 'N/A') ?></p>
+                <?php endif; ?>
+            </div>
+            <div class="col-6">
+                <label for="mileage"><strong>Mileage</strong></label>
+                <?php if ($getToUpdate): ?>
+                    <input type="text" class="form-control" id="mileage" name="mileage" value="<?= htmlspecialchars($car['mileage'] ?? '') ?>">
+                <?php else: ?>
+                    <p><?= htmlspecialchars($car['mileage'] ?? 'N/A') ?></p>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="row">
-            <p class="col-6"><strong>Drive Type:</strong> <?= htmlspecialchars($car['drive_type'] ?? 'N/A') ?></p>
-            <p class="col-6"><strong>Service Duration:</strong> <?= htmlspecialchars($car['service_duration'] ?? 'N/A') ?></p>
+        <div class="row mb-3">
+            <div class="col-6">
+                <label for="drive_type"><strong>Drive Type</strong></label>
+                <?php if ($getToUpdate): ?>
+                    <select class="form-control" id="drive_type" name="drive_type">
+                        <option value="Self" <?= ($car['drive_type'] ?? '') === 'Self' ? 'selected' : '' ?>>Self</option>
+                        <option value="Automatic" <?= ($car['drive_type'] ?? '') === 'Automatic' ? 'selected' : '' ?>>Automatic</option>
+                        <option value="Manual" <?= ($car['drive_type'] ?? '') === 'Manual' ? 'selected' : '' ?>>Manual</option>
+                    </select>
+                <?php else: ?>
+                    <p><?= htmlspecialchars($car['drive_type'] ?? 'N/A') ?></p>
+                <?php endif; ?>
+            </div>
+            <div class="col-6 mb-3">
+                <label for="service_duration"><strong>Service Duration</strong></label>
+                <?php if ($getToUpdate): ?>
+                    <input type="text" class="form-control" id="service_duration" name="service_duration" value="<?= htmlspecialchars($car['service_duration'] ?? '') ?>">
+                <?php else: ?>
+                    <p><?= htmlspecialchars($car['service_duration'] ?? 'N/A') ?></p>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="row">
-            <p class="col-6"><strong>Body Weight:</strong> <?= htmlspecialchars($car['body_weight'] ?? 'N/A') ?></p>
-            <p class="col-6"><strong>Price:</strong> $<?= number_format($car['price'] ?? 0, 2) ?></p>
+        <div class="row mb-5">
+            <div class="col-6">
+                <label for="body_weight"><strong>Body Weight</strong></label>
+                <?php if ($getToUpdate): ?>
+                    <input type="text" class="form-control" id="body_weight" name="body_weight" value="<?= htmlspecialchars($car['body_weight'] ?? '') ?>">
+                <?php else: ?>
+                    <p><?= htmlspecialchars($car['body_weight'] ?? 'N/A') ?></p>
+                <?php endif; ?>
+            </div>
+            <div class="col-6">
+                <label for="price"><strong>Price</strong></label>
+                <?php if ($getToUpdate): ?>
+                    <input type="number" class="form-control" id="price" name="price" value="<?= $car['price'] ?>" step="0.01">
+                <?php else: ?>
+                    <p>$<?= number_format($car['price'] ?? 0, 2) ?></p>
+                <?php endif; ?>
+            </div>
         </div>
+        <?php if ($getToUpdate): ?>
+            <div class="text-center">
+                <button class="btn btn-outline-secondary action-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Exit</button>
+                <button type="submit" class="btn btn-outline-primary action-btn save-btn" data-id="<?= htmlspecialchars($car['id']) ?>">Save</button>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

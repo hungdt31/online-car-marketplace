@@ -54,7 +54,6 @@ class Database
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($params); // Truyền tham số để tránh SQL Injection
-    
             // Nếu là truy vấn SELECT
             if (stripos(trim($sql), 'SELECT') === 0) {
                 return $single ? $stmt->fetch(PDO::FETCH_ASSOC) : $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -64,6 +63,9 @@ class Database
             return $stmt->rowCount();
         } catch (PDOException $exception) {
             error_log($exception->getMessage(), 3, "error.log"); // Ghi log lỗi vào file
+            $data['error'] = $exception->getMessage();
+            extract($data);
+            include_once _DIR_ROOT. '/public/errors/db.php';
             return false;
         }
     }    

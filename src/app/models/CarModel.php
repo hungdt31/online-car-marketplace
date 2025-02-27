@@ -36,5 +36,29 @@ class CarModel extends Model {
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
         return $result;
-    }    
+    }
+    public function editCar($id, $data) {
+        $sql = "UPDATE $this->_table SET name = :name, location = :location, fuel_type = :fuel_type, mileage = :mileage, drive_type = :drive_type, service_duration = :service_duration, body_weight = :body_weight, price = :price WHERE id = :id";
+        
+        $params = [
+            ':id' => $id,
+            ':name' => $data['name'],
+            ':location' => $data['location'],
+            ':fuel_type' => $data['fuel_type'],
+            ':mileage' => $data['mileage'],
+            ':drive_type' => $data['drive_type'],
+            ':service_duration' => $data['service_duration'],
+            ':body_weight' => $data['body_weight'],
+            ':price' => $data['price']
+        ];
+    
+        $result = $this->db->execute($sql, $params);
+        return $result;
+    }
+    public function deleteCar($id) {
+        $sql = "DELETE FROM $this->_table WHERE id = :id";
+        $params = [':id' => $id];
+        $result = $this->db->execute($sql, $params);
+        return $result;
+    }
 }

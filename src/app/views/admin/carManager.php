@@ -7,12 +7,16 @@
 
 <!-- Hiển thị danh sách xe -->
 <div class="container mt-4">
-  <div class="my-3">
+  <div class="d-flex justify-content-between align-items-center my-3">
+    <!-- Search bar -->
+    <input type="text" id="searchInput" class="form-control w-25" placeholder="Search by car name...">
+
     <!-- Button trigger modal -->
     <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-light">
       <i class="bi bi-plus-circle"></i> Insert data
     </button>
   </div>
+
   <table class="table table-bordered table-striped">
     <thead class="table-dark">
       <tr>
@@ -24,23 +28,31 @@
         <th class="text-center py-3">Action</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="carTableBody">
       <?php foreach ($list_cars as $car) : ?>
-        <tr>
+        <tr class="car-row">
           <td><?= htmlspecialchars($car['id']) ?></td>
-          <td><?= htmlspecialchars($car['name']) ?></td>
+          <td class="car-name"><?= htmlspecialchars($car['name']) ?></td>
           <td><?= htmlspecialchars($car['location']) ?></td>
           <td><?= htmlspecialchars($car['fuel_type']) ?></td>
           <td>$<?= number_format($car['price'], 2) ?></td>
           <td class="text-center">
             <button type="button" class="btn btn-info details-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#carDetailModal">Details</button>
-            <button type="button" class="btn btn-primary">Edit</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-primary edit-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#updateCarModal">Edit</button>
+            <button type="button" class="btn btn-danger delete-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#deleteCarModal">Delete</button>
           </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
+  <p id="noResultsMessage" class="text-center text-danger d-none">No matching records found.</p>
+
+  <!-- Pagination -->
+  <nav>
+    <ul class="pagination justify-content-center" id="pagination">
+      <!-- JS sẽ thêm số trang vào đây -->
+    </ul>
+  </nav>
 </div>
 
 <!-- Modal thêm xe mới -->
@@ -120,6 +132,37 @@
   </div>
 </div>
 
+<!-- Modal chỉnh sửa thông tin xe -->
+<div class="modal fade" id="updateCarModal" tabindex="-1" aria-labelledby="updateCarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="updateCarForm" method="post">
+      <div class="modal-content" id="updateCar">
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal xóa xe -->
+<div class="modal fade" id="deleteCarModal" tabindex="-1" aria-labelledby="deleteCarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="deleteCarForm" method="post">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteCarModalLabel">Delete Car</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this car?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
   $(document).ready(function() {
     $("#addCarForm").submit(function(event) {
@@ -159,5 +202,169 @@
         }
       });
     });
+    $(".edit-btn").click(function() {
+      var carId = $(this).data("id"); // Lấy ID của xe
+      $.ajax({
+        url: "/admin/dashboard/getCar/" + carId, // Gọi API lấy thông tin xe
+        type: "GET",
+        data: {
+          'getToUpdate': true
+        },
+        dataType: "html",
+        success: function(response) {
+          $('#updateCar').html(response);
+        },
+        error: function() {
+          toastr.error("Failed to get car details.");
+        }
+      });
+    });
+    $(".delete-btn").click(function() {
+      var carId = $(this).data("id"); // Lấy ID của xe
+      var deleteButton = document.getElementById("deleteCarForm").querySelector("button[type='submit']");
+      deleteButton.setAttribute("data-id", carId); // Gán ID vào nút xác nhận xóa
+    });
+  });
+  document.getElementById("updateCarForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Ngăn trang load lại
+
+    let formData = new FormData(this);
+    let xhr = new XMLHttpRequest();
+
+    let submitButton = this.querySelector("button[type='submit']");
+    let id = submitButton.getAttribute("data-id");
+
+    xhr.open("POST", `/admin/dashboard/editCar/${id}`, true);
+
+    // Khi request hoàn thành
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try {
+          let response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            toastr.success(response.message);
+          } else {
+            toastr.error(response.message);
+          }
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        } catch (e) {
+          toastr.error("Error! " + e);
+        }
+      } else {
+        toastr.error("Error! " + xhr.statusText);
+      }
+    };
+
+    // Xử lý lỗi mạng
+    xhr.onerror = function() {
+      toastr.error("Error! " + xhr.statusText);
+    };
+
+    xhr.send(formData);
+  });
+  document.getElementById("deleteCarForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Ngăn trang load lại
+
+    let formData = new FormData(this);
+    let xhr = new XMLHttpRequest();
+
+    let submitButton = this.querySelector("button[type='submit']");
+    let id = submitButton.getAttribute("data-id");
+
+    xhr.open("POST", `/admin/dashboard/deleteCar/${id}`, true);
+
+    // Khi request hoàn thành
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try {
+          let response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            toastr.success(response.message);
+          } else {
+            toastr.error(response.message);
+          }
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        } catch (e) {
+          toastr.error("Error! " + e);
+        }
+      } else {
+        toastr.error("Error! " + xhr.statusText);
+      }
+    };
+
+    // Xử lý lỗi mạng
+    xhr.onerror = function() {
+      toastr.error("Error! " + xhr.statusText);
+    };
+
+    xhr.send(formData);
+  });
+  document.getElementById("searchInput").addEventListener("keyup", function() {
+    var filter = this.value.toLowerCase();
+    var rows = document.querySelectorAll("#carTableBody tr");
+    var found = false;
+
+    rows.forEach(function(row) {
+      var name = row.querySelector(".car-name").textContent.toLowerCase();
+      if (name.includes(filter)) {
+        row.style.display = "";
+        found = true;
+      } else {
+        row.style.display = "none";
+      }
+    });
+
+    document.getElementById("noResultsMessage").classList.toggle("d-none", found);
+  });
+  document.addEventListener("DOMContentLoaded", function() {
+    var rowsPerPage = 5; // Số xe mỗi trang
+    var rows = document.querySelectorAll(".car-row");
+    var searchInput = document.getElementById("searchInput");
+    var pagination = document.getElementById("pagination");
+    var noResultsMessage = document.getElementById("noResultsMessage");
+    var currentPage = 1;
+
+    function updateTable() {
+      var filter = searchInput.value.toLowerCase();
+      var filteredRows = Array.from(rows).filter(row => row.querySelector(".car-name").textContent.toLowerCase().includes(filter));
+
+      // Hiển thị thông báo nếu không tìm thấy xe
+      noResultsMessage.classList.toggle("d-none", filteredRows.length > 0);
+
+      // Tính toán số trang
+      var totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+      if (currentPage > totalPages) currentPage = totalPages || 1;
+
+      // Cập nhật hiển thị
+      filteredRows.forEach((row, index) => {
+        row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
+      });
+
+      updatePagination(totalPages);
+    }
+
+    function updatePagination(totalPages) {
+      pagination.innerHTML = "";
+
+      for (let i = 1; i <= totalPages; i++) {
+        let li = document.createElement("li");
+        li.classList.add("page-item");
+        if (i === currentPage) li.classList.add("active");
+        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        li.addEventListener("click", function(e) {
+          e.preventDefault();
+          currentPage = i;
+          updateTable();
+        });
+        pagination.appendChild(li);
+      }
+    }
+
+    searchInput.addEventListener("keyup", updateTable);
+    updateTable();
   });
 </script>
