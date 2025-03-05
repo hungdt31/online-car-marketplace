@@ -1,5 +1,9 @@
 <?php
 class Controller {
+    public function __construct()
+    {
+        echo 'Controller';
+    }
     public function model($model) {
         if (file_exists(_DIR_ROOT.'/app/models/'.$model.'.php')) {
             require_once _DIR_ROOT.'/app/models/'.$model.'.php';
@@ -24,5 +28,8 @@ class Controller {
     }
     public function renderAdmin ($data=[]) {
         $this->render('layouts/admin', $data);
+    }
+    public function renderAuth ($data=[]) {
+        $this->render('layouts/auth', $data);
     }
 }

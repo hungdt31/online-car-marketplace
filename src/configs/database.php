@@ -11,3 +11,13 @@ $config['database'] = [
     'pass' => $db_pass,
     'db' => $db_name,
 ];
+
+$config['fake-user-data'] = array([
+    'email' => 'admin@gmail.com',
+    'password' => 'admin',
+    'role' => 'admin'
+], [
+    'email' => 'user@gmail.com',
+    'password' => 'user',
+    'role' => 'user'
+]);

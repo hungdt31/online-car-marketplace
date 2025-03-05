@@ -16,6 +16,14 @@
             ]
         ];
     }
+    
+    $cookie_name = 'access_token';
+    if(!isset($_COOKIE[$cookie_name])) {
+        echo "Cookie named '" . $cookie_name . "' is not set!";
+    } else {
+        echo "Cookie '" . $cookie_name . "' is set!<br>";
+        echo "Value is: " . $_COOKIE[$cookie_name];
+    }
 ?>
 
 <div class="container mt-3">
@@ -36,20 +44,13 @@
             <?php
         }
         ?>
-        <!-- <?php
-            if(isset($_POST['button1'])) {
-                echo "This is Button1 that is selected";
-            }
-            if(isset($_POST['button2'])) {
-                echo "This is Button2 that is selected";
-            }
-        ?>
-        <form method="post">
-        <input type="submit" name="button1"
-                value="Button1"/>
-        
-        <input type="submit" name="button2"
-                value="Button2"/>
-        </form> -->
+        <form>
+            <label>Upload ảnh</label>
+            <input type="file" name="image" class="form-control">
+            <div>
+                // Hiển thị hình ảnh
+                <img src="data:image/jpeg;base64,<?php echo base64_encode($image); ?>" alt="Hình ảnh" class="img-thumbnail">
+            </div>
+        </form>
     </div>
 </div>
