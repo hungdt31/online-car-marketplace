@@ -1,15 +1,19 @@
 <?php
 class Dashboard extends Controller{
     public $car_model;
+    public $jwt;
     public function __construct() {
         $this->car_model = $this->model('CarModel');
+        $this->jwt = new JwtAuth();
     }
     public function index() {
+        $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
         $this->renderAdmin([
             'page_title' => 'Dashboard',
             'view' => 'admin/dashboard',
             'content' => [
-                'title' => 'Dashboard'
+                'title' => 'Dashboard',
+                'payload' => $payload
             ]
         ]);
     }

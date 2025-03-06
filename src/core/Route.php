@@ -2,7 +2,11 @@
 
 class Route
 {
-    function handleRoute($url)
+    private $public_routes = [
+        '/auth',
+        '/',
+    ];
+    public function handleRoute($url)
     {
         global $routes;
 
@@ -11,11 +15,6 @@ class Route
 
         // Xóa default_controller khỏi danh sách routes để không lặp qua
         unset($routes['default_controller']);
-
-        // Hiển thị routes để debug
-//        echo '<pre>';
-//        print_r($routes);
-//        echo '</pre>';
 
         // Loại bỏ dấu gạch chéo ở đầu và cuối URL
         $url = trim($url, '/');
@@ -41,6 +40,10 @@ class Route
         }
 
         return $handleUrl;
+    }
+    public function getPublicRoute()
+    {
+        return $this->public_routes;
     }
 }
 

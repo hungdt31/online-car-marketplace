@@ -2,13 +2,19 @@
 
 class Account extends Controller
 {
+    private $jwt;
+    public function __construct()
+    {
+        $this->jwt = new JwtAuth();
+    }
     public function index()
     {
+        $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
         $this->renderUser([
-            'page_title' => 'Tài khoản người dùng',
-            'view' => 'user/account/index',
-            'data' => [
-                'title' => 'Account'
+            'page_title' => 'My account',
+            'view' => 'user/account',
+            'content' => [
+                'payload' => $payload
             ]
         ]);
     }

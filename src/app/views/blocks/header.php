@@ -10,7 +10,7 @@
                     <a class="nav-link active" aria-current="page" href="/admin/dashboard/carManager">Car Management</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Blog</a>
+                    <a class="nav-link" href="/auth">Sign In</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -24,7 +24,7 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Account</a>
+                    <a class="nav-link" href="/account" tabindex="-1" aria-disabled="true">Account</a>
                 </li>
             </ul>
             <form class="d-flex m-3">

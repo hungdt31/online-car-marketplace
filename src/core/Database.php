@@ -63,9 +63,10 @@ class Database
             return $stmt->rowCount();
         } catch (PDOException $exception) {
             error_log($exception->getMessage(), 3, "error.log"); // Ghi log lỗi vào file
-            $data['error'] = $exception->getMessage();
+            $data['message'] = $exception->getMessage();
+            $data['type'] = 'error';
             extract($data);
-            include_once _DIR_ROOT. '/public/errors/db.php';
+            include_once _DIR_ROOT. '/public/errors/index.php';
             return false;
         }
     }    
