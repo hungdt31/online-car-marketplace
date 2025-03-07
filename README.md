@@ -10,6 +10,13 @@
 | Advantages    | Cho phép dữ liệu thay đổi độc lập với cách thể hiện (presentation) và ngược lại cũng đúng. Hỗ trợ trình bày cùng một dữ liệu theo nhiều cách khác nhau, với những thay đổi được thực hiện trong một thể hiện được hiển thị trong tất cả chúng.                                                                                                                                                                                                                                                                           |
 | Disadvantages | Có thể dẫn đến việc phải viết thêm mã và tăng độ phức tạp của mã khi mô hình dữ liệu và các tương tác còn đơn giản.
 
+## Set up
+
+- Tạo thư mục `db/password.txt` để lưu mật khẩu của database.
+- `composer install` để cài đặt các package cần thiết. Sử dụng `composer require <name_package>` để thêm package mới.
+- Chạy chương trình (theo dõi các thay đổi file) với lệnh `docker composer watch`.
+- Dừng và loại bỏ các container `docker composer down`.
+
 ## Tài liệu tham khảo
 
 - A simple PHP web application example for [Docker's PHP Language Guide](https://docs.docker.com/language/php/).
