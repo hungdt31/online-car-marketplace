@@ -27,9 +27,10 @@ class Database
             $this->conn = new PDO($dsn, $db_config['user'], $pass, $options);
             // $this->conn = new mysqli($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['db']);
         } catch (Exception $exception) {
-            error_log($exception->getMessage(), 3, "error.log"); // Ghi log lỗi vào file
-            echo "Không thể kết nối cơ sở dữ liệu, vui lòng thử lại sau";
-            print_r($exception->getMessage());
+            $data['message'] = "Can\'t connect to Database: ". $exception->getMessage();
+            $data['type'] = 'error';
+            extract($data);
+            include_once _DIR_ROOT. '/public/errors/index.php';
         }
     }
 
@@ -60,14 +61,18 @@ class Database
             }
     
             // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
-            return $stmt->rowCount();
+            return [
+                'success' => true,
+                'message' => 'Execute successfully!',
+                'rowCount' => $stmt->rowCount(),
+                'lastInsertId' => $this->conn->lastInsertId()
+            ];
         } catch (PDOException $exception) {
-            error_log($exception->getMessage(), 3, "error.log"); // Ghi log lỗi vào file
-            $data['message'] = $exception->getMessage();
-            $data['type'] = 'error';
-            extract($data);
-            include_once _DIR_ROOT. '/public/errors/index.php';
-            return false;
+            return [
+                'message' => $exception->getMessage(),
+                'success' => false,
+                'errorCode' => $exception->getCode()
+            ];
         }
     }    
 }

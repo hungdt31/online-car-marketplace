@@ -18,6 +18,7 @@
     }
     
     $cookie_name = 'access_token';
+    echo '<pre>'.print_r($_SESSION, true).'</pre>';
     if(!isset($_COOKIE[$cookie_name])) {
         echo "Cookie named '" . $cookie_name . "' is not set!";
     } else {

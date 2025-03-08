@@ -1,6 +1,6 @@
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
-		<form action="/auth" method="post">
+		<form id="form-sign-up" action="/auth/signup" method="post">
 			<h1>Create Account</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -8,10 +8,11 @@
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
-			<input type="text" placeholder="Name" />
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
-			<button>Submit</button>
+			<input type="text" placeholder="Username" name="username"/>
+			<input type="email" placeholder="Email" name="email"/>
+			<input type="password" placeholder="Password" name="password"/>
+			<button type="submit" id="signUpBtn">Submit</button>
+			<div class="loader" id="loader-sign-up" style="display: none;"></div>
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
@@ -27,7 +28,7 @@
 			<input type="password" placeholder="Password" name="password"/>
 			<a href="#">Forgot your password?</a>
 			<button type="submit" id="signInBtn">Submit</button>
-            <div class="loader" style="display: none;"></div>
+            <div class="loader" id="loader-sign-in" style="display: none;"></div>
 		</form>
 	</div>
 	<div class="overlay-container">
@@ -52,29 +53,64 @@
             e.preventDefault();
             var form = $(this);
             let btn = document.getElementById('signInBtn')
-            let loader = document.querySelector('.loader');
+            let loader = document.getElementById('loader-sign-in');
             loader.style.display = 'block';
             btn.hidden = true;
-            $.ajax({
-                type: 'POST',
-                url: '/auth/signIn',
-                data: form.serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success(response.message);
-                        setTimeout(() => {
-                            window.location.href = '/admin/dashboard';
-                        }, 1000);
-                    } else {
-                        toastr.warning(response.message);
-                    }
-                },
-                complete: function() {
-                    loader.style.display = 'none';
-                    btn.hidden = false;
-                }
-            });
+
+			// Trì hoãn 1.5 giây trước khi gửi request
+			setTimeout(function() {
+				$.ajax({
+					type: 'POST',
+					url: '/auth/signin',
+					data: form.serialize(),
+					dataType: 'json',
+					success: function(response) {
+						if (response.success) {
+							toastr.success(response.message);
+							setTimeout(() => {
+								window.location.href = '/admin/dashboard';
+							}, 1000);
+						} else {
+							toastr.warning(response.message);
+						}
+					},
+					complete: function() {
+						loader.style.display = 'none';
+						btn.hidden = false;
+					}
+				});
+			}, 1000);
         });
+		$('#form-sign-up').submit(function(e) {
+			e.preventDefault();
+			var form = $(this);
+			let btn = document.getElementById('signUpBtn');
+			let loader = document.getElementById('loader-sign-up');
+
+			// Hiển thị loader và ẩn nút đăng ký ngay lập tức
+			loader.style.display = 'block';
+			btn.hidden = true;
+
+			// Trì hoãn 1.5 giây trước khi gửi request
+			setTimeout(function() {
+				$.ajax({
+					type: 'POST',
+					url: '/auth/signup',
+					data: form.serialize(),
+					dataType: 'json',
+					success: function(response) {
+						if (response.success) {
+							toastr.success(response.message);
+						} else {
+							toastr.warning(response.message);
+						}
+					},
+					complete: function() {
+						loader.style.display = 'none';
+						btn.hidden = false;
+					}
+				});
+			}, 1500);
+		});
     });
 </script>
