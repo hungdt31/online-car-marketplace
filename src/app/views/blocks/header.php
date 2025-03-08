@@ -26,6 +26,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/account" tabindex="-1" aria-disabled="true">Account</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dashboard" tabindex="-1" aria-disabled="true">Dashboard</a>
+                </li>
             </ul>
             <form class="d-flex m-3">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">

@@ -9,12 +9,12 @@ class Account extends Controller
     }
     public function index()
     {
-        $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
+        $profile = SessionFactory::createSession('account')->getProfile();
         $this->renderUser([
             'page_title' => 'My account',
             'view' => 'user/account',
             'content' => [
-                'payload' => $payload
+                'profile' => $profile
             ]
         ]);
     }

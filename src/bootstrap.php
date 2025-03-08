@@ -22,7 +22,8 @@ if (!defined('_WEB_ROOT')) {
 $dir_arr = [
     'core',
     'configs',
-    'libs'
+    'libs',
+    'sessions',
 ];
 foreach ($dir_arr as $dir) {
     if (is_dir(_DIR_ROOT.'/'.$dir)) {

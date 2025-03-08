@@ -39,7 +39,9 @@ class Auth extends Controller
             // Kiểm tra email và password
             $result = $this->user_model->findOne($payload);
             if ($result) {
-                $payload['role'] = $result['role'];
+                $accountSession = SessionFactory::createSession('account');
+                $accountSession->setProfile($result['data']);
+                $payload['role'] = $result['data']['role'];
                 $this->jwt->encodeDataToCookie($payload);
                 $token = $this->jwt->getTokenFromCookie();
                 // Đợi cookie được lưu bằng cách kiểm tra nó trong vòng lặp
@@ -51,6 +53,7 @@ class Auth extends Controller
                 echo json_encode([
                     'success' => true,
                     'message' => 'Successfully logged in',
+                    'role' => $result['data']['role']
                 ]);
                 exit();
             }

@@ -11,7 +11,7 @@ class CarModel extends Model {
     public function getList() {
         $sql = "SELECT * FROM $this->_table";
         $result = $this->db->execute($sql);
-        return $result;
+        return $result['data'];
     }
     public function addCar($data) {
         $sql = "INSERT INTO $this->_table (name, location, fuel_type, mileage, drive_type, service_duration, body_weight, price) 
@@ -29,13 +29,13 @@ class CarModel extends Model {
         ];
     
         $result = $this->db->execute($sql, $params);
-        return $result;
+        return $result['data'];
     }
     public function getCar($id) {
         $sql = "SELECT * FROM $this->_table WHERE id = :id";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
-        return $result;
+        return $result['data'];
     }
     public function editCar($id, $data) {
         $sql = "UPDATE $this->_table SET name = :name, location = :location, fuel_type = :fuel_type, mileage = :mileage, drive_type = :drive_type, service_duration = :service_duration, body_weight = :body_weight, price = :price WHERE id = :id";
@@ -53,12 +53,12 @@ class CarModel extends Model {
         ];
     
         $result = $this->db->execute($sql, $params);
-        return $result;
+        return $result['data'];
     }
     public function deleteCar($id) {
         $sql = "DELETE FROM $this->_table WHERE id = :id";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params);
-        return $result;
+        return $result['data'];
     }
 }

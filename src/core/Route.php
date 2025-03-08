@@ -4,7 +4,7 @@ class Route
 {
     private $public_routes = [
         '/auth',
-        '/',
+        'home',
     ];
     public function handleRoute($url)
     {

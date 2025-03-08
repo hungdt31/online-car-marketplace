@@ -134,10 +134,13 @@ class App
                             exit();
                         }
                     } else {
+                        $session = SessionFactory::createSession('account');
+                        $session->destroy();
                         header('Location: /auth');
                     }
                 } else {
                     $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
+                    // echo '<pre>' . print_r($payload, true) . '</pre>';
                     if ($payload['role'] != $folder) {
                         require_once _DIR_ROOT . '/public/placeholders/index.php';
                         $data['message'] = 'You don\'t have permission to access this page';
@@ -146,6 +149,16 @@ class App
                         // echo '<script>setTimeout(function(){window.location.href = "/";}, 2000);</script>';
                         exit();
                     }
+                }
+            }
+        } else {
+            $response = $this->jwt->getTokenFromCookie();
+            $accessToken = $response['access']['value'];
+            if (!isset($accessToken)) {
+                $response = $this->jwt->generateAccessFromRefresh();
+                if (!$response['success']) {
+                    $session = SessionFactory::createSession('account');
+                    $session->destroy();
                 }
             }
         }

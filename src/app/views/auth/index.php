@@ -68,7 +68,7 @@
 						if (response.success) {
 							toastr.success(response.message);
 							setTimeout(() => {
-								window.location.href = '/admin/dashboard';
+								response.role === 'admin' ? window.location.href = '/admin/dashboard' : window.location.href = '/account';
 							}, 1000);
 						} else {
 							toastr.warning(response.message);

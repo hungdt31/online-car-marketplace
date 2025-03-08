@@ -13,9 +13,9 @@ class UserModel extends Model {
         $sql = "SELECT * FROM $this->_table WHERE email = :email";
         $params = [':email' => $data['email']];
         $result = $this->db->execute($sql, $params, true);
-        if ($result) {
+        if ($result['success']) {
             $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
-            if (hash_equals($hashedPassword, $result['password'])) {
+            if (hash_equals($hashedPassword, $result['data']['password'])) {
                 return $result;
             }
         }

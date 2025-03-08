@@ -56,17 +56,23 @@ class Database
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($params); // Truyền tham số để tránh SQL Injection
             // Nếu là truy vấn SELECT
-            if (stripos(trim($sql), 'SELECT') === 0) {
-                return $single ? $stmt->fetch(PDO::FETCH_ASSOC) : $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
-    
-            // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
-            return [
+            $response = [
                 'success' => true,
-                'message' => 'Execute successfully!',
-                'rowCount' => $stmt->rowCount(),
-                'lastInsertId' => $this->conn->lastInsertId()
+                'message' => 'Execute successfully!'
             ];
+            if (stripos(trim($sql), 'SELECT') === 0) {
+                if ($single) {
+                    $response['data'] = $stmt->fetch(PDO::FETCH_ASSOC);
+                } else {
+                    $response['data'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                }
+            } else {
+                // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
+                $response['rowCount'] = $stmt->rowCount();
+                $response['lastInsertId'] = $this->conn->lastInsertId();
+            }
+
+            return $response; 
         } catch (PDOException $exception) {
             return [
                 'message' => $exception->getMessage(),
