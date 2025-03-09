@@ -7,7 +7,7 @@ class Dashboard extends Controller{
         $this->jwt = new JwtAuth();
     }
     public function index() {
-        $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
+        $payload = SessionFactory::createSession('account')->getProfile();
         $this->renderAdmin([
             'page_title' => 'Dashboard',
             'view' => 'admin/dashboard',

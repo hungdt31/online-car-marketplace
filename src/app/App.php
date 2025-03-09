@@ -125,11 +125,17 @@ class App
                     $response = $this->jwt->generateAccessFromRefresh();
                     if ($response['success']) {
                         $role = $response['payload']['role'];
+                        require_once _DIR_ROOT . '/app/models/UserModel.php';
+                        $userModel = new UserModel();
+                        $res = $userModel->findOne($response['payload']);
+                        if ($res) {
+                            $session = SessionFactory::createSession('account');
+                            $session->setProfile($res['data']);
+                        }
                         if ($role != $folder) {
-                            require_once _DIR_ROOT . '/public/placeholders/index.php';
                             $data['message'] = 'You don\'t have permission to access this page';
                             extract($data);
-                            require_once _DIR_ROOT . '/public/errors/index.php';
+                            require_once _DIR_ROOT . '/public/placeholders/index.php';
                             // echo '<script>setTimeout(function(){window.location.href = "/";}, 2000);</script>';
                             exit();
                         }
@@ -142,10 +148,9 @@ class App
                     $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
                     // echo '<pre>' . print_r($payload, true) . '</pre>';
                     if ($payload['role'] != $folder) {
-                        require_once _DIR_ROOT . '/public/placeholders/index.php';
                         $data['message'] = 'You don\'t have permission to access this page';
                         extract($data);
-                        require_once _DIR_ROOT . '/public/errors/index.php';
+                        require_once _DIR_ROOT . '/public/placeholders/index.php';
                         // echo '<script>setTimeout(function(){window.location.href = "/";}, 2000);</script>';
                         exit();
                     }
@@ -159,6 +164,14 @@ class App
                 if (!$response['success']) {
                     $session = SessionFactory::createSession('account');
                     $session->destroy();
+                } else {
+                    require_once _DIR_ROOT . '/app/models/UserModel.php';
+                    $userModel = new UserModel();
+                    $res = $userModel->findOne($response['payload']);
+                    if ($res) {
+                        $session = SessionFactory::createSession('account');
+                        $session->setProfile($res['data']);
+                    }
                 }
             }
         }

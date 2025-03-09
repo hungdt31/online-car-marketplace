@@ -35,7 +35,9 @@
         </a>
     </div>
     <div class="content">
-        <div class="block"></div>
+        <div class="block">
+            <p>/* <?php echo $message ?> */</p>
+        </div>
         <div class="block"></div>
         <div class="block"></div>
     </div>

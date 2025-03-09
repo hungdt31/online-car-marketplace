@@ -16,6 +16,7 @@ class UserModel extends Model {
         if ($result['success']) {
             $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
             if (hash_equals($hashedPassword, $result['data']['password'])) {
+                unset($result['data']['password']);
                 return $result;
             }
         }
