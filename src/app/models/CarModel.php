@@ -29,7 +29,7 @@ class CarModel extends Model {
         ];
     
         $result = $this->db->execute($sql, $params);
-        return $result['data'];
+        return $result['success'];
     }
     public function getCar($id) {
         $sql = "SELECT * FROM $this->_table WHERE id = :id";
@@ -53,12 +53,12 @@ class CarModel extends Model {
         ];
     
         $result = $this->db->execute($sql, $params);
-        return $result['data'];
+        return $result['success'];
     }
     public function deleteCar($id) {
         $sql = "DELETE FROM $this->_table WHERE id = :id";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params);
-        return $result['data'];
+        return $result['success'];
     }
 }

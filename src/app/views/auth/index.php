@@ -1,16 +1,53 @@
+<?php
+// đăng nhập với google
+$instance = new GoogleClient();
+$scope = [
+	"email",
+	"profile"
+];
+
+$instance->addScope($scope);
+
+$client = $instance->getClient();
+$url = $client->createAuthUrl();
+
+
+// thông báo đăng nhập
+global $oauth_notice;
+$notice = null;
+if (isset($_GET['code'])) {
+	foreach ($oauth_notice as $key => $value) {
+		if ($_GET['code'] == $key) {
+			$notice = $value;
+			break;
+		}
+	}
+}
+?>
+<?php if ($notice): ?>
+	<div class="alert alert-<?php echo $notice['status'] ?> alert-dismissible" role="alert">
+		<div>
+			<?php echo $notice['message'] ?>
+		</div>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+<?php endif; ?>
+
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form id="form-sign-up" action="/auth/signup" method="post">
 			<h1>Create Account</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="<?= isset($url) ? htmlspecialchars($url) : '#' ?>" class="social" id="gg-sign-up">
+                    <i class="fab fa-google-plus-g"></i>
+                </a>
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
-			<input type="text" placeholder="Username" name="username"/>
-			<input type="email" placeholder="Email" name="email"/>
-			<input type="password" placeholder="Password" name="password"/>
+			<input type="text" placeholder="Username" name="username" />
+			<input type="email" placeholder="Email" name="email" />
+			<input type="password" placeholder="Password" name="password" />
 			<button type="submit" id="signUpBtn">Submit</button>
 			<div class="loader" id="loader-sign-up" style="display: none;"></div>
 		</form>
@@ -20,15 +57,17 @@
 			<h1>Sign in</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+				<a href="<?= isset($url) ? htmlspecialchars($url) : '#' ?>" class="social" id="gg-sign-in">
+                    <i class="fab fa-google-plus-g"></i>
+                </a>
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your account</span>
-			<input type="email" placeholder="Email" name="email"/>
-			<input type="password" placeholder="Password" name="password"/>
+			<input type="email" placeholder="Email" name="email" />
+			<input type="password" placeholder="Password" name="password" />
 			<a href="#">Forgot your password?</a>
 			<button type="submit" id="signInBtn">Submit</button>
-            <div class="loader" id="loader-sign-in" style="display: none;"></div>
+			<div class="loader" id="loader-sign-in" style="display: none;"></div>
 		</form>
 	</div>
 	<div class="overlay-container">
@@ -47,15 +86,15 @@
 	</div>
 </div>
 <script>
-    // using ajax to submit form
-    $(document).ready(function() {
-        $('#form-sign-in').submit(function(e) {
-            e.preventDefault();
-            var form = $(this);
-            let btn = document.getElementById('signInBtn')
-            let loader = document.getElementById('loader-sign-in');
-            loader.style.display = 'block';
-            btn.hidden = true;
+	// using ajax to submit form
+	$(document).ready(function() {
+		$('#form-sign-in').submit(function(e) {
+			e.preventDefault();
+			var form = $(this);
+			let btn = document.getElementById('signInBtn')
+			let loader = document.getElementById('loader-sign-in');
+			loader.style.display = 'block';
+			btn.hidden = true;
 
 			// Trì hoãn 1.5 giây trước khi gửi request
 			setTimeout(function() {
@@ -80,7 +119,7 @@
 					}
 				});
 			}, 1000);
-        });
+		});
 		$('#form-sign-up').submit(function(e) {
 			e.preventDefault();
 			var form = $(this);
@@ -112,5 +151,14 @@
 				});
 			}, 1500);
 		});
-    });
+	});
+	document.addEventListener("DOMContentLoaded", function () {
+		document.getElementById("gg-sign-up").addEventListener("click", function () {
+			document.cookie = "authType=signup"; // Lưu trạng thái đăng ký
+		});
+
+		document.getElementById("gg-sign-in").addEventListener("click", function () {
+			document.cookie = "authType=signin"; // Lưu trạng thái đăng nhập
+		});
+	});
 </script>

@@ -1,5 +1,7 @@
 <?php
 
+use Google\Service\Oauth2;
+
 class Auth extends Controller
 {
     private $jwt;
@@ -74,9 +76,9 @@ class Auth extends Controller
             ]);
             echo json_encode([
                 'success' => !empty($response['success']),
-                'message' => !empty($response['success']) 
-                    ? 'Successfully signed up, ' . $_POST['email'] 
-                    : 'Failed to sign up: '. $response['message']
+                'message' => !empty($response['success'])
+                    ? 'Successfully signed up, ' . $_POST['email']
+                    : 'Failed to sign up: ' . $response['message']
             ]);
         }
     }
@@ -88,6 +90,75 @@ class Auth extends Controller
                 'success' => true,
                 'message' => 'Successfully logged out'
             ]);
+        }
+    }
+    public function googleAuth()
+    {
+        global $oauth_notice;
+        $instance = new GoogleClient();
+        $client = $instance->getClient();
+
+        if (! isset($_GET["code"])) {
+            exit("Login failed");
+        }
+
+        $token = $client->fetchAccessTokenWithAuthCode($_GET["code"]);
+
+        $client->setAccessToken($token["access_token"]);
+
+        $oauth = new Oauth2($client);
+
+        $userinfo = $oauth->userinfo->get();
+
+        // echo "Email: " . $userinfo->email . "<br>";
+        // echo "Family Name: " . $userinfo->familyName . "<br>";
+        // echo "Given Name: " . $userinfo->givenName . "<br>";
+        // echo "Name: " . $userinfo->name . "<br>";
+        // echo "Gender: " . $userinfo->gender . "<br>";
+        // echo "Locale: " . $userinfo->locale . "<br>";
+        // echo "Picture: <img src='" . $userinfo->picture . "' alt='Profile Picture'><br>";
+
+        $isCreated = $this->user_model->findOne(['email' => $userinfo->email]);
+        if (!$isCreated['data']) {
+            $response = $this->user_model->createOne([
+                'username' => $userinfo->name,
+                'email' => $userinfo->email,
+                'firstname' => $userinfo->givenName,
+                'lastname' => $userinfo->familyName,
+                'provider' => 'google',
+                'role' => 'user'
+            ]);
+            if ($response['success']) {
+                header('Location: /auth?code=account_created');
+            } else {
+                header('Location: /auth?code=cannot_link_provider');
+            }
+        } else {
+            if (isset($_COOKIE['authType'])) {
+                $authType = $_COOKIE['authType'];
+                if ($authType == 'signin') {
+                    $provider = $isCreated['data']['provider'];
+                    if ($provider == 'google') {
+                        $accountSession = SessionFactory::createSession('account');
+                        $accountSession->setProfile($isCreated['data']);
+                        $payload = [
+                            "email" => $isCreated['data']['email'],
+                            "role" => $isCreated['data']['role']
+                        ];
+                        $this->jwt->encodeDataToCookie($payload);
+                        $role = $isCreated['data']['role'];
+                        if ($role == 'admin') {
+                            header('Location: /admin/dashboard');
+                        } else {
+                            header('Location: /account');
+                        }
+                    } else {
+                        header('Location: /auth?code=login_method_mismatch');
+                    }
+                } else {
+                    header('Location: /auth?code=account_already_registered');
+                }
+            }
         }
     }
 }

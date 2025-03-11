@@ -14,8 +14,15 @@ class UserModel extends Model {
         $params = [':email' => $data['email']];
         $result = $this->db->execute($sql, $params, true);
         if ($result['success']) {
-            $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
-            if (hash_equals($hashedPassword, $result['data']['password'])) {
+            if ($data['password']) {
+                // dùng để trả thông tin đăng nhập thành công
+                $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
+                if (hash_equals($hashedPassword, $result['data']['password'])) {
+                    unset($result['data']['password']);
+                    return $result;
+                }
+            } else {
+                // dùng để kiểm tra email tồn tại
                 unset($result['data']['password']);
                 return $result;
             }
@@ -23,13 +30,19 @@ class UserModel extends Model {
         return false;
     }
     public function createOne($data) {
-        $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
-        $sql = "INSERT INTO $this->_table (email, username, password, role) VALUES (:email, :username, :password, :role)";
+        $hashedPassword = '';
+        if (isset($data['password'])) {
+            $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
+        }
+        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, firstname, lastname) VALUES (:email, :username, :password, :role, :provider, :firstname, :lastname)";
         $params = [
             ':email' => $data['email'],
             ':username' => $data['username'],
             ':password' => $hashedPassword,
-            ':role' => $data['role']
+            ':role' => $data['role'],
+            ':provider' => $data['provider'],
+            ':firstname' => $data['firstname'],
+            ':lastname' => $data['lastname'],
         ];
         $result = $this->db->execute($sql, $params);
         if (isset($result['errorCode'])) {

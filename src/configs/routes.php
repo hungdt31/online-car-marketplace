@@ -6,3 +6,4 @@ $routes['trang-chu'] = 'home';
 $routes['tin-tuc/.+-(\d+).html'] = 'news/category/$1';
 $routes['contact'] = 'home/contact';
 $routes['account'] = 'user/account';
+$routes['auth/google-redirect'] = 'auth/googleAuth';
