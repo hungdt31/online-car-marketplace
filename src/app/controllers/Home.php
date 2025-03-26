@@ -8,7 +8,7 @@ class Home extends Controller{
     public function index() {
         $this->renderUser([
             'page_title' => 'Home',
-            'view' => 'home/index',
+            'view' => 'public/home',
             'content' => [
                 'user' => $this->model_home->getList()
             ]
@@ -28,7 +28,7 @@ class Home extends Controller{
     public function contact() {
         $this->renderUser([
             'page_title' => 'Contact us',
-            'view' => 'home/contact'
+            'view' => 'public/contact'
         ]);
     }
 }

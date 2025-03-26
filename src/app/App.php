@@ -1,4 +1,5 @@
 <?php
+
 class App
 {
     private $__controller, $__action, $__params, $__routes;
@@ -81,10 +82,10 @@ class App
                 $this->__controller = new $this->__controller();
                 unset($urlArr[0]);
             } else {
-                $this->loadError();
+                $this->loadError('client/index', ['error_code' => '404', 'page_title' => 'Page Not Found']);
             }
         } else {
-            $this->loadError();
+            $this->loadError('client/index', ['error_code' => '404', 'page_title' => 'Page Not Found']);
         }
         // handle action
         if (!empty($urlArr[1])) {
@@ -98,15 +99,16 @@ class App
         if (method_exists($this->__controller, $this->__action)) {
             call_user_func_array([$this->__controller, $this->__action], $this->__params);
         } else {
-            $this->loadError();
+            $this->loadError('client/index', ['error_code' => '404', 'page_title' => 'Page Not Found']);
         }
         //        echo '<pre>';
         //        print_r($this->__params);
         //        echo '</pre>';
     }
-    public function loadError($name = '404')
+    public function loadError($path = 'client/index', $data = [])
     {
-        require_once _DIR_ROOT . '/public/errors/' . $name . '.php';
+        extract($data);
+        require_once _DIR_ROOT . '/app/views/pages/errors/' . $path . '.php';
     }
     public function protectRoute($url)
     {
@@ -133,9 +135,7 @@ class App
                             $session->setProfile($res['data']);
                         }
                         if ($role != $folder) {
-                            $data['message'] = 'You don\'t have permission to access this page';
-                            extract($data);
-                            require_once _DIR_ROOT . '/public/placeholders/index.php';
+                            $this->loadError('client/index', ['error_code' => '403', 'page_title' => 'Access Denied']);
                             // echo '<script>setTimeout(function(){window.location.href = "/";}, 2000);</script>';
                             exit();
                         }
@@ -148,9 +148,7 @@ class App
                     $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
                     // echo '<pre>' . print_r($payload, true) . '</pre>';
                     if ($payload['role'] != $folder) {
-                        $data['message'] = 'You don\'t have permission to access this page';
-                        extract($data);
-                        require_once _DIR_ROOT . '/public/placeholders/index.php';
+                        $this->loadError('client/index', ['error_code' => '403', 'page_title' => 'Access Denied']);
                         // echo '<script>setTimeout(function(){window.location.href = "/";}, 2000);</script>';
                         exit();
                     }

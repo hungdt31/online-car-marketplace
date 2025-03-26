@@ -9,14 +9,17 @@ class UserModel extends Model {
         $this->secret_key = getenv('SECRET_KEY');
         $this->algo = 'sha256';
     }
+    public function hashPassword($password) {
+        return hash_hmac($this->algo, $password, $this->secret_key);
+    }
     public function findOne($data) {
         $sql = "SELECT * FROM $this->_table WHERE email = :email";
         $params = [':email' => $data['email']];
         $result = $this->db->execute($sql, $params, true);
-        if ($result['success']) {
+        if ($result['success'] && $result['data']) {
             if ($data['password']) {
                 // dùng để trả thông tin đăng nhập thành công
-                $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
+                $hashedPassword = $this->hashPassword($data['password']);
                 if (hash_equals($hashedPassword, $result['data']['password'])) {
                     unset($result['data']['password']);
                     return $result;
@@ -29,20 +32,25 @@ class UserModel extends Model {
         }
         return false;
     }
+    public function findAll() {
+        $sql = "SELECT * FROM $this->_table";
+        $result = $this->db->execute($sql);
+        return $result['data'];
+    }
     public function createOne($data) {
         $hashedPassword = '';
         if (isset($data['password'])) {
-            $hashedPassword = hash_hmac($this->algo, $data['password'], $this->secret_key);
+            $hashedPassword = $this->hashPassword($data['password']);
         }
-        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, firstname, lastname) VALUES (:email, :username, :password, :role, :provider, :firstname, :lastname)";
+        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, fname, lname) VALUES (:email, :username, :password, :role, :provider, :fname, :lname)";
         $params = [
             ':email' => $data['email'],
             ':username' => $data['username'],
             ':password' => $hashedPassword,
             ':role' => $data['role'],
             ':provider' => $data['provider'],
-            ':firstname' => $data['firstname'],
-            ':lastname' => $data['lastname'],
+            ':fname' => $data['fname'],
+            ':lname' => $data['lname'],
         ];
         $result = $this->db->execute($sql, $params);
         if (isset($result['errorCode'])) {

@@ -12,7 +12,7 @@ class Account extends Controller
         $profile = SessionFactory::createSession('account')->getProfile();
         $this->renderUser([
             'page_title' => 'My account',
-            'view' => 'user/account',
+            'view' => 'protected/account',
             'content' => [
                 'profile' => $profile
             ]

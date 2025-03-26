@@ -4,3 +4,4 @@ README.Docker.md
 vendor
 default.env
 override.env
+sql/main.sql

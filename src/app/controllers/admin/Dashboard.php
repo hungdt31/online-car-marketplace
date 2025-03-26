@@ -10,7 +10,7 @@ class Dashboard extends Controller{
         $payload = SessionFactory::createSession('account')->getProfile();
         $this->renderAdmin([
             'page_title' => 'Dashboard',
-            'view' => 'admin/dashboard',
+            'view' => 'protected/dashboard',
             'content' => [
                 'title' => 'Dashboard',
                 'payload' => $payload
@@ -21,7 +21,7 @@ class Dashboard extends Controller{
         $list_cars = $this->car_model->getList();
         $this->renderAdmin([
             'page_title' => 'Manage Cars',
-            'view' => 'admin/carManager',
+            'view' => 'protected/cars/carManager',
             'content' => [
                 'title' => 'Car Management',
                 'list_cars' => $list_cars
