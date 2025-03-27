@@ -1,18 +1,35 @@
 <?php
 class Home extends Controller{
     public $model_home;
+    public $category_model;
+    public $car_model;
     public $data;
     public function __construct() {
         $this->model_home = $this->model('HomeModel');
+        $this->category_model = $this->model('CategoryModel');
+        $this->car_model = $this->model('CarModel');
     }
     public function index() {
         $this->renderUser([
             'page_title' => 'Home',
             'view' => 'public/home',
             'content' => [
-                'user' => $this->model_home->getList()
+                'user' => $this->model_home->getList(),
+                'top_category' => $this->category_model->getTopCategory()
             ]
         ]);
+    }
+    public function getCarsByCategory() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $arrayIds = [];
+            if (isset($_POST['category_id'])) {
+                $arrayIds = [ $_POST['category_id'] ];
+            }
+            $data = $this->car_model->getCarsByCategories($arrayIds);
+            echo '<pre>';
+            print_r($data);
+            echo '</pre>';
+        }
     }
     public function detail($id='', $slug='') {
         echo 'id: ',$id.'<br/>'.'slug: '.$slug. '<br/>';

@@ -2,21 +2,24 @@
 /*
  * inheritance from class model
  */
-class CarModel extends Model {
+class CarModel extends Model
+{
     public function __construct()
     {
         parent::__construct();
         $this->_table = 'cars';
     }
-    public function getList() {
+    public function getList()
+    {
         $sql = "SELECT * FROM $this->_table";
         $result = $this->db->execute($sql);
         return $result['data'];
     }
-    public function addCar($data) {
+    public function addCar($data)
+    {
         $sql = "INSERT INTO $this->_table (name, location, fuel_type, mileage, drive_type, service_duration, body_weight, price) 
                 VALUES (:name, :location, :fuel_type, :mileage, :drive_type, :service_duration, :body_weight, :price)";
-        
+
         $params = [
             ':name' => $data['name'],
             ':location' => $data['location'],
@@ -27,19 +30,21 @@ class CarModel extends Model {
             ':body_weight' => $data['body_weight'],
             ':price' => $data['price']
         ];
-    
+
         $result = $this->db->execute($sql, $params);
         return $result['success'];
     }
-    public function getCar($id) {
+    public function getCar($id)
+    {
         $sql = "SELECT * FROM $this->_table WHERE id = :id";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
         return $result['data'];
     }
-    public function editCar($id, $data) {
+    public function editCar($id, $data)
+    {
         $sql = "UPDATE $this->_table SET name = :name, location = :location, fuel_type = :fuel_type, mileage = :mileage, drive_type = :drive_type, service_duration = :service_duration, body_weight = :body_weight, price = :price WHERE id = :id";
-        
+
         $params = [
             ':id' => $id,
             ':name' => $data['name'],
@@ -51,14 +56,51 @@ class CarModel extends Model {
             ':body_weight' => $data['body_weight'],
             ':price' => $data['price']
         ];
-    
+
         $result = $this->db->execute($sql, $params);
         return $result['success'];
     }
-    public function deleteCar($id) {
+    public function deleteCar($id)
+    {
         $sql = "DELETE FROM $this->_table WHERE id = :id";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params);
         return $result['success'];
+    }
+    public function getCarsByCategories($categoryIds = [])
+    {
+        if (empty($categoryIds)) {
+            // 🔹 Lấy tất cả xe, giới hạn 5 bản ghi
+            $sql = "
+                SELECT 
+                    c.id, c.name, c.location, c.overview, c.fuel_type, c.mileage, 
+                    c.drive_type, c.service_duration, c.body_weight, c.price, 
+                    c.avg_rating, c.capabilities, c.created_at, c.updated_at
+                FROM cars c
+                LIMIT 5
+            ";
+            $result = $this->db->execute($sql);
+        } else {
+            // 🔹 Chỉ lấy xe thuộc đủ tất cả danh mục trong $categoryIds
+            $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+
+            $sql = "
+                SELECT 
+                    c.id, c.name, c.location, c.overview, c.fuel_type, c.mileage, 
+                    c.drive_type, c.service_duration, c.body_weight, c.price, 
+                    c.avg_rating, c.capabilities, c.created_at, c.updated_at, 
+                    COUNT(DISTINCT cm.category_id) AS matched_categories
+                FROM cars c
+                INNER JOIN category_mappings cm ON c.id = cm.entity_id
+                WHERE cm.entity_type = 'cars'
+                AND cm.category_id IN ($placeholders)
+                GROUP BY c.id
+                HAVING COUNT(DISTINCT cm.category_id) = ?
+            ";
+
+            $result = $this->db->execute($sql, array_merge($categoryIds, [count($categoryIds)]));
+        }
+
+        return $result['data'];
     }
 }

@@ -156,16 +156,29 @@ class App
             }
         } else {
             $response = $this->jwt->getTokenFromCookie();
+            // echo '<pre>' . print_r($response, true) . '</pre>';
             $accessToken = $response['access']['value'];
+            $session = SessionFactory::createSession('account');
             if (!isset($accessToken)) {
                 $response = $this->jwt->generateAccessFromRefresh();
                 if (!$response['success']) {
-                    $session = SessionFactory::createSession('account');
                     $session->destroy();
                 } else {
                     require_once _DIR_ROOT . '/app/models/UserModel.php';
                     $userModel = new UserModel();
                     $res = $userModel->findOne($response['payload']);
+                    if ($res) {
+                        $session = SessionFactory::createSession('account');
+                        $session->setProfile($res['data']);
+                    }
+                }
+            } else {
+                if ($session->getProfile() == null) {
+                    $payload = $this->jwt->decodeTokenFromCookie('access')['payload'];
+                    // echo '<pre>' . print_r($payload, true) . '</pre>';
+                    require_once _DIR_ROOT . '/app/models/UserModel.php';
+                    $userModel = new UserModel();
+                    $res = $userModel->findOne($payload);
                     if ($res) {
                         $session = SessionFactory::createSession('account');
                         $session->setProfile($res['data']);

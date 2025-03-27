@@ -78,7 +78,7 @@ class UserModel extends Model {
     public function getList() {
         $sql = "SELECT * FROM $this->_table";
         $result = $this->db->execute($sql);
-        return $result;
+        return $result['data'];
     }
     public function getDetail($id) {
         $sql = "SELECT * FROM $this->_table WHERE id = $id";

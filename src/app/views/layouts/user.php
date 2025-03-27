@@ -3,6 +3,7 @@
 
 <head>
     <title><?php echo (!empty($page_title)) ? $page_title : "Trang chủ" ?></title>
+    <link rel="icon" href="<?php echo _WEB_ROOT ?>/assets/images/carvan-logo.svg" type="image/x-icon" />
     <?php include "imports.php"; ?>
     <link type="text/css" rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/css/main.css" />
 </head>
