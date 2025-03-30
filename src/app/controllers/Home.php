@@ -26,9 +26,9 @@ class Home extends Controller{
                 $arrayIds = [ $_POST['category_id'] ];
             }
             $data = $this->car_model->getCarsByCategories($arrayIds);
-            echo '<pre>';
-            print_r($data);
-            echo '</pre>';
+            foreach ($data as $value) {
+                RenderSystem::renderOne('components', 'Home/carCard', $value);
+            }
         }
     }
     public function detail($id='', $slug='') {

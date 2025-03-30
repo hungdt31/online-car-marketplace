@@ -10,7 +10,7 @@ class RenderSystem
         }
         if (file_exists($_path)) {
             extract($data);
-            require_once $_path;
+            require $_path;
         }
     }
     // render multiple components: mỗi component sẽ có data và name riêng truyền vào
