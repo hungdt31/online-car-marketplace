@@ -49,11 +49,11 @@
 <?php
 // Load CSS
 echo '<style>';
-RenderSystem::renderOne('assets', 'css/home/rentalCars.css', []);
+RenderSystem::renderOne('assets', 'static/css/home/rentalCars.css', []);
 echo '</style>';
 
 // Load JS
 echo '<script>';
-RenderSystem::renderOne('assets', 'js/home/rentalCars.js', []);
+RenderSystem::renderOne('assets', 'static/js/components/home/rentalCars.js', []);
 echo '</script>';
 ?>

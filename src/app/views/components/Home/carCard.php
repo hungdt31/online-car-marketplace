@@ -29,17 +29,17 @@
     <div class="vehicle-details">
         <p class="vehicle-name"><?= htmlspecialchars($name) ?></p>
         <div class="vehicle-spec">
-            <img src="<?= _WEB_ROOT. '/assets/images/fuel-type.svg' ?>" alt="Fuel Type Icon" width="24" height="24">
+            <img src="<?= _WEB_ROOT. '/assets/static/images/home/fuel-type.svg' ?>" alt="Fuel Type Icon" width="24" height="24">
             <span class="spec-label">Fuel type:</span>
             <span class="spec-value"><?= htmlspecialchars($fuel_type) ?></span>
         </div>
         <div class="vehicle-spec">
-            <img src="<?=  _WEB_ROOT. '/assets/images/mileage.svg' ?>" alt="Mileage Icon" width="24" height="24">
+            <img src="<?=  _WEB_ROOT. '/assets/static/images/home/mileage.svg' ?>" alt="Mileage Icon" width="24" height="24">
             <span class="spec-label">Mileage:</span>
             <span class="spec-value"><?= htmlspecialchars($mileage) ?></span>
         </div>
         <div class="vehicle-spec">
-            <img src="<?=  _WEB_ROOT. '/assets/images/drive-type.svg' ?>" alt="Drive Type Icon" width="24" height="24">
+            <img src="<?=  _WEB_ROOT. '/assets/static/images/home/drive-type.svg' ?>" alt="Drive Type Icon" width="24" height="24">
             <span class="spec-label">Drive type:</span>
             <span class="spec-value"><?= htmlspecialchars($drive_type) ?></span>
         </div>
@@ -58,6 +58,6 @@
 <style>
     <?php
     // Load CSS
-    RenderSystem::renderOne('assets', 'css/home/carCard.css', []);
+    RenderSystem::renderOne('assets', 'static/css/home/carCard.css', []);
     ?>
 </style>

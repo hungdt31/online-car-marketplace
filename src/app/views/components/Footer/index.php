@@ -1,9 +1,9 @@
 <div class="footer">
     <div class="footer-content">
         <div class="logo-section">
-            <img src="<?= htmlspecialchars(_WEB_ROOT) ?>/assets/images/carvan-logo.svg" alt="Carvan Logo">
+            <img src="<?= htmlspecialchars(_WEB_ROOT) ?>/assets/static/images/carvan-logo.svg" alt="Carvan Logo">
             <div class="car-image">
-                <img src="<?= htmlspecialchars(_WEB_ROOT) ?>/assets/images/car-silhouette.svg" alt="Car Silhouette">
+                <img src="<?= htmlspecialchars(_WEB_ROOT) ?>/assets/static/images/car-silhouette.svg" alt="Car Silhouette">
             </div>
         </div>
 

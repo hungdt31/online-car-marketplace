@@ -29,7 +29,7 @@
         display: flex;
         flex-direction: column;
         /* Giá trị mặc định cho màn hình lớn (desktop) */
-        background-image: url("<?= htmlspecialchars(_WEB_ROOT) ?>/assets/images/header.svg");
+        background-image: url("<?= htmlspecialchars(_WEB_ROOT) ?>/assets/static/images/header.svg");
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
@@ -166,9 +166,9 @@
     class HeaderSlider {
         constructor() {
             this.backgroundImages = [
-                `<?= _WEB_ROOT ?>/assets/images/header.svg`,
-                `<?= _WEB_ROOT ?>/assets/images/header1.avif`,
-                `<?= _WEB_ROOT ?>/assets/images/header2.avif`
+                `<?= _WEB_ROOT ?>/assets/static/images/header.svg`,
+                `<?= _WEB_ROOT ?>/assets/static/images/header1.avif`,
+                `<?= _WEB_ROOT ?>/assets/static/images/header2.avif`
             ];
 
             this.header = document.querySelector('.header');

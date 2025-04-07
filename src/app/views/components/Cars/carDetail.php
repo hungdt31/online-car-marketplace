@@ -18,8 +18,8 @@
             <span id="carName">
                 <?= htmlspecialchars($car['name'] ?? 'N/A') ?>
             </span>
-            <div class="lead" style="font-size: medium;">
-                <i class="bi bi-pin-map"></i>
+            <div class="lead" style="font-size: medium; text-align: left;">
+                <i class="bi bi-geo-alt-fill"></i>
                 <em id="carLocation">
                     <?= htmlspecialchars($car['location'] ?? 'N/A') ?>
                 </em>
@@ -32,7 +32,7 @@
     <div class="p-3">
         <div class="input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text"><strong>Location</strong></div>
+                <div class="input-group-text p-3"><strong>Location</strong></div>
             </div>
             <input type="text" class="form-control" id="inlineFormInputGroup" value="<?= $car['location'] ?? '' ?>" name="location">
         </div>
@@ -85,7 +85,7 @@
                 <?php endif; ?>
             </div>
         </div>
-        <div class="row mb-5">
+        <div class="row">
             <div class="col-6">
                 <label for="body_weight"><strong>Body Weight</strong></label>
                 <?php if ($getToUpdate): ?>
@@ -104,9 +104,28 @@
             </div>
         </div>
         <?php if ($getToUpdate): ?>
-            <div class="text-center">
+            <div class="text-center mt-5">
                 <button class="btn btn-outline-secondary action-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Exit</button>
                 <button type="submit" class="btn btn-outline-primary action-btn save-btn" data-id="<?= htmlspecialchars($car['id']) ?>">Save</button>
+            </div>
+        <?php else: ?>
+            <div class="row mb-5">
+                <div class="col-12">
+                    <label for="body_weight"><strong>Pictures</strong></label>
+                    <div class="d-flex mt-2 gap-3 flex-wrap">
+                        <?php
+                            $type_video = ['mp4', 'avi', 'mov', 'wmv', 'flv'];
+                            foreach ($car['images'] as $image) {
+                                if (!in_array($image['type'], $type_video)) {
+                                    echo '<img src="' . htmlspecialchars($image['url']) . '" alt="Car Image" class="img-fluid" style="width: 100%; height: auto; max-width: 300px; margin-right: 10px;">';
+                                }  
+                            }
+                        ?>
+                    </div>
+                    <a href="/car-assets/<?= htmlspecialchars($car['id']) ?>">
+                        <button class="btn btn-outline-secondary mt-3">See more <i class="bi bi-arrow-right-short"></i></button>
+                    </a>
+                </div>
             </div>
         <?php endif; ?>
     </div>

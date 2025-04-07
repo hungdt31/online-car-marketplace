@@ -4,7 +4,6 @@
     font-weight: bold;
   }
 </style>
-
 <!-- Hiển thị danh sách xe -->
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center my-3">
@@ -193,7 +192,7 @@
     $(".details-btn").click(function() {
       var carId = $(this).data("id"); // Lấy ID của xe
       $.ajax({
-        url: "/admin/dashboard/getCar/" + carId, // Gọi API lấy thông tin xe
+        url: "/admin/cars/getCar/" + carId, // Gọi API lấy thông tin xe
         type: "GET",
         dataType: "html",
         success: function(response) {
@@ -208,7 +207,7 @@
     $(".edit-btn").click(function() {
       var carId = $(this).data("id"); // Lấy ID của xe
       $.ajax({
-        url: "/admin/dashboard/getCar/" + carId, // Gọi API lấy thông tin xe
+        url: "/admin/cars/getCar/" + carId, // Gọi API lấy thông tin xe
         type: "GET",
         data: {
           'getToUpdate': true
@@ -238,7 +237,7 @@
     let submitButton = this.querySelector("button[type='submit']");
     let id = submitButton.getAttribute("data-id");
 
-    xhr.open("POST", `/admin/dashboard/editCar/${id}`, true);
+    xhr.open("POST", `/admin/cars/editCar/${id}`, true);
 
     // Khi request hoàn thành
     xhr.onload = function() {
@@ -277,7 +276,7 @@
     let submitButton = this.querySelector("button[type='submit']");
     let id = submitButton.getAttribute("data-id");
 
-    xhr.open("POST", `/admin/dashboard/deleteCar/${id}`, true);
+    xhr.open("POST", `/admin/cars/deleteCar/${id}`, true);
 
     // Khi request hoàn thành
     xhr.onload = function() {

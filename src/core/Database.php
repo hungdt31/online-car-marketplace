@@ -74,6 +74,31 @@ class Database
 
             return $response; 
         } catch (PDOException $exception) {
+            // Tạo nội dung log chi tiết
+            $errorLog = sprintf(
+                "[%s] SQL Error\n" .
+                "SQL Query: %s\n" .
+                "Parameters: %s\n" .
+                "Error Code: %s\n" .
+                "Error Message: %s\n" .
+                "Stack Trace:\n%s\n" .
+                "----------------------------------------\n",
+                date('Y-m-d H:i:s'),
+                $sql,
+                json_encode($params, JSON_PRETTY_PRINT),
+                $exception->getCode(),
+                $exception->getMessage(),
+                $exception->getTraceAsString()
+            );
+            // Tạo thư mục logs nếu chưa tồn tại
+            $logDir = _DIR_ROOT . '/logs';
+            if (!file_exists($logDir)) {
+                mkdir($logDir, 0777, true);
+            }
+
+            // Ghi log vào file theo ngày
+            $logFile = $logDir . '/sql_errors_' . date('Y-m-d') . '.log';
+            error_log($errorLog, 3, $logFile);
             return [
                 'message' => $exception->getMessage(),
                 'success' => false,
