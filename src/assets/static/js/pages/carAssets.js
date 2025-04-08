@@ -57,9 +57,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Upload handling
     document.getElementById('uploadButton').addEventListener('click', function() {
         const form = document.getElementById('uploadForm');
+        const id = this.dataset.id;
         const formData = new FormData(form);
         
-        fetch('/cars/uploadAssets', {
+        fetch(`/admin/cars/uploadAssets/${id}`, {
             method: 'POST',
             body: formData
         })
@@ -74,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
+            console.error('Error:', error);
             showToast('Failed to upload media', 'danger');
         });
     });
@@ -83,9 +85,17 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             if (confirm('Are you sure you want to delete this media?')) {
                 const mediaId = this.dataset.id;
-                
-                fetch(`/cars/deleteAsset/${mediaId}`, {
-                    method: 'POST'
+                // id có dạng x,y nên cần tách ra
+                const ids = mediaId.split(',');
+                fetch(`/admin/cars/deleteAssets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        file_id: ids[0],
+                        car_id: ids[1],
+                    }),
                 })
                 .then(response => response.json())
                 .then(data => {

@@ -90,9 +90,13 @@ class CarModel extends Model
                 SELECT 
                     c.id, c.name, c.location, c.overview, c.fuel_type, c.mileage, 
                     c.drive_type, c.service_duration, c.body_weight, c.price, 
-                    c.avg_rating, c.capabilities, c.created_at, c.updated_at
+                    c.avg_rating, c.capabilities, c.created_at, c.updated_at,
+                    f.id AS file_id, f.name AS file_name, f.fkey, f.url, f.reg_date, f.size, f.type
                 FROM cars c
-                LIMIT 5
+                LEFT JOIN car_assets ca ON c.id = ca.car_id
+                LEFT JOIN files f ON ca.file_id = f.id
+                WHERE f.type NOT LIKE '%video%' OR f.type IS NULL
+                LIMIT 5;
             ";
             $result = $this->db->execute($sql);
         } else {
@@ -104,18 +108,24 @@ class CarModel extends Model
                     c.id, c.name, c.location, c.overview, c.fuel_type, c.mileage, 
                     c.drive_type, c.service_duration, c.body_weight, c.price, 
                     c.avg_rating, c.capabilities, c.created_at, c.updated_at, 
-                    COUNT(DISTINCT cm.category_id) AS matched_categories
+                    COUNT(DISTINCT cm.category_id) AS matched_categories,
+                    f.id AS file_id, f.name AS file_name, f.fkey, f.url, f.reg_date, f.size, f.type
                 FROM cars c
                 INNER JOIN category_mappings cm ON c.id = cm.entity_id
+                LEFT JOIN car_assets ca ON c.id = ca.car_id
+                LEFT JOIN files f ON ca.file_id = f.id
                 WHERE cm.entity_type = 'cars'
                 AND cm.category_id IN ($placeholders)
+                AND (f.type NOT LIKE '%video%' OR f.type IS NULL)
                 GROUP BY c.id
-                HAVING COUNT(DISTINCT cm.category_id) = ?
+                HAVING COUNT(DISTINCT cm.category_id) = ?;
             ";
 
             $result = $this->db->execute($sql, array_merge($categoryIds, [count($categoryIds)]));
         }
-
+        // foreach ($result['data'] as &$car) {
+        //     $car['capabilities'] = json_decode($car['capabilities'], true);
+        // }
         return $result['data'];
     }
 }

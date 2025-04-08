@@ -17,7 +17,7 @@
 <div class="vehicle-card">
     <div class="vehicle-image">
         <img
-            src="<?= isset($image) ? $image : 'https://images.unsplash.com/photo-1704340142770-b52988e5b6eb?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' ?>"
+            src="<?= isset($url) ? $url : 'https://images.unsplash.com/photo-1704340142770-b52988e5b6eb?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' ?>"
             alt="<?= htmlspecialchars($name) ?>">
         <div class="action">
             <a href="<?= htmlspecialchars($link) ?>">View Detail <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">

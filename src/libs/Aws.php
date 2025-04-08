@@ -29,12 +29,12 @@ class AwsS3Service {
         $fileName = $folder . '/' . time() . '_' . $file['name'];
         $fileType = $file['type'];
 
-        var_dump([
-            'Bucket' => $this->bucketName,
-            'Key' => $fileName,
-            'SourceFile' => $fileTmpPath,
-            'ContentType' => $fileType,
-        ]);
+        // var_dump([
+        //     'Bucket' => $this->bucketName,
+        //     'Key' => $fileName,
+        //     'SourceFile' => $fileTmpPath,
+        //     'ContentType' => $fileType,
+        // ]);
 
         try {
             $result = $this->s3Client->putObject([

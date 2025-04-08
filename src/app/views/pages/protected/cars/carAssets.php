@@ -1,8 +1,21 @@
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="my-4">Media Management</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
-            <i class="fas fa-plus me-2"></i>Add New Media
+<div class="container-fluid px-4 pt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 px-2 py-3 bg-light rounded shadow-sm">
+        <!-- Left Side: Breadcrumb + Title -->
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="/cars-management">Cars</a></li>
+                    <li class="breadcrumb-item"><a href="#">Assets</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><?= $car_name ?></li>
+                </ol>
+            </nav>
+            <h4 class="fw-semibold text-primary mb-0">Media Management</h4>
+        </div>
+
+        <!-- Right Side: Add Button -->
+        <button class="btn btn-outline-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#uploadModal">
+            <i class="bi bi-plus-lg me-2"></i>
+            Add New Media
         </button>
     </div>
 
@@ -23,7 +36,7 @@
             <div class="row g-4" id="mediaGrid">
                 <?php if (!empty($car_assets)): ?>
                     <?php foreach ($car_assets as $asset): ?>
-                        <?php 
+                        <?php
                         $isVideo = strpos($asset['type'], 'video/') === 0;
                         $mediaClass = $isVideo ? 'video-item' : 'image-item';
                         ?>
@@ -40,13 +53,13 @@
                                         </span>
                                     <?php else: ?>
                                         <div class="image-container" style="height: 200px; overflow: hidden;">
-                                            <img src="<?php echo $asset['url']; ?>" 
-                                                 class="card-img-top h-100 w-100" 
-                                                 style="object-fit: cover;"
-                                                 alt="<?php echo $asset['name']; ?>"
-                                                 data-bs-toggle="modal"
-                                                 data-bs-target="#imageModal"
-                                                 data-img-url="<?php echo $asset['url']; ?>">
+                                            <img src="<?php echo $asset['url']; ?>"
+                                                class="card-img-top h-100 w-100"
+                                                style="object-fit: cover;"
+                                                alt="<?php echo $asset['name']; ?>"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#imageModal"
+                                                data-img-url="<?php echo $asset['url']; ?>">
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -58,7 +71,7 @@
                                         Size: <?php echo number_format($asset['size'] / 1024, 2); ?> KB
                                     </p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button class="btn btn-sm btn-outline-danger delete-media" data-id="<?php echo $asset['id']; ?>">
+                                        <button class="btn btn-sm btn-outline-danger delete-media" data-id="<?php echo $asset['id'].','.$car_id; ?>">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-primary copy-url" data-url="<?php echo $asset['url']; ?>">
@@ -96,8 +109,8 @@
                     <div class="mb-3">
                         <label class="form-label">Select Files</label>
                         <div class="input-group">
-                            <input type="file" class="form-control" id="media" name="media[]" multiple 
-                                   accept="image/*,video/mp4,video/webm">
+                            <input type="file" class="form-control" id="media" name="media" multiple
+                                accept="image/*,video/mp4,video/webm">
                         </div>
                         <small class="text-muted">Supported formats: Images (JPG, PNG, GIF) and Videos (MP4, WebM)</small>
                     </div>
@@ -106,7 +119,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="uploadButton">Upload</button>
+                <button type="button" class="btn btn-primary" id="uploadButton" data-id="<?= $car_id ?>">Upload</button>
             </div>
         </div>
     </div>
@@ -117,8 +130,8 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body p-0">
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" 
-                        data-bs-dismiss="modal" style="z-index: 1050; background-color: white;"></button>
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2"
+                    data-bs-dismiss="modal" style="z-index: 1050; background-color: white;"></button>
                 <img src="" class="img-fluid w-100" id="modalImage">
             </div>
         </div>
@@ -130,12 +143,12 @@
 
 <style>
     <?php
-        RenderSystem::renderOne('assets', 'static/css/carAssets.css');
+    RenderSystem::renderOne('assets', 'static/css/carAssets.css');
     ?>
 </style>
 
 <script>
     <?php
-        RenderSystem::renderOne('assets', 'static/js/carAssets.js');
+    RenderSystem::renderOne('assets', 'static/js/pages/carAssets.js');
     ?>
 </script>

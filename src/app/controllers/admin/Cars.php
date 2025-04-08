@@ -1,13 +1,18 @@
 <?php
-class Cars extends Controller {
+class Cars extends Controller
+{
     public $car_model;
+    public $file_model;
     public $jwt;
-    public function __construct() {
+    public function __construct()
+    {
         $this->car_model = $this->model('CarModel');
+        $this->file_model = $this->model('FileModel');
         $this->jwt = new JwtAuth();
     }
 
-    public function index() {
+    public function index()
+    {
         $list_cars = $this->car_model->getList();
         $this->renderAdmin([
             'page_title' => 'Management',
@@ -19,18 +24,49 @@ class Cars extends Controller {
         ]);
     }
 
-    public function assets($id) {
-        $car_assets = $this->car_model->getCarAssets($id);
+    public function assets($id)
+    {
+        $car = $this->car_model->getCar($id);
         $this->renderAdmin([
-            'page_title' => 'Management',
+            'page_title' => 'Assets of ' . $car['name'],
             'view' => 'protected/cars/carAssets',
             'content' => [
-                'car_assets' => $car_assets,
+                'car_assets' => $car['images'],
+                'car_id' => $id,
+                'car_name' => $car['name'],
             ]
         ]);
     }
 
-    public function addCar() {
+    public function uploadAssets($id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $result = $this->file_model->uploadFileToCarAsset($id);
+
+            if ($result) {
+                echo json_encode(["success" => true, "message" => "Assets uploaded successfully!"]);
+            } else {
+                echo json_encode(["success" => false, "message" => "Failed to upload assets."]);
+            }
+        }
+    }
+
+    public function deleteAssets()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $rawBody = file_get_contents("php://input");
+            $data = json_decode($rawBody, true); // true để trả về mảng
+            $result = $this->file_model->deleteFileFromCarAsset($data['car_id'], $data['file_id']);
+            if ($result) {
+                echo json_encode(["success" => true, "message" => "Assets deleted successfully!"]);
+            } else {
+                echo json_encode(["success" => false, "message" => "Failed to delete assets."]);
+            }
+        }
+    }
+
+    public function addCar()
+    {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $result = $this->car_model->addCar($_POST);
 
@@ -41,8 +77,9 @@ class Cars extends Controller {
             }
         }
     }
-    
-    public function getCar($id) {
+
+    public function getCar($id)
+    {
         if ($_SERVER["REQUEST_METHOD"] === "GET") {
             $data['car'] = $this->car_model->getCar($id);
             $data['getToUpdate'] = $_GET["getToUpdate"];
@@ -52,7 +89,8 @@ class Cars extends Controller {
         }
     }
 
-    public function editCar($id) {
+    public function editCar($id)
+    {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $result = $this->car_model->editCar($id, $_POST);
             if ($result) {
@@ -63,7 +101,8 @@ class Cars extends Controller {
         }
     }
 
-    public function deleteCar($id) {
+    public function deleteCar($id)
+    {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $result = $this->car_model->deleteCar($id);
             if ($result) {

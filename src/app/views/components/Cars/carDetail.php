@@ -112,14 +112,21 @@
             <div class="row mb-5">
                 <div class="col-12">
                     <label for="body_weight"><strong>Pictures</strong></label>
-                    <div class="d-flex mt-2 gap-3 flex-wrap">
+                    <div class="row mt-2 align-items-stretch">
                         <?php
-                            $type_video = ['mp4', 'avi', 'mov', 'wmv', 'flv'];
-                            foreach ($car['images'] as $image) {
-                                if (!in_array($image['type'], $type_video)) {
-                                    echo '<img src="' . htmlspecialchars($image['url']) . '" alt="Car Image" class="img-fluid" style="width: 100%; height: auto; max-width: 300px; margin-right: 10px;">';
-                                }  
+                        $type_video = ['video/mp4', 'avi', 'mov', 'wmv', 'flv'];
+                        $count = 0;
+                        foreach ($car['images'] as $image) {
+                            if ($count >= 3) {
+                                break;
                             }
+                            if (!in_array($image['type'], $type_video)) {
+                                $count++;
+                                echo '<div class="col-12 col-lg-6 mb-3" style="object-fit: cover;">'; // full width on mobile, half on large
+                                echo '<img src="' . htmlspecialchars($image['url']) . '" alt="Car Image" class="img-fluid rounded" style="width: 100%; height: 100%;">';
+                                echo '</div>';
+                            }
+                        }
                         ?>
                     </div>
                     <a href="/car-assets/<?= htmlspecialchars($car['id']) ?>">

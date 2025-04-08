@@ -19,30 +19,8 @@
         <!-- Cars Grid -->
         <div class="cars-grid">
             <!-- Car Card 1 -->
-            <!-- <div class="car-card">
-                <div class="car-image">
-                    <img src="path-to-car1.jpg" alt="Rapid Falcon GTR">
-                    <span class="car-type">Sport Car / Yellow</span>
-                </div>
-                <div class="car-details">
-                    <h3>Rapid Falcon GTR Max</h3>
-                    <div class="car-specs">
-                        <div class="spec">
-                            <i class="icon-fuel"></i>
-                            <span>Fuel type: Diesel</span>
-                        </div>
-                        <div class="spec">
-                            <i class="icon-storage"></i>
-                            <span>Storage: 450cc + Extra</span>
-                        </div>
-                    </div>
-                    <div class="car-price">
-                        <span class="price">$599.00</span>
-                        <button class="reserve-btn">Reserve</button>
-                    </div>
-                </div>
-            </div> -->
-            <!-- Repeat car-card structure for other cars -->
+            <!-- Car Card 2 -->
+            <!-- .......... -->
         </div>
     </div>
 </section>
