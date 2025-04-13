@@ -17,7 +17,7 @@
   </div>
 
   <table class="table table-bordered table-striped">
-    <thead class="table-dark">
+    <thead class="table-light">
       <tr>
         <th class="py-3">ID</th>
         <th class="py-3">Name</th>

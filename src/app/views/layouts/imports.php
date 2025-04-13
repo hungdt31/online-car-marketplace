@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/dist/css/bootstrap.min.css" />
 <script src="<?php echo _WEB_ROOT ?>/assets/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/dist/icon/font/bootstrap-icons.min.css" />
+<link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/static/css/base/bootstrap-override.css" />
 
 <!-- Custom toast -->
 <link href="<?php echo _WEB_ROOT ?>/assets/dist/toastr/toastr.css" rel="stylesheet" />

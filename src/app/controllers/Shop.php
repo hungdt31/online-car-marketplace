@@ -1,9 +1,9 @@
 <?php
-class Product extends Controller{
+class Shop extends Controller{
     protected $model_product;
     public $data = [];
     public function __construct() {
-        $this->model_product = $this->model('ProductModel');
+        $this->model_product = $this->model('CarModel');
     }
     public function index(){
         $this->renderUser([
@@ -26,14 +26,17 @@ class Product extends Controller{
             ]
         ]);
     }
-    public function detail($id='', $slug='') {
-        // echo 'id: ',$id.'<br/>'.'slug: '.$slug. '<br/>';
-        $this->renderUser([
-            'page_title' => 'Trang sản phẩm',
-            'view' => 'products/detail',
-            'data' => [
-                'title' => 'Chi tiết sản phẩm',
-                'info' => $this->model_product->getDetail($id)
+    public function detail($id='') {
+        $car = $this->model_product->getAdvancedCar($id);
+        $this->renderShop([
+            'page_title' => $car['name'],
+            'view' => 'public/shop/detail',
+            'content' => [
+                'header' => [
+                    'title' => $car['name'],
+                    'description' => $car['description']
+                ],
+                'info' => $car
             ]
         ]);
     }

@@ -11,6 +11,7 @@
     --bs-danger: var(--danger);
     --bs-light: var(--light);
     --bs-dark: var(--dark);
+    --bs-blue: var(--primary);
 
     --bs-font-sans-serif: var(--font-family-base);
     --bs-body-font-family: var(--font-family-base);
@@ -34,10 +35,46 @@
     border-color: var(--primary);
 }
 
+.text-primary {
+    color: var(--primary) !important;
+}
+
+/* Override Card Styling */
 .card {
+    border: none;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    background: white;
+    overflow: hidden;
 }
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card a {
+    color: var(--primary);
+    transition: var(--transition);
+}
+
+.card a:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+/* -------------------- */
+
 
 .form-control {
     border-radius: var(--border-radius);

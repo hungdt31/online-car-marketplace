@@ -3,8 +3,8 @@
         <!-- Header Section -->
         <div class="section-header">
             <div class="title-wrapper">
-                <p class="subtitle">Effortless Renting Solutions</p>
-                <h2>Browse Our Rental Cars</h2>
+                <p class="subtitle">Effortless Buying Solutions</p>
+                <h2>Browse Our Perfect Cars</h2>
             </div>
             <div class="category-filters">
                 <div class="category-item active">All</div>

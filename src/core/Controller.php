@@ -28,4 +28,7 @@ class Controller {
     public function renderAuth ($data=[]) {
         $this->render('layouts/auth', $data);
     }
+    public function renderShop ($data=[]) {
+        $this->render('layouts/shop', $data);
+    }
 }
