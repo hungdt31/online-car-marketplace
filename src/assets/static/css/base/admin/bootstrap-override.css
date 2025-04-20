@@ -1,12 +1,35 @@
-/* Admin Dashboard CSS */
+/* Import variables */
+@import 'variables.css';
+
+/* Override Bootstrap variables */
 :root {
+    --bs-primary: var(--primary-color);
+    --bs-secondary: var(--secondary-color);
+    --bs-success: var(--success-color);
+    --bs-info: var(--info-color);
+    --bs-warning: var(--warning-color);
+    --bs-danger: var(--danger-color);
+    --bs-light: var(--light-color);
+    --bs-dark: var(--dark-color);
+    --bs-blue: var(--primary-color);
+
+    --bs-font-sans-serif: var(--font-family-base);
+    --bs-body-font-family: var(--font-family-base);
+    --bs-body-font-size: var(--font-size-base);
+    --bs-body-font-weight: var(--font-weight-normal);
+    --bs-body-line-height: var(--line-height-base);
+
+    --bs-border-radius: var(--border-radius);
+    --bs-border-radius-lg: var(--border-radius-lg);
+    --bs-border-radius-sm: var(--border-radius-sm);
+
     --header-height: 3.5rem;
     --nav-width: 68px;
-    --first-color: #4723D9;
+    --first-color: var(--accent-color);
     --first-color-light: #AFA5D9;
     --white-color: #F7F6FB;
     --normal-font-size: 1rem;
-    --z-fixed: 100
+    --z-fixed: 100;
 }
 
 *,
@@ -27,6 +50,7 @@ a {
     text-decoration: none
 }
 
+/* Custom header */
 .header {
     width: 100%;
     height: var(--header-height);
@@ -67,7 +91,7 @@ a {
     left: -30%;
     width: var(--nav-width);
     height: 100vh;
-    background-color: var(--first-color);
+    background-color: #2c3e50;
     padding: .5rem 1rem 0 0;
     transition: .5s;
     z-index: var(--z-fixed)
@@ -178,6 +202,77 @@ a {
     }
 }
 
+/* Override Bootstrap component styles */
+.btn {
+    border-radius: var(--border-radius);
+    padding: var(--spacing-2) var(--spacing-3);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Override Card Styling */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    background: white;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card a {
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.card a:hover {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+/* -------------------- */
+
+
+.form-control {
+    border-radius: var(--border-radius);
+    padding: var(--spacing-2);
+}
+
+/* Custom utility classes */
+.shadow-custom {
+    box-shadow: var(--box-shadow) !important;
+}
+
+.rounded-custom {
+    border-radius: var(--border-radius) !important;
+}
+
 /* Modal Fixes */
 .modal {
     position: fixed;
@@ -222,7 +317,8 @@ a {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-Fix scroll issues body.modal-open {
+/* Fix scroll issues  */
+body.modal-open {
     overflow: hidden;
     padding-right: 0 !important;
     /* Ngăn jump scroll */
@@ -326,4 +422,41 @@ Fix scroll issues body.modal-open {
 
 .modal-body {
     overflow-y: auto;
+}
+
+
+/* Table Styling */
+.table-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+.table {
+    margin: 0;
+}
+
+.table thead th {
+    /* background-color: var(--light-bg); */
+    /* border-bottom: 2px solid #e2e8f0; */
+    color: var(--accent-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    transition: var(--transition);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Add transition for rows */
+.table tbody tr {
+    transition: all 0.2s ease-in-out;
 }

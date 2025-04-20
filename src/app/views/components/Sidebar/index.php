@@ -2,8 +2,6 @@
     <nav class="nav">
         <div>
             <a href="<?= _WEB_ROOT ?>/dashboard" class="nav_logo">
-                <!-- <i class="bi bi-back"></i>
-                <span class="nav_logo-name">Carvan</span> -->
                 <img src="<?= _WEB_ROOT ?>/assets/static/images/carvan-logo.svg" alt="Logo" class="logo" width="100px">
             </a>
             <div class="nav_list">

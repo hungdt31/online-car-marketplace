@@ -34,6 +34,8 @@ class Cars extends Controller
                 'car_assets' => $car['images'],
                 'car_id' => $id,
                 'car_name' => $car['name'],
+                'car_overview' => $car['overview'],
+                'car_capabilities' => json_decode($car['capabilities'], true)
             ]
         ]);
     }
@@ -42,7 +44,6 @@ class Cars extends Controller
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $result = $this->file_model->uploadFileToCarAsset($id);
-
             if ($result) {
                 echo json_encode(["success" => true, "message" => "Assets uploaded successfully!"]);
             } else {
@@ -69,7 +70,6 @@ class Cars extends Controller
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $result = $this->car_model->addCar($_POST);
-
             if ($result) {
                 echo json_encode(["success" => true, "message" => "Car added successfully!"]);
             } else {
@@ -109,6 +109,38 @@ class Cars extends Controller
                 echo json_encode(["success" => true, "message" => "Car deleted successfully!"]);
             } else {
                 echo json_encode(["success" => false, "message" => "Failed to delete car."]);
+            }
+        }
+    }
+
+    public function updateDetails($id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            // Get JSON data from request body
+            $jsonData = json_decode(file_get_contents('php://input'), true);
+            
+            // Validate data
+            if (!isset($jsonData['overview']) || !isset($jsonData['capabilities'])) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Invalid data provided"
+                ]);
+                return;
+            }
+
+            // Update car details
+            $result = $this->car_model->updateCarDetails($id, $jsonData);
+
+            if ($result) {
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Car details updated successfully!"
+                ]);
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Failed to update car details."
+                ]);
             }
         }
     }

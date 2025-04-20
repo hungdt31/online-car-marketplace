@@ -150,4 +150,75 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Car Details Form Handling
+    const carDetailsForm = document.getElementById('carDetailsForm');
+    const addFeatureBtn = document.getElementById('addFeature');
+    const featuresList = document.getElementById('featuresList');
+
+    // Add new feature input
+    addFeatureBtn.addEventListener('click', function() {
+        const featureInput = `
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="capabilities[features][]" placeholder="Enter feature">
+                <button type="button" class="btn btn-outline-danger remove-feature">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        featuresList.insertAdjacentHTML('beforeend', featureInput);
+    });
+
+    // Remove feature
+    featuresList.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-feature')) {
+            e.target.closest('.input-group').remove();
+        }
+    });
+
+    // Submit form
+    carDetailsForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        // Convert form data to JSON
+        const jsonData = {
+            overview: formData.get('overview'),
+            capabilities: {
+                engine: formData.get('capabilities[engine]'),
+                seats: parseInt(formData.get('capabilities[seats]')),
+                features: Array.from(formData.getAll('capabilities[features][]')).filter(f => f.trim() !== '')
+            }
+        };
+
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+        submitBtn.disabled = true;
+
+        // Send AJAX request
+        fetch(`/admin/cars/updateDetails/${formData.get('car_id')}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                toastr.success(data.message);
+            } else {
+                toastr.error(data.message);
+            }
+        })
+        .catch(error => {
+            toastr.error('An error occurred while saving changes');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
 });

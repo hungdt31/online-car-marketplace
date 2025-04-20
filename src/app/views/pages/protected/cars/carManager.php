@@ -1,55 +1,99 @@
-<!-- Modal -->
 <style>
-  label {
-    font-weight: bold;
-  }
+  <?php
+  RenderSystem::renderOne('assets', 'static/css/cars/carManager.css');
+  ?>
 </style>
-<!-- Hiển thị danh sách xe -->
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center my-3">
-    <!-- Search bar -->
-    <input type="text" id="searchInput" class="form-control w-25" placeholder="Search by car name...">
 
-    <!-- Button trigger modal -->
-    <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-light">
-      <i class="bi bi-plus-circle"></i> Insert data
+<div class="container-fluid px-4 py-5">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h4 class="mb-0">Car Management Dashboard</h4>
+    <p class="text-white-50 mb-0">Manage your vehicle inventory</p>
+  </div>
+
+  <!-- Control Bar -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Search Bar -->
+    <div class="search-wrapper">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="searchInput" class="form-control" placeholder="Search cars...">
+    </div>
+
+    <!-- Add New Car Button -->
+    <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-add">
+      <i class="fas fa-plus-circle me-2"></i>Add New Car
     </button>
   </div>
 
-  <table class="table table-bordered table-striped">
-    <thead class="table-light">
-      <tr>
-        <th class="py-3">ID</th>
-        <th class="py-3">Name</th>
-        <th class="py-3">Location</th>
-        <th class="py-3">Fuel Type</th>
-        <th class="py-3">Price</th>
-        <th class="text-center py-3">Action</th>
-      </tr>
-    </thead>
-    <tbody id="carTableBody">
-      <?php foreach ($list_cars as $car) : ?>
-        <tr class="car-row">
-          <td><?= htmlspecialchars($car['id']) ?></td>
-          <td class="car-name"><?= htmlspecialchars($car['name']) ?></td>
-          <td><?= htmlspecialchars($car['location']) ?></td>
-          <td><?= htmlspecialchars($car['fuel_type']) ?></td>
-          <td>$<?= number_format($car['price'], 2) ?></td>
-          <td class="text-center">
-            <button type="button" class="btn btn-info details-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#carDetailModal">Details</button>
-            <button type="button" class="btn btn-primary edit-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#updateCarModal">Edit</button>
-            <button type="button" class="btn btn-danger delete-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#deleteCarModal">Delete</button>
-          </td>
+  <!-- Table Container -->
+  <div class="table-container">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="py-3 sortable" data-sort="id">
+            ID
+            <i class="fas fa-sort ms-1"></i>
+          </th>
+          <th class="py-3 sortable" data-sort="name">
+            Name
+            <i class="fas fa-sort ms-1"></i>
+          </th>
+          <th class="py-3 sortable" data-sort="location">
+            Location
+            <i class="fas fa-sort ms-1"></i>
+          </th>
+          <th class="py-3 sortable" data-sort="fuel_type">
+            Fuel Type
+            <i class="fas fa-sort ms-1"></i>
+          </th>
+          <th class="py-3 sortable" data-sort="price">
+            Price
+            <i class="fas fa-sort ms-1"></i>
+          </th>
+          <th class="text-center py-3">Actions</th>
         </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
-  <p id="noResultsMessage" class="text-center text-danger d-none">No matching records found.</p>
+      </thead>
+      <tbody id="carTableBody">
+        <?php foreach ($list_cars as $car) : ?>
+          <tr class="car-row">
+            <td class="align-middle"><?= htmlspecialchars($car['id']) ?></td>
+            <td class="car-name align-middle"><?= htmlspecialchars($car['name']) ?></td>
+            <td class="align-middle">
+              <i class="fas fa-map-marker-alt text-muted me-2"></i>
+              <?= htmlspecialchars($car['location']) ?>
+            </td>
+            <td class="align-middle">
+              <span class="status-badge bg-light">
+                <?= htmlspecialchars($car['fuel_type']) ?>
+              </span>
+            </td>
+            <td class="price-column align-middle">$<?= number_format($car['price'], 2) ?></td>
+            <td class="text-center align-middle">
+              <div class="action-buttons">
+                <button type="button" class="btn btn-info details-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#carDetailModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button type="button" class="btn btn-primary edit-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#updateCarModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-danger delete-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#deleteCarModal">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    <p id="noResultsMessage" class="text-center text-muted py-5 d-none">
+      <i class="fas fa-search me-2"></i>No matching cars found
+    </p>
+  </div>
 
   <!-- Pagination -->
   <nav>
     <ul class="pagination justify-content-center" id="pagination">
-      <!-- JS sẽ thêm số trang vào đây -->
+      <!-- JS will populate this -->
     </ul>
   </nav>
 </div>
@@ -169,7 +213,7 @@
       event.preventDefault(); // Ngăn chặn form gửi theo cách thông thường
 
       $.ajax({
-        url: "/admin/dashboard/addCar", // Action của form
+        url: "/admin/cars/addCar", // Action của form
         type: "POST",
         data: $(this).serialize(), // Lấy dữ liệu từ form
         dataType: "json",
@@ -369,5 +413,115 @@
 
     searchInput.addEventListener("keyup", updateTable);
     updateTable();
+  });
+
+  // Sorting functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    let sortState = {
+      column: null,
+      direction: 'asc'
+    };
+
+    // Function to sort table data
+    function sortTable(column) {
+      const table = document.getElementById('carTableBody');
+      const rows = Array.from(table.getElementsByTagName('tr'));
+      const headers = document.querySelectorAll('th.sortable');
+
+      // Reset all headers
+      headers.forEach(header => {
+        header.classList.remove('asc', 'desc');
+        header.querySelector('i').className = 'fas fa-sort ms-1';
+      });
+
+      // Update sort state
+      if (sortState.column === column) {
+        sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState.column = column;
+        sortState.direction = 'asc';
+      }
+
+      // Update header appearance
+      const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
+      currentHeader.classList.add(sortState.direction);
+      currentHeader.querySelector('i').className = `fas fa-sort-${sortState.direction === 'asc' ? 'up' : 'down'} ms-1`;
+
+      // Sort the rows
+      rows.sort((a, b) => {
+        let aValue = getCellValue(a, column);
+        let bValue = getCellValue(b, column);
+
+        // Handle numeric sorting for ID and Price
+        if (column === 'id') {
+          return sortState.direction === 'asc' ?
+            parseInt(aValue) - parseInt(bValue) :
+            parseInt(bValue) - parseInt(aValue);
+        }
+
+        if (column === 'price') {
+          // Remove '$' and ',' from price strings and convert to numbers
+          aValue = parseFloat(aValue.replace(/[$,]/g, ''));
+          bValue = parseFloat(bValue.replace(/[$,]/g, ''));
+          return sortState.direction === 'asc' ? aValue - bValue : bValue - aValue;
+        }
+
+        // String comparison for other columns
+        return sortState.direction === 'asc' ?
+          aValue.localeCompare(bValue) :
+          bValue.localeCompare(aValue);
+      });
+
+      // Reorder the table
+      rows.forEach(row => table.appendChild(row));
+
+      // Update pagination after sorting
+      updateTable();
+    }
+
+    // Helper function to get cell value
+    function getCellValue(row, column) {
+      const mapping = {
+        'id': 0,
+        'name': 1,
+        'location': 2,
+        'fuel_type': 3,
+        'price': 4
+      };
+
+      const cell = row.cells[mapping[column]];
+      return cell.textContent.trim();
+    }
+
+    // Add click event listeners to sortable headers
+    document.querySelectorAll('th.sortable').forEach(header => {
+      header.addEventListener('click', () => {
+        const column = header.getAttribute('data-sort');
+        sortTable(column);
+      });
+    });
+
+    // Add sorting indicators hover effect
+    document.querySelectorAll('th.sortable').forEach(header => {
+      header.addEventListener('mouseover', () => {
+        if (!header.classList.contains('asc') && !header.classList.contains('desc')) {
+          header.querySelector('i').style.opacity = '0.5';
+        }
+      });
+      header.addEventListener('mouseout', () => {
+        if (!header.classList.contains('asc') && !header.classList.contains('desc')) {
+          header.querySelector('i').style.opacity = '0.2';
+        }
+      });
+    });
+
+    // Enhance the existing updateTable function to maintain sorting
+    const originalUpdateTable = updateTable;
+    updateTable = function() {
+      originalUpdateTable();
+      if (sortState.column) {
+        sortTable(sortState.column);
+      }
+    };
   });
 </script>

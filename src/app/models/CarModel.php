@@ -53,30 +53,30 @@ class CarModel extends Model
                     c.*
                 FROM $this->_table c
                 WHERE c.id = :id";
-        
+
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
-    
+
         // Kiểm tra nếu không có dữ liệu
         if (!$result || empty($result['data'])) {
             return null; // Hoặc throw exception tùy yêu cầu
         }
-    
+
         $carData = $result['data'];
-    
+
         // Giải mã JSON cho capabilities
         $carData['capabilities'] = !empty($carData['capabilities']) ? json_decode($carData['capabilities'], true) : [];
-    
+
         // Lấy danh sách hình ảnh cho xe chính
         $carData['images'] = $this->getCarAssets($id) ?: [];
-    
+
         // Truy vấn categories
         $categorySql = "SELECT 
                             cat.id, cat.name
                         FROM categories cat
                         INNER JOIN category_mappings cm ON cat.id = cm.category_id
                         WHERE cm.entity_id = :id AND cm.entity_type = 'cars'";
-        
+
         $categoriesResult = $this->db->execute($categorySql, $params)['data'];
         $categories = [];
         if ($categoriesResult && is_array($categoriesResult)) {
@@ -88,7 +88,7 @@ class CarModel extends Model
             }
         }
         $carData['categories'] = $categories;
-    
+
         // // Truy vấn xe liên quan (related_cars)
         $relatedCarsSql = "SELECT 
                             c2.id, c2.name, c2.price, c2.location
@@ -99,7 +99,7 @@ class CarModel extends Model
                         WHERE c.id = :id
                         GROUP BY c2.id
                         LIMIT 3";
-        
+
         $relatedCarsResult = $this->db->execute($relatedCarsSql, $params)['data'];
         $relatedCars = [];
         if ($relatedCarsResult && is_array($relatedCarsResult)) {
@@ -114,7 +114,7 @@ class CarModel extends Model
                     'image' => null,
                     'video' => null
                 ];
-    
+
                 // Lấy ảnh hoặc video cho xe liên quan
                 $assets = $this->getCarAssets($car['id']);
                 $trigger = isset($assets[0]['url']) ? $assets[0]['url'] : null;
@@ -123,12 +123,12 @@ class CarModel extends Model
                 } else {
                     $relatedCar['image'] = $trigger;
                 }
-    
+
                 $relatedCars[] = $relatedCar;
             }
         }
         $carData['related_cars'] = $relatedCars;
-    
+
         // Truy vấn comments
         $commentsSql = "SELECT 
                             com.id, com.title, com.content, com.rating, com.created_at,
@@ -137,7 +137,7 @@ class CarModel extends Model
                         LEFT JOIN users u ON com.user_id = u.id
                         LEFT JOIN files f ON u.avatar_id = f.id
                         WHERE com.car_id = :id";
-        
+
         $commentsResult = $this->db->execute($commentsSql, $params)['data'];
         $comments = [];
         if ($commentsResult && is_array($commentsResult)) {
@@ -156,7 +156,7 @@ class CarModel extends Model
             }
         }
         $carData['comments'] = $comments;
-    
+
         return $carData;
     }
 
@@ -201,15 +201,19 @@ class CarModel extends Model
         if (empty($categoryIds)) {
             // 🔹 Lấy tất cả xe, giới hạn 5 bản ghi
             $sql = "
-                SELECT 
+                SELECT
                     c.id, c.name, c.location, c.overview, c.fuel_type, c.mileage, 
                     c.drive_type, c.service_duration, c.body_weight, c.price, 
                     c.avg_rating, c.capabilities, c.created_at, c.updated_at,
                     f.id AS file_id, f.name AS file_name, f.fkey, f.url, f.reg_date, f.size, f.type
                 FROM cars c
-                LEFT JOIN car_assets ca ON c.id = ca.car_id
-                LEFT JOIN files f ON ca.file_id = f.id
-                WHERE f.type NOT LIKE '%video%' OR f.type IS NULL
+                LEFT JOIN (
+                    SELECT ca.car_id, f.id, f.name, f.fkey, f.url, f.reg_date, f.size, f.type
+                    FROM car_assets ca
+                    LEFT JOIN files f ON ca.file_id = f.id
+                    WHERE f.type NOT LIKE '%video%' OR f.type IS NULL
+                    GROUP BY ca.car_id
+                ) f ON c.id = f.car_id
                 LIMIT 5;
             ";
             $result = $this->db->execute($sql);
@@ -241,5 +245,40 @@ class CarModel extends Model
         //     $car['capabilities'] = json_decode($car['capabilities'], true);
         // }
         return $result['data'];
+    }
+
+    public function updateCarDetails($id, $data)
+    {
+        try {
+            // Validate capabilities structure
+            if (
+                !isset($data['capabilities']['engine']) ||
+                !isset($data['capabilities']['seats']) ||
+                !isset($data['capabilities']['features'])
+            ) {
+                return false;
+            }
+
+            // Convert capabilities to JSON
+            $capabilities = json_encode($data['capabilities']);
+
+            $sql = "UPDATE $this->_table 
+                    SET overview = :overview, 
+                        capabilities = :capabilities,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = :id";
+
+            $params = [
+                ':id' => $id,
+                ':overview' => $data['overview'],
+                ':capabilities' => $capabilities
+            ];
+
+            $result = $this->db->execute($sql, $params);
+            return $result['success'];
+        } catch (Exception $e) {
+            // Log error if needed
+            return false;
+        }
     }
 }

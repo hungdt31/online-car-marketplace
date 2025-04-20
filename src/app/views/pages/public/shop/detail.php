@@ -1,3 +1,31 @@
+<?php
+if ($_POST) {
+    $commentTitle = $_POST['commentTitle'];
+    $commentContent = $_POST['commentContent'];
+    $commentRating = $_POST['commentRating'];
+    $commentFile = $_FILES['commentFile'];
+
+    $request = [
+        'title' => $commentTitle,
+        'content' => $commentContent,
+        'rating' => $commentRating,
+        'file' => $commentFile
+    ];
+
+    // Output the HTML content without escaping
+    echo "<div class='content-preview border p-3 mb-3 rounded'>";
+    echo "<h5>Content Preview:</h5>";
+    echo "<div class='rendered-content'>";
+    // Use this to render the HTML instead of escaping it
+    echo $commentContent;
+    echo "</div>";
+    echo "</div>";
+
+    echo "<pre>";
+    print_r($request);
+    echo "</pre>";
+}
+?>
 <div class="container-fluid px-4 py-3">
     <!-- Main Content Grid -->
     <div class="row mt-3">
@@ -219,9 +247,9 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="card-title mb-0">Sale Price</h5>
-                        <h3 class="text-primary mb-0">
-                            <?php echo number_format($info['price']); ?>
-                            <i class="bi bi-coin"></i>
+                        <h3 class="text-primary mb-0 fw-bolder">
+                            <span><?php echo number_format($info['price']); ?></span>
+                            <i class="bi bi-currency-dollar"></i>
                         </h3>
                     </div>
                     <?php if ($info['avg_rating'] > 0): ?>
@@ -329,23 +357,111 @@
     <?php
     RenderSystem::renderOne('assets', 'static/css/shop/detail.css', []);
     ?>
+    .color-picker {
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 50%;
+        overflow: hidden;
+        padding: 0;
+        border: none;
+        cursor: pointer;
+        position: relative;
+        margin: 2px;
+        vertical-align: middle;
+    }
+
+    .color-picker::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    .color-picker::-webkit-color-swatch {
+        border: none;
+        border-radius: 50%;
+    }
+
+    .color-picker::-moz-color-swatch {
+        border: none;
+        border-radius: 50%;
+    }
 </style>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<form action="" method="POST" enctype="multipart/form-data" class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fs-5" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title fs-5" id="exampleModalLabel">Comment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium quae, voluptate voluptatibus totam minus nihil quisquam in perferendis explicabo. Aspernatur maiores distinctio id error. Quam a quo qui beatae ullam?
+                <div class="mb-3">
+                    <label for="commentTitle" class="form-label fw-bold">Title</label>
+                    <input type="text" class="form-control" id="commentTitle" placeholder="Enter title" name="commentTitle">
+                </div>
+                <div class="mb-3">
+                    <label for="commentContent" class="form-label fw-bold">Content</label>
+                    <div class="editor-container"></div>
+                </div>
+                <div class="mb-4">
+                    <label for="star-rating" class="form-label fw-bold">Rating</label>
+                    <div class="star-rating">
+                        <i class="far fa-star" data-rating="1"></i>
+                        <i class="far fa-star" data-rating="2"></i>
+                        <i class="far fa-star" data-rating="3"></i>
+                        <i class="far fa-star" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="commentRating" name="commentRating" value="">
+                </div>
+                <div class="mb-3">
+                    <label for="commentFile" class="form-label fw-bold">File attached (max 5MB)</label>
+                    <input type="file"
+                        class="form-control"
+                        id="commentFile"
+                        accept="image/*,video/*"
+                        placeholder="Upload image or video"
+                        name="commentFile"
+                        onchange="handleFileUpload(this)">
+                    <div class="invalid-feedback">File size exceeds the 5MB limit.</div>
+                    <p class="form-text text-muted mt-2">Allowed formats: images and videos (max: 5MB)</p>
+
+                    <!-- Preview container -->
+                    <div id="filePreviewContainer" class="mt-2" style="display: none;">
+                        <div class="card">
+                            <div class="card-body p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div id="filePreview" class="me-3"></div>
+                                        <div id="fileInfo">
+                                            <h6 id="fileName" class="mb-0"></h6>
+                                            <small id="fileSize" class="text-muted"></small>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-light" onclick="clearFileUpload()">
+                                        <i class="fas fa-times text-danger m-auto"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
-</div>
+</form>
+
+<script>
+    <?php
+    RenderSystem::renderOne('assets', 'static/js/pages/shop/detail.js', []);
+    ?>
+</script>
+
+<script type="module">
+    <?php
+    RenderSystem::renderOne('assets', 'static/js/helper/editor.js', []);
+    ?>
+</script>

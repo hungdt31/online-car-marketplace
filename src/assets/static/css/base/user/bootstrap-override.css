@@ -1,0 +1,158 @@
+/* Import variables */
+@import 'variables.css';
+
+/* Override Bootstrap variables */
+:root {
+    --bs-primary: var(--primary-color);
+    --bs-secondary: var(--secondary-color);
+    --bs-success: var(--success-color);
+    --bs-info: var(--info-color);
+    --bs-warning: var(--warning-color);
+    --bs-danger: var(--danger-color);
+    --bs-light: var(--light-color);
+    --bs-dark: var(--dark-color);
+    --bs-blue: var(--primary-color);
+
+    --bs-font-sans-serif: var(--font-family-base);
+    --bs-body-font-family: var(--font-family-base);
+    --bs-body-font-size: var(--font-size-base);
+    --bs-body-font-weight: var(--font-weight-normal);
+    --bs-body-line-height: var(--line-height-base);
+
+    --bs-border-radius: var(--border-radius);
+    --bs-border-radius-lg: var(--border-radius-lg);
+    --bs-border-radius-sm: var(--border-radius-sm);
+}
+
+* {
+    font-family: "Poppins", sans-serif;
+    box-sizing: border-box;
+}
+
+/* Override Bootstrap component styles */
+.btn {
+    border-radius: var(--border-radius);
+    padding: var(--spacing-2) var(--spacing-3);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--secondary-color) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Override Card Styling */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    background: white;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card a {
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.card a:hover {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+/* -------------------- */
+.form-control {
+    border-radius: var(--border-radius);
+    padding: var(--spacing-2);
+}
+
+/* Custom utility classes */
+.shadow-custom {
+    box-shadow: var(--box-shadow) !important;
+}
+
+.rounded-custom {
+    border-radius: var(--border-radius) !important;
+}
+
+/* Custom text editor */
+.editor-content {
+    min-height: 150px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+.editor-toolbar button {
+    min-width: 2.5rem;
+}
+
+.color-picker {
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    margin: 2px;
+    vertical-align: middle;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.color-picker::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.ProseMirror:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.ProseMirror p {
+    margin-bottom: 0.5rem;
+}
+
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3, 
+.ProseMirror h4, .ProseMirror h5, .ProseMirror h6 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}

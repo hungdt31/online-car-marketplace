@@ -33,7 +33,7 @@
                 <span class="spec-value"><?= htmlspecialchars($drive_type) ?></span>
             </div>
             <div class="price-section">
-                <span class="price">$<?= htmlspecialchars($price) ?></span>
+                <span class="price"><?= '$' . number_format($price, 0) ?></span>
                 <div class="reviews">
                     <span>Reviews:</span>
                     <div class="star-rating">

@@ -3,13 +3,16 @@
         <!-- Left Side: Breadcrumb + Title -->
         <div>
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="/cars-management">Cars</a></li>
-                    <li class="breadcrumb-item"><a href="#">Assets</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><?= $car_name ?></li>
+                <ol class="breadcrumb mb-2">
+                    <li class="breadcrumb-item">
+                        <a href="/cars-management" class="text-decoration-none text-primary">Cars</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <?= $car_name ?>
+                    </li>
                 </ol>
             </nav>
-            <h4 class="fw-semibold text-primary mb-0">Media Management</h4>
+            <h4 class="fw-semibold text-primary mb-0">Bonus Details</h4>
         </div>
 
         <!-- Right Side: Add Button -->
@@ -91,6 +94,71 @@
                     </div>
                 <?php endif; ?>
             </div>
+        </div>
+    </div>
+
+    <!-- Overview & Capabilities Editor -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-edit me-1"></i>
+                Overview & Capabilities
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="carDetailsForm">
+                <input type="hidden" name="car_id" value="<?php echo $car_id; ?>">
+                
+                <!-- Overview Section -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Overview</label>
+                    <textarea class="form-control" name="overview" rows="4"><?php echo htmlspecialchars($car_overview); ?></textarea>
+                </div>
+
+                <!-- Capabilities Section -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Capabilities</label>
+                    
+                    <!-- Engine -->
+                    <div class="mb-3">
+                        <label class="form-label">Engine</label>
+                        <input type="text" class="form-control" name="capabilities[engine]" 
+                               value="<?php echo htmlspecialchars($car_capabilities['engine'] ?? ''); ?>">
+                    </div>
+
+                    <!-- Seats -->
+                    <div class="mb-3">
+                        <label class="form-label">Number of Seats</label>
+                        <input type="number" class="form-control" name="capabilities[seats]" 
+                               value="<?php echo htmlspecialchars($car_capabilities['seats'] ?? ''); ?>">
+                    </div>
+
+                    <!-- Features -->
+                    <div class="mb-3">
+                        <label class="form-label">Features</label>
+                        <div id="featuresList">
+                            <?php if (!empty($car_capabilities['features'])): ?>
+                                <?php foreach ($car_capabilities['features'] as $index => $feature): ?>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="capabilities[features][]" 
+                                               value="<?php echo htmlspecialchars($feature); ?>">
+                                        <button type="button" class="btn btn-outline-danger remove-feature">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="addFeature">
+                            <i class="fas fa-plus me-1"></i>Add Feature
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Save Changes
+                </button>
+            </form>
         </div>
     </div>
 </div>

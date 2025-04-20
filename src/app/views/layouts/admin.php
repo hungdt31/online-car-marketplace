@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo (!empty($page_title)) ? $page_title : "Admin Dashboard" ?></title>
     <?php include "imports.php"; ?>
-    <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/static/css/main.css">
-    <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/static/css/admin.css">
+    <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/static/css/base/admin/bootstrap-override.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
 </head>
 

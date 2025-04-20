@@ -1,9 +1,10 @@
 <?php
 class Shop extends Controller{
-    protected $model_product;
+    protected $car_model;
+    protected $comment_model;
     public $data = [];
     public function __construct() {
-        $this->model_product = $this->model('CarModel');
+        $this->car_model = $this->model('CarModel');
     }
     public function index(){
         $this->renderUser([
@@ -16,7 +17,7 @@ class Shop extends Controller{
     }
     public function list_product()
     {
-        $dataProduct = $this->model_product->getList();
+        $dataProduct = $this->car_model->getList();
         $this->renderUser([
             'page_title' => 'Trang sản phẩm',
             'view' => 'products/list',
@@ -27,7 +28,7 @@ class Shop extends Controller{
         ]);
     }
     public function detail($id='') {
-        $car = $this->model_product->getAdvancedCar($id);
+        $car = $this->car_model->getAdvancedCar($id);
         $this->renderShop([
             'page_title' => $car['name'],
             'view' => 'public/shop/detail',
@@ -39,6 +40,18 @@ class Shop extends Controller{
                 'info' => $car
             ]
         ]);
+    }
+    public function replyCarPost() {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $rawBody = file_get_contents("php://input");
+            $data = json_decode($rawBody, true); // true để trả về mảng
+            $result = $this->comment_model->addComment($data);
+            if ($result) {
+                echo json_encode(["success" => true, "message" => "Comment added successfully!"]);
+            } else {
+                echo json_encode(["success" => false, "message" => "Failed to add comment."]);
+            }
+        }
     }
     public function sendMail() {
         $email = $_POST['email'];

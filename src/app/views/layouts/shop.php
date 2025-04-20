@@ -5,7 +5,7 @@
     <title><?php echo (!empty($page_title)) ? $page_title : "Trang chủ" ?></title>
     <link rel="icon" href="<?php echo _WEB_ROOT ?>/assets/static/images/carvan-logo.png" type="image/x-icon" />
     <?php include "imports.php"; ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/static/css/main.css" />
+    <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/static/css/base/user/bootstrap-override.css" />
 </head>
 
 <body>
