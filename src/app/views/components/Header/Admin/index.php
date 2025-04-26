@@ -4,7 +4,7 @@ $profile = $session->getProfile();
 ?>
 <header class="header" id="header">
     <div class="header_toggle"> <i class='bx bx-menu' id="header-toggle"></i> </div>
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2 date-top">
         <i class="bi bi-cloud-lightning-fill"></i>
         <span id="current-date"></span>
     </div>
@@ -34,3 +34,16 @@ $profile = $session->getProfile();
 
     dateEl.textContent = `${dayName}, ${date} ${month} ${year}`;
 </script>
+<style>
+    /* Default state - visible */
+    .date-top {
+        display: flex !important;  /* Change from block to flex to maintain your alignment */
+    }
+    
+    /* Hide on screens smaller than or equal to 768px */
+    @media screen and (max-width: 768px) {
+        .date-top {
+            display: none !important;
+        }
+    }
+</style>

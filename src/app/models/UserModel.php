@@ -83,6 +83,6 @@ class UserModel extends Model {
     public function getDetail($id) {
         $sql = "SELECT * FROM $this->_table WHERE id = $id";
         $result = $this->db->execute($sql);
-        return $result;
+        return $result['data'];
     }
 }

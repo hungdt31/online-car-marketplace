@@ -1,17 +1,26 @@
 <div class="container-fluid px-4 pt-3">
-    <div class="d-flex justify-content-between align-items-center mb-4 px-2 py-3 bg-light rounded shadow-sm">
+    <div class="d-flex justify-content-between flex-wrap align-items-center gap-3 mb-4 p-3 bg-light rounded shadow-sm">
         <!-- Left Side: Breadcrumb + Title -->
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-2">
-                    <li class="breadcrumb-item">
-                        <a href="/cars-management" class="text-decoration-none text-primary">Cars</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <?= $car_name ?>
-                    </li>
-                </ol>
-            </nav>
+            <div class="custom-breadcrumb d-flex align-items-center mb-3">
+                <a href="/dashboard" class="custom-breadcrumb-item text-decoration-none">
+                    <i class="fas fa-home me-1"></i>
+                    <span>Dashboard</span>
+                </a>
+                <div class="custom-breadcrumb-separator mx-2">
+                    <i class="bi bi-caret-right-fill"></i>
+                </div>
+                <a href="/cars-management" class="custom-breadcrumb-item text-decoration-none">
+                    <i class="fas fa-car me-1"></i>
+                    <span>Cars</span>
+                </a>
+                <div class="custom-breadcrumb-separator mx-2">
+                    <i class="bi bi-caret-right-fill"></i>
+                </div>
+                <span class="custom-breadcrumb-item custom-breadcrumb-active">
+                    <?= $car_name ?>
+                </span>
+            </div>
             <h4 class="fw-semibold text-primary mb-0">Bonus Details</h4>
         </div>
 
@@ -24,7 +33,7 @@
 
     <!-- Media Grid -->
     <div class="card mb-4">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <div class="card-header bg-primary text-white d-flex flex-wrap gap-3 justify-content-between align-items-center">
             <div>
                 <i class="fas fa-photo-video me-1"></i>
                 Media Gallery
@@ -74,7 +83,7 @@
                                         Size: <?php echo number_format($asset['size'] / 1024, 2); ?> KB
                                     </p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button class="btn btn-sm btn-outline-danger delete-media" data-id="<?php echo $asset['id'].','.$car_id; ?>">
+                                        <button class="btn btn-sm btn-outline-danger delete-media" data-id="<?php echo $asset['id'] . ',' . $car_id; ?>">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-primary copy-url" data-url="<?php echo $asset['url']; ?>">
@@ -108,7 +117,7 @@
         <div class="card-body">
             <form id="carDetailsForm">
                 <input type="hidden" name="car_id" value="<?php echo $car_id; ?>">
-                
+
                 <!-- Overview Section -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Overview</label>
@@ -118,19 +127,19 @@
                 <!-- Capabilities Section -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Capabilities</label>
-                    
+
                     <!-- Engine -->
                     <div class="mb-3">
                         <label class="form-label">Engine</label>
-                        <input type="text" class="form-control" name="capabilities[engine]" 
-                               value="<?php echo htmlspecialchars($car_capabilities['engine'] ?? ''); ?>">
+                        <input type="text" class="form-control" name="capabilities[engine]"
+                            value="<?php echo htmlspecialchars($car_capabilities['engine'] ?? ''); ?>">
                     </div>
 
                     <!-- Seats -->
                     <div class="mb-3">
                         <label class="form-label">Number of Seats</label>
-                        <input type="number" class="form-control" name="capabilities[seats]" 
-                               value="<?php echo htmlspecialchars($car_capabilities['seats'] ?? ''); ?>">
+                        <input type="number" class="form-control" name="capabilities[seats]"
+                            value="<?php echo htmlspecialchars($car_capabilities['seats'] ?? ''); ?>">
                     </div>
 
                     <!-- Features -->
@@ -140,8 +149,8 @@
                             <?php if (!empty($car_capabilities['features'])): ?>
                                 <?php foreach ($car_capabilities['features'] as $index => $feature): ?>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="capabilities[features][]" 
-                                               value="<?php echo htmlspecialchars($feature); ?>">
+                                        <input type="text" class="form-control" name="capabilities[features][]"
+                                            value="<?php echo htmlspecialchars($feature); ?>">
                                         <button type="button" class="btn btn-outline-danger remove-feature">
                                             <i class="fas fa-times"></i>
                                         </button>
@@ -211,7 +220,7 @@
 
 <style>
     <?php
-    RenderSystem::renderOne('assets', 'static/css/carAssets.css');
+    RenderSystem::renderOne('assets', 'static/css/cars/carAssets.css');
     ?>
 </style>
 

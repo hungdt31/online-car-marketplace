@@ -1,30 +1,6 @@
 <?php
-if ($_POST) {
-    $commentTitle = $_POST['commentTitle'];
-    $commentContent = $_POST['commentContent'];
-    $commentRating = $_POST['commentRating'];
-    $commentFile = $_FILES['commentFile'];
-
-    $request = [
-        'title' => $commentTitle,
-        'content' => $commentContent,
-        'rating' => $commentRating,
-        'file' => $commentFile
-    ];
-
-    // Output the HTML content without escaping
-    echo "<div class='content-preview border p-3 mb-3 rounded'>";
-    echo "<h5>Content Preview:</h5>";
-    echo "<div class='rendered-content'>";
-    // Use this to render the HTML instead of escaping it
-    echo $commentContent;
-    echo "</div>";
-    echo "</div>";
-
-    echo "<pre>";
-    print_r($request);
-    echo "</pre>";
-}
+$account = SessionFactory::createSession('account');
+$profile = $account->getProfile();
 ?>
 <div class="container-fluid px-4 py-3">
     <!-- Main Content Grid -->
@@ -221,19 +197,30 @@ if ($_POST) {
                     ?>
                         <div class="d-flex align-items-start mb-4 border-bottom pb-3 gap-3">
                             <div class="comment-avatar">
-                                <img src="<?php echo $comment['avatar'] ?>" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                <img src="<?php echo $comment['user_avatar'] ?>" alt="Avatar" class="rounded-circle" width="50" height="50">
                             </div>
                             <div class="flex-grow-1">
                                 <h5><?= htmlspecialchars($comment['title']); ?></h5>
                                 <div class="text-warning"><?= $ratingStars; ?></div>
-                                <p><?= htmlspecialchars($comment['content']); ?></p>
+                                <p><?php echo $comment['content']; ?></p>
+                                <?php
+                                    // kiểm tra xem có file đính kèm không
+                                    if (!empty($comment['comment_file'])) {
+                                        $fileType = pathinfo($comment['comment_file'], PATHINFO_EXTENSION);
+                                        if (in_array($fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                            echo '<img src="' . htmlspecialchars($comment['comment_file']) . '" class="img-fluid" alt="Comment File">';
+                                        } else if (in_array($fileType, ['mp4', 'avi', 'mov'])) {
+                                            echo '<video controls class="w-100"><source src="' . htmlspecialchars($comment['comment_file']) . '" type="video/' . $fileType . '"></video>';
+                                        }
+                                    }
+                                ?>
                                 <div>
                                     <strong><?= htmlspecialchars($comment['username']); ?></strong>
                                     <span>said</span>
                                 </div>
                                 <div class="timestamp text-secondary"><?= htmlspecialchars($formattedDate); ?></div>
                             </div>
-                            <button class="btn btn-light">Reply</button>
+                            <!-- <button class="btn btn-light">Reply</button> -->
                         </div>
                     <?php } ?>
                 </div>
@@ -356,8 +343,7 @@ if ($_POST) {
 <style>
     <?php
     RenderSystem::renderOne('assets', 'static/css/shop/detail.css', []);
-    ?>
-    .color-picker {
+    ?>.color-picker {
         width: 1.8rem;
         height: 1.8rem;
         border-radius: 50%;
@@ -386,7 +372,7 @@ if ($_POST) {
 </style>
 
 <!-- Modal -->
-<form action="" method="POST" enctype="multipart/form-data" class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<form action="/shop/replyCarPost" method="POST" enctype="multipart/form-data" class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -448,7 +434,7 @@ if ($_POST) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="submit" class="btn btn-primary" value="<?php echo $profile['id'] . '-' . $info['id']; ?>" id="uc_id">Save changes</button>
             </div>
         </div>
     </div>

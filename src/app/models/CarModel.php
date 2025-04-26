@@ -131,12 +131,15 @@ class CarModel extends Model
 
         // Truy vấn comments
         $commentsSql = "SELECT 
-                            com.id, com.title, com.content, com.rating, com.created_at,
-                            u.username, f.url AS avatar
-                        FROM comments com
-                        LEFT JOIN users u ON com.user_id = u.id
-                        LEFT JOIN files f ON u.avatar_id = f.id
-                        WHERE com.car_id = :id";
+            com.id, com.title, com.content, com.rating, com.created_at,
+            u.username, 
+            f1.url AS user_avatar, -- Avatar của người dùng
+            f2.url AS comment_file -- File của bình luận
+            FROM comments com
+            LEFT JOIN users u ON com.user_id = u.id
+            LEFT JOIN files f1 ON u.avatar_id = f1.id -- JOIN để lấy avatar người dùng
+            LEFT JOIN files f2 ON com.file_id = f2.id -- JOIN để lấy file của bình luận
+            WHERE com.car_id = :id";
 
         $commentsResult = $this->db->execute($commentsSql, $params)['data'];
         $comments = [];
@@ -144,16 +147,20 @@ class CarModel extends Model
             // Nếu chỉ có 1 bản ghi, chuyển thành mảng
             $commentsResult = isset($commentsResult['id']) ? [$commentsResult] : $commentsResult;
             foreach ($commentsResult as $comment) {
+                // Kiểm tra các trường trước khi gán để tránh lỗi undefined index
                 $comments[] = [
-                    'id' => $comment['id'],
-                    'title' => $comment['title'],
-                    'content' => $comment['content'],
-                    'rating' => $comment['rating'],
-                    'created_at' => $comment['created_at'],
-                    'username' => $comment['username'],
-                    'avatar' => $comment['avatar'] ?: 'https://ui.shadcn.com/avatars/05.png'
+                    'id' => $comment['id'] ?? null,
+                    'title' => $comment['title'] ?? '',
+                    'content' => $comment['content'] ?? '',
+                    'rating' => $comment['rating'] ?? null,
+                    'created_at' => $comment['created_at'] ?? '',
+                    'username' => $comment['username'] ?? '',
+                    'user_avatar' => $comment['user_avatar'] ?? 'https://ui.shadcn.com/avatars/05.png', // Avatar người dùng
+                    'comment_file' => $comment['comment_file'] ?? null // File của bình luận
                 ];
             }
+        } else {
+            error_log("Failed to fetch comments for car ID: " . $id);
         }
         $carData['comments'] = $comments;
 

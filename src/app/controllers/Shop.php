@@ -2,9 +2,14 @@
 class Shop extends Controller{
     protected $car_model;
     protected $comment_model;
+    protected $file_model;
+    protected $user_model;
     public $data = [];
     public function __construct() {
         $this->car_model = $this->model('CarModel');
+        $this->comment_model = $this->model('CommentModel');
+        $this->file_model = $this->model('FileModel');
+        $this->user_model = $this->model('UserModel');
     }
     public function index(){
         $this->renderUser([
@@ -29,7 +34,7 @@ class Shop extends Controller{
     }
     public function detail($id='') {
         $car = $this->car_model->getAdvancedCar($id);
-        $this->renderShop([
+        $this->renderGeneral([
             'page_title' => $car['name'],
             'view' => 'public/shop/detail',
             'content' => [
@@ -43,14 +48,57 @@ class Shop extends Controller{
     }
     public function replyCarPost() {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $rawBody = file_get_contents("php://input");
-            $data = json_decode($rawBody, true); // true để trả về mảng
-            $result = $this->comment_model->addComment($data);
-            if ($result) {
-                echo json_encode(["success" => true, "message" => "Comment added successfully!"]);
-            } else {
-                echo json_encode(["success" => false, "message" => "Failed to add comment."]);
+            $data = $_POST;
+            // Check user existence
+            $user = $this->user_model->getDetail($data['user_id']);
+            if (!$user) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "User not found!"
+                ]);
+                return;
             }
+            $aws = new AwsS3Service();
+            // Upload file to S3
+            $uploadFile = $aws->uploadFile($_FILES['commentFile'], 'comments');
+            if ($uploadFile) {
+                // tạo record mới cho bảng files
+                $addFileStatus = $this->file_model->addFile([
+                    'name' => $_FILES['commentFile']['name'],
+                    'fkey' => $uploadFile['fileKey'],
+                    'path' => $uploadFile['fileUrl'],
+                    'size' => $_FILES['commentFile']['size'],
+                    'type' => $_FILES['commentFile']['type']
+                ]);
+                if ($addFileStatus) {
+                    $file = $this->file_model->getFile(['fkey' => $uploadFile['fileKey']]);
+                    // tạo record mới cho bảng comments
+                    $data['file_id'] = $file['id'];
+                    $addCmtStatus = $this->comment_model->addComment($data);
+                    if ($addCmtStatus) {
+                        echo json_encode([
+                            "success" => true,
+                            "message" => "Comment added successfully!",
+                            "data" => $data
+                        ]);
+                    } else {
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Comment creation failed!"
+                        ]);
+                    }
+                } else {
+                    echo json_encode([
+                        "success" => false,
+                        "message" => "Fail to add file!"
+                    ]);
+                }
+                return;
+            } 
+            echo json_encode([
+                "success" => false,
+                "message" => "File upload failed!"
+            ]);
         }
     }
     public function sendMail() {

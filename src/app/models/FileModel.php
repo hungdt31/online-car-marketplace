@@ -28,7 +28,7 @@ class FileModel extends Model
         ];
 
         $result = $this->db->execute($sql, $params);
-        return $result['data'];
+        return $result['success'];
     }
 
     public function getFile($filter = [])
@@ -59,7 +59,7 @@ class FileModel extends Model
         $aws = new AwsS3Service();
         $uploadFile = $aws->uploadFile($media, 'cars');
         if ($uploadFile) {
-            $createdFile = $this->addFile([
+            $this->addFile([
                 'name' => $media['name'],
                 'fkey' => $uploadFile['fileKey'],
                 'path' => $uploadFile['fileUrl'],
