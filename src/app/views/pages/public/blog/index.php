@@ -91,15 +91,37 @@
             <!-- Search -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Search</h5>
-                    <form action="<?php echo _WEB_ROOT; ?>/blog/search" method="GET">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Search</h5>
+                        <?php if (isset($hasRecentKeywords) && $hasRecentKeywords): ?>
+                            <a href="<?php echo _WEB_ROOT; ?>/blog/clearSearchHistory" class="btn btn-sm btn-outline-secondary" id="clearSearchHistoryBtn">
+                                <i class="fas fa-history"></i> Clear History
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <form action="<?php echo _WEB_ROOT; ?>/blog/search" method="GET" class="position-relative">
                         <div class="input-group">
-                            <input type="text" class="form-control" name="keyword" placeholder="Enter keyword"
-                                value="<?php echo isset($keyword) ? htmlspecialchars($keyword) : ''; ?>">
+                            <input type="text" class="form-control" name="keyword" id="searchKeyword" placeholder="Enter keyword"
+                                value="<?php echo isset($keyword) ? htmlspecialchars($keyword) : (isset($currentKeyword) ? htmlspecialchars($currentKeyword) : ''); ?>">
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
+
+                        <?php if (isset($hasRecentKeywords) && $hasRecentKeywords): ?>
+                            <div class="recent-keywords mt-2">
+                                <small class="text-muted d-block mb-1">Recent searches:</small>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <?php foreach ($recentKeywords as $recentKeyword): ?>
+                                        <a href="<?php echo _WEB_ROOT; ?>/blog/search?keyword=<?php echo urlencode($recentKeyword); ?>"
+                                            class="badge bg-light text-dark search-keyword-badge">
+                                            <?php echo htmlspecialchars($recentKeyword); ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>
@@ -107,13 +129,42 @@
             <!-- Categories -->
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Categories</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Categories</h5>
+                        <?php if (!empty($selectedCategories)): ?>
+                            <a href="<?php echo _WEB_ROOT; ?>/blog/clearCategories" id="clearCategoriesBtn">
+                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-times-circle"></i> Clear Filters</button>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php if (!empty($selectedCategories)): ?>
+                        <div class="mb-3">
+                            <small class="text-muted mb-3">Showing posts with ALL of these categories:</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                <?php foreach ($categories as $category): ?>
+                                    <?php if (in_array($category['id'], $selectedCategories)): ?>
+                                        <a href="<?php echo _WEB_ROOT; ?>/blog/toggleCategory/<?php echo $category['id']; ?>"
+                                            class="badge bg-primary text-white category-filter-badge"
+                                            data-category-id="<?php echo $category['id']; ?>">
+                                            <?php echo htmlspecialchars($category['name']); ?>
+                                            <i class="fas fa-times ms-1"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="list-group list-group-flush">
                         <?php foreach ($categories as $category): ?>
-                            <a href="<?php echo _WEB_ROOT; ?>/blog/category/<?php echo $category['id']; ?>"
-                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <a href="<?php echo _WEB_ROOT; ?>/blog/toggleCategory/<?php echo $category['id']; ?>"
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center category-item <?php echo in_array($category['id'], $selectedCategories ?? []) ? 'text-white bg-primary' : ''; ?>"
+                                data-category-id="<?php echo $category['id']; ?>">
                                 <?php echo htmlspecialchars($category['name']); ?>
-                                <span class="badge bg-primary rounded-pill"><?php echo $category['post_count']; ?></span>
+                                <span class="badge <?php echo in_array($category['id'], $selectedCategories ?? []) ? 'bg-white text-primary' : 'bg-primary'; ?> rounded-pill">
+                                    <?php echo $category['post_count']; ?>
+                                </span>
                             </a>
                         <?php endforeach; ?>
                     </div>
@@ -123,9 +174,15 @@
             <!-- Recent Posts -->
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Recent Posts</h5>
+                    <h5 class="card-title">
+                        <?php if (isset($hasRecentlyViewed) && $hasRecentlyViewed): ?>
+                            Recently Viewed Posts
+                        <?php else: ?>
+                            Recent Posts
+                        <?php endif; ?>
+                    </h5>
                     <?php foreach ($recentPosts as $post): ?>
-                        <div class="d-flex mb-3">
+                        <div class="d-flex mb-3 mt-3">
                             <img src="<?php echo !empty($post['cover_image_url']) ? htmlspecialchars($post['cover_image_url']) : 'https://via.placeholder.com/100?text=No+Image'; ?>"
                                 class="flex-shrink-0 me-3" alt="<?php echo htmlspecialchars($post['title']); ?>"
                                 style="width: 70px; height: 70px; object-fit: cover;">
@@ -146,7 +203,7 @@
             </div>
 
             <!-- Tags -->
-            <div class="card shadow-sm mt-4">
+            <!-- <div class="card shadow-sm mt-4">
                 <div class="card-body">
                     <h5 class="card-title">Tags</h5>
                     <div class="d-flex flex-wrap gap-2">
@@ -157,10 +214,90 @@
                         <a href="<?php echo _WEB_ROOT; ?>/blog/tag/sports" class="btn btn-sm btn-outline-secondary">Sports</a>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
+
+<!-- <div class="container mt-4 bg-light p-3 rounded">
+    <h5>Debug Links</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Category Filter Behavior:</strong> Posts must have <em>ALL</em> selected categories to appear in the list.</p>
+
+            <p>Test category toggle links:</p>
+            <?php foreach ($categories as $category): ?>
+                <a href="<?php echo _WEB_ROOT; ?>/blog/toggleCategory/<?php echo $category['id']; ?>" class="btn btn-sm <?php echo in_array($category['id'], $selectedCategories ?? []) ? 'btn-primary' : 'btn-outline-primary'; ?> me-2 mb-2">
+                    Toggle: <?php echo htmlspecialchars($category['name']); ?> (ID: <?php echo $category['id']; ?>)
+                </a>
+            <?php endforeach; ?>
+
+            <a href="<?php echo _WEB_ROOT; ?>/blog/clearCategories" class="btn btn-sm btn-danger me-2">Clear All Categories</a>
+
+            <hr>
+
+            <p>Current selected categories (requiring ALL to match):</p>
+            <?php if (!empty($selectedCategories)): ?>
+                <ul>
+                    <?php foreach ($selectedCategories as $catId): ?>
+                        <li>
+                            Category ID: <?php echo $catId; ?> -
+                            <?php
+                            $foundCategory = null;
+                            foreach ($categories as $category) {
+                                if ($category['id'] == $catId) {
+                                    $foundCategory = $category;
+                                    break;
+                                }
+                            }
+                            echo $foundCategory ? htmlspecialchars($foundCategory['name']) : 'Unknown Category';
+                            ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p><em>No categories selected</em></p>
+            <?php endif; ?>
+        </div>
+
+        <div class="col-md-6">
+            <p><strong>Search Keywords:</strong> Recent searches are stored in session.</p>
+
+            <p>Current search keyword:</p>
+            <?php if (isset($keyword) && !empty($keyword)): ?>
+                <p><code><?php echo htmlspecialchars($keyword); ?></code></p>
+            <?php elseif (isset($currentKeyword) && !empty($currentKeyword)): ?>
+                <p><code><?php echo htmlspecialchars($currentKeyword); ?></code></p>
+            <?php else: ?>
+                <p><em>No current keyword</em></p>
+            <?php endif; ?>
+
+            <p>Recent search keywords:</p>
+            <?php if (isset($recentKeywords) && !empty($recentKeywords)): ?>
+                <ul>
+                    <?php foreach ($recentKeywords as $index => $recentKeyword): ?>
+                        <li>
+                            <?php echo $index + 1; ?>. <code><?php echo htmlspecialchars($recentKeyword); ?></code>
+                            <a href="<?php echo _WEB_ROOT; ?>/blog/search?keyword=<?php echo urlencode($recentKeyword); ?>" class="btn btn-sm btn-link py-0">Use</a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <a href="<?php echo _WEB_ROOT; ?>/blog/clearSearchHistory" class="btn btn-sm btn-outline-danger">Clear Search History</a>
+            <?php else: ?>
+                <p><em>No recent keywords</em></p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <p>Session Data (for debugging):</p>
+            <pre><?php print_r($_SESSION); ?></pre>
+        </div>
+    </div>
+</div> -->
 
 <style>
     /* Modern Pagination Styling */
@@ -254,6 +391,83 @@
     .blog-card.active {
         display: block;
         /* Chỉ hiển thị cards ở trang hiện tại */
+    }
+
+    /* Category Filters Styling */
+    .category-item {
+        transition: all 0.2s ease-in-out;
+        border-radius: 6px;
+        margin-bottom: 5px;
+    }
+
+    .category-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(3px);
+    }
+
+    .category-item.active {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .category-filter-badge {
+        padding: 6px 10px;
+        font-weight: normal;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .category-filter-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-filter-badge .fas {
+        opacity: 0.7;
+    }
+
+    #clearCategoriesBtn {
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+    #clearCategoriesBtn:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    /* Search Keyword Styling */
+    .search-keyword-badge {
+        padding: 5px 10px;
+        font-weight: normal;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        border: 1px solid #e5e5e5;
+    }
+
+    .search-keyword-badge:hover {
+        background-color: #f1f1f1;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .recent-keywords {
+        max-width: 100%;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    #clearSearchHistoryBtn {
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+    }
+
+    #clearSearchHistoryBtn:hover {
+        background-color: #e9ecef;
     }
 </style>
 
@@ -447,5 +661,126 @@
         blogCards.forEach(card => {
             card.classList.add('blog-card');
         });
+
+        // Category filter handling
+        function initCategoryFilters() {
+            // Add click handlers for category filters using AJAX
+            const categoryItems = document.querySelectorAll('.category-item, .category-filter-badge');
+            const clearCategoriesBtn = document.getElementById('clearCategoriesBtn');
+
+            console.log('Initializing category filters');
+            console.log('Found ' + categoryItems.length + ' category items');
+
+            // Log the web root for debugging
+            console.log('Web root: ' + '<?php echo _WEB_ROOT; ?>');
+
+            // Function to reload the page content after filter change
+            function reloadPage() {
+                window.location.reload();
+            }
+
+            // Add click handler for category items
+            categoryItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const categoryId = this.getAttribute('data-category-id');
+                    console.log('Category clicked: ' + categoryId);
+
+                    // Toggle active state visually
+                    this.classList.toggle('active');
+
+                    // Make AJAX request with a direct URL
+                    const url = '<?php echo _WEB_ROOT; ?>/blog/toggleCategory/' + categoryId;
+                    console.log('Making request to: ' + url);
+
+                    // Use regular form submission instead of AJAX for now
+                    window.location.href = url;
+
+                    /* 
+                    // Original AJAX code
+                    fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response data:', data);
+                        if (data.success) {
+                            // Reload the page to show filtered results
+                            reloadPage();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error toggling category:', error);
+                    });
+                    */
+                });
+            });
+
+            // Add click handler for clear categories button
+            if (clearCategoriesBtn) {
+                clearCategoriesBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Clear categories clicked');
+
+                    // Use regular form submission instead of AJAX for now
+                    window.location.href = '<?php echo _WEB_ROOT; ?>/blog/clearCategories';
+
+                    /*
+                    // Original AJAX code
+                    fetch(`<?php echo _WEB_ROOT; ?>/blog/clearCategories`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Reload the page to show all results
+                            reloadPage();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error clearing categories:', error);
+                    });
+                    */
+                });
+            }
+        }
+
+        // Initialize category filters
+        initCategoryFilters();
+
+        // Search history handling
+        function initSearchHistory() {
+            const clearSearchHistoryBtn = document.getElementById('clearSearchHistoryBtn');
+
+            if (clearSearchHistoryBtn) {
+                clearSearchHistoryBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Clear search history clicked');
+
+                    // Use regular navigation
+                    window.location.href = '<?php echo _WEB_ROOT; ?>/blog/clearSearchHistory';
+                });
+            }
+
+            // Make search keywords clickable
+            const searchKeywords = document.querySelectorAll('.search-keyword-badge');
+            searchKeywords.forEach(keyword => {
+                keyword.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('href');
+                    window.location.href = url;
+                });
+            });
+        }
+
+        // Initialize search history
+        initSearchHistory();
     });
 </script>

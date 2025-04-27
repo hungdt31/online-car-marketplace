@@ -11,7 +11,7 @@
 <body>
     <?php
     echo '<div style="min-height: 100vh; display: flex; flex-direction: column;">';
-    $this->render('components/Header/Shop/index', $content['header']);
+    $this->render('components/Header/General/index', $content['header']);
     echo '<div style="flex: 1;">';
     $this->render('pages/'. $view,  $content);
     echo '</div>';

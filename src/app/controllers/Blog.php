@@ -3,18 +3,56 @@ class Blog extends Controller
 {
     public $blog_model;
     public $category_model;
+    private $blog_session;
     
     public function __construct()
     {
         $this->blog_model = $this->model('BlogModel');
         $this->category_model = $this->model('CategoryModel');
+        $this->blog_session = SessionFactory::createSession('blog');
+        $this->blog_session->debugSession();
+    }
+    
+    // Helper method to get recent blog posts (either from storage or database)
+    private function getRecentBlogPosts()
+    {
+        // Check if we have recent blog IDs in session
+        if ($this->blog_session->hasRecentPosts()) {
+            // Get posts by stored IDs
+            return $this->blog_model->getPostsByIds($this->blog_session->getRecentPostIds());
+        }
+        
+        // Fallback to regular recent posts if no stored IDs
+        return $this->blog_model->getRecentPosts(3);
+    }
+    
+    // Helper method to get filtered blogs based on selected categories
+    private function getFilteredBlogs()
+    {
+        // Check if we have selected categories
+        if ($this->blog_session->hasSelectedCategories()) {
+            // Get blogs filtered by selected categories
+            return $this->blog_model->getBlogsByCategories($this->blog_session->getSelectedCategories());
+        }
+        
+        // No categories selected, return all blogs
+        return $this->blog_model->getList();
     }
     
     public function index()
     {
-        $blogs = $this->blog_model->getList();
+        $this->blog_session->debugSession();
+        $blogs = $this->getFilteredBlogs();
         $categories = $this->blog_model->getBlogCategories();
-        $recentPosts = $this->blog_model->getRecentPosts(3);
+        $recentPosts = $this->getRecentBlogPosts();
+        $recentKeywords = $this->blog_session->getRecentKeywords();
+        $currentKeyword = $this->blog_session->getCurrentKeyword();
+        
+        // Breadcrumb structure
+        $breadcrumbs = [
+            ['name' => 'Home', 'url' => _WEB_ROOT],
+            ['name' => 'Blog', 'url' => '']
+        ];
         
         $this->renderGeneral([
             'page_title' => 'Blog',
@@ -22,39 +60,28 @@ class Blog extends Controller
             'content' => [
                 'header' => [
                     'title' => 'Blogs',
-                    'description' => '//'
+                    'description' => $breadcrumbs
                 ],
                 'blogs' => $blogs,
                 'categories' => $categories,
-                'recentPosts' => $recentPosts
+                'recentPosts' => $recentPosts,
+                'hasRecentlyViewed' => $this->blog_session->hasRecentPosts(),
+                'selectedCategories' => $this->blog_session->getSelectedCategories(),
+                'recentKeywords' => $recentKeywords,
+                'hasRecentKeywords' => $this->blog_session->hasRecentKeywords(),
+                'currentKeyword' => $currentKeyword
             ]
         ]);
     }
     
     public function category($categoryId)
     {
-        $blogs = $this->blog_model->getBlogsByCategoryId($categoryId);
-        $categories = $this->blog_model->getBlogCategories();
-        $recentPosts = $this->blog_model->getRecentPosts(3);
-        $currentCategory = null;
+        // If we're accessing this directly, just add this category to our filter
+        $this->blog_session->addSelectedCategory((int)$categoryId);
         
-        foreach ($categories as $category) {
-            if ($category['id'] == $categoryId) {
-                $currentCategory = $category;
-                break;
-            }
-        }
-        
-        $this->renderGeneral([
-            'page_title' => 'Blog - ' . ($currentCategory ? $currentCategory['name'] : 'Category'),
-            'view' => 'public/blog/index',
-            'content' => [
-                'blogs' => $blogs,
-                'categories' => $categories,
-                'recentPosts' => $recentPosts,
-                'currentCategory' => $currentCategory
-            ]
-        ]);
+        // Redirect back to index where filtering will happen
+        header('Location: ' . _WEB_ROOT . '/blog');
+        exit;
     }
     
     public function detail($id)
@@ -67,40 +94,175 @@ class Blog extends Controller
             exit;
         }
         
+        // Store this blog ID in recently viewed posts
+        $this->blog_session->saveRecentPostId($id);
+        
         $categories = $this->blog_model->getBlogCategories();
-        $recentPosts = $this->blog_model->getRecentPosts(3);
+        $recentPosts = $this->getRecentBlogPosts();
+        $recentKeywords = $this->blog_session->getRecentKeywords();
+        
+        // Breadcrumb structure
+        $breadcrumbs = [
+            ['name' => 'Home', 'url' => _WEB_ROOT],
+            ['name' => 'Blog', 'url' => _WEB_ROOT . '/blog'],
+            ['name' => $blog['title'], 'url' => '']
+        ];
         
         $this->renderGeneral([
             'page_title' => $blog['title'],
             'view' => 'public/blog/detail',
             'content' => [
                 'header' => [
-                    'title' => $blog['title'],
-                    'description' => 'Home/Blog - ' . $blog['title']
+                    'title' => 'Blog Details',
+                    'description' => $breadcrumbs
                 ],
                 'blog' => $blog,
                 'categories' => $categories,
-                'recentPosts' => $recentPosts
+                'recentPosts' => $recentPosts,
+                'hasRecentlyViewed' => $this->blog_session->hasRecentPosts(),
+                'selectedCategories' => $this->blog_session->getSelectedCategories(),
+                'recentKeywords' => $recentKeywords,
+                'hasRecentKeywords' => $this->blog_session->hasRecentKeywords()
             ]
         ]);
     }
     
     public function search()
     {
-        $keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
-        $blogs = $this->blog_model->searchBlogs($keyword);
+        $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+        
+        // Store the keyword in session if it's not empty
+        if (!empty($keyword)) {
+            $this->blog_session->setCurrentKeyword($keyword);
+        }
+        
+        // Get filtered blogs based on keyword and selected categories
+        $blogs = [];
+        if ($this->blog_session->hasSelectedCategories()) {
+            // Search with both keyword and category filters
+            $blogs = $this->blog_model->searchBlogsByCategoriesAndKeyword(
+                $keyword, 
+                $this->blog_session->getSelectedCategories()
+            );
+        } else {
+            // Search with just keyword
+            $blogs = $this->blog_model->searchBlogs($keyword);
+        }
+        
         $categories = $this->blog_model->getBlogCategories();
-        $recentPosts = $this->blog_model->getRecentPosts(3);
+        $recentPosts = $this->getRecentBlogPosts();
+        $recentKeywords = $this->blog_session->getRecentKeywords();
+        
+        // Breadcrumb structure
+        $breadcrumbs = [
+            ['name' => 'Home', 'url' => _WEB_ROOT],
+            ['name' => 'Blog', 'url' => _WEB_ROOT . '/blog'],
+            ['name' => 'Search: ' . $keyword, 'url' => '']
+        ];
         
         $this->renderGeneral([
             'page_title' => 'Search: ' . $keyword,
             'view' => 'public/blog/index',
             'content' => [
+                'header' => [
+                    'title' => 'Search Results for: ' . $keyword,
+                    'description' => $breadcrumbs
+                ],
                 'blogs' => $blogs,
                 'categories' => $categories,
                 'recentPosts' => $recentPosts,
-                'keyword' => $keyword
+                'keyword' => $keyword,
+                'hasRecentlyViewed' => $this->blog_session->hasRecentPosts(),
+                'selectedCategories' => $this->blog_session->getSelectedCategories(),
+                'recentKeywords' => $recentKeywords,
+                'hasRecentKeywords' => $this->blog_session->hasRecentKeywords(),
+                'currentKeyword' => $keyword
             ]
         ]);
+    }
+    
+    /**
+     * Toggle a category in the filter
+     * 
+     * @param int $categoryId The ID of the category to toggle
+     * @return void
+     */
+    public function toggleCategory($categoryId)
+    {
+        // Log session state before changes
+        $this->blog_session->debugSession();
+        
+        // Convert to integer and toggle
+        $categoryId = (int)$categoryId;
+        $result = $this->blog_session->toggleSelectedCategory($categoryId);
+        
+        // Log session state after changes
+        $this->blog_session->debugSession();
+        
+        // Check and log current state
+        $selectedCategories = $this->blog_session->getSelectedCategories();
+        error_log('Category ' . $categoryId . ' toggled. Selected: ' . ($result ? 'Yes' : 'No'));
+        error_log('Current selected categories: ' . json_encode($selectedCategories));
+        
+        // If this is an AJAX request, return JSON response
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            $isSelected = $this->blog_session->isCategorySelected($categoryId);
+            $blogs = $this->getFilteredBlogs();
+            
+            echo json_encode([
+                'success' => true,
+                'isSelected' => $isSelected,
+                'selectedCategories' => $selectedCategories,
+                'blogCount' => count($blogs)
+            ]);
+            exit;
+        }
+        
+        // Otherwise redirect back to blog index
+        header('Location: ' . _WEB_ROOT . '/blog');
+        exit;
+    }
+    
+    /**
+     * Clear all selected categories
+     * 
+     * @return void
+     */
+    public function clearCategories()
+    {
+        $this->blog_session->clearSelectedCategories();
+        
+        // If this is an AJAX request, return JSON response
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            echo json_encode([
+                'success' => true
+            ]);
+            exit;
+        }
+        
+        // Otherwise redirect back to blog index
+        header('Location: ' . _WEB_ROOT . '/blog');
+        exit;
+    }
+    
+    /**
+     * Clear the search history
+     */
+    public function clearSearchHistory()
+    {
+        $this->blog_session->clearRecentKeywords();
+        $this->blog_session->clearCurrentKeyword();
+        
+        // If this is an AJAX request, return JSON response
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            echo json_encode([
+                'success' => true
+            ]);
+            exit;
+        }
+        
+        // Otherwise redirect back to blog index
+        header('Location: ' . _WEB_ROOT . '/blog');
+        exit;
     }
 }

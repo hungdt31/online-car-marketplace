@@ -145,4 +145,176 @@ class BlogModel extends Model
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
+    
+    public function getPostsByIds(array $ids)
+    {
+        if (empty($ids)) {
+            return [];
+        }
+        
+        // Create placeholders for IDs
+        $placeholders = implode(',', array_map(function($i) { 
+            return ':id' . $i; 
+        }, array_keys($ids)));
+        
+        $sql = "SELECT 
+                b.id, b.title, b.created_at,
+                f.url as cover_image_url
+            FROM $this->_table b
+            LEFT JOIN files f ON b.cover_image_id = f.id
+            WHERE b.id IN ($placeholders)";
+        
+        // Prepare parameters
+        $params = [];
+        foreach ($ids as $key => $id) {
+            $params[':id' . $key] = $id;
+        }
+        
+        $result = $this->db->execute($sql, $params);
+        return $result['data'];
+    }
+    
+    /**
+     * Get blogs filtered by multiple category IDs - must have ALL categories
+     * 
+     * @param array $categoryIds Array of category IDs to filter by
+     * @param int|null $limit Maximum number of blogs to return
+     * @param int|null $offset Starting offset for pagination
+     * @return array The filtered blog posts
+     */
+    public function getBlogsByCategories(array $categoryIds, $limit = null, $offset = null)
+    {
+        error_log('Getting blogs for categories: ' . json_encode($categoryIds));
+        
+        if (empty($categoryIds)) {
+            error_log('No category IDs provided, returning all blogs');
+            return $this->getList($limit, $offset);
+        }
+        
+        // We use a different approach to find posts with ALL categories
+        // For each category, we need a matching entry in category_mappings
+        // Count these matches and ensure they equal the number of category IDs
+        
+        $categoryCount = count($categoryIds);
+        
+        // Create placeholders for category IDs
+        $placeholders = implode(',', array_map(function($i) { 
+            return ':cat_id' . $i; 
+        }, array_keys($categoryIds)));
+        
+        $sql = "SELECT 
+                b.id, b.title, b.content, b.views, b.created_at, b.updated_at,
+                u.username as author_name, 
+                f.url as cover_image_url
+            FROM $this->_table b
+            LEFT JOIN users u ON b.author_id = u.id
+            LEFT JOIN files f ON b.cover_image_id = f.id
+            WHERE b.id IN (
+                SELECT cm.entity_id
+                FROM category_mappings cm
+                WHERE cm.entity_type = 'blogs' 
+                AND cm.category_id IN ($placeholders)
+                GROUP BY cm.entity_id
+                HAVING COUNT(DISTINCT cm.category_id) = :category_count
+            )
+            ORDER BY b.created_at DESC";
+        
+        // Add limit and offset if provided
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            if ($offset !== null) {
+                $sql .= " OFFSET :offset";
+            }
+        }
+        
+        // Prepare parameters
+        $params = [':category_count' => $categoryCount];
+        foreach ($categoryIds as $key => $id) {
+            $params[':cat_id' . $key] = $id;
+        }
+        
+        if ($limit !== null) {
+            $params[':limit'] = $limit;
+            if ($offset !== null) {
+                $params[':offset'] = $offset;
+            }
+        }
+        
+        error_log('SQL: ' . $sql);
+        error_log('Params: ' . json_encode($params));
+        
+        $result = $this->db->execute($sql, $params);
+        error_log('Found ' . count($result['data']) . ' blogs');
+        return $result['data'];
+    }
+
+    /**
+     * Search blogs by keyword and filter by categories
+     * 
+     * @param string $keyword The search keyword
+     * @param array $categoryIds Array of category IDs to filter by
+     * @param int|null $limit Maximum number of blogs to return
+     * @param int|null $offset Starting offset for pagination
+     * @return array The filtered blog posts matching both keyword and categories
+     */
+    public function searchBlogsByCategoriesAndKeyword($keyword, array $categoryIds, $limit = null, $offset = null)
+    {
+        if (empty($categoryIds)) {
+            return $this->searchBlogs($keyword);
+        }
+        
+        // Count the number of categories to filter by
+        $categoryCount = count($categoryIds);
+        
+        // Create placeholders for category IDs
+        $placeholders = implode(',', array_map(function($i) { 
+            return ':cat_id' . $i; 
+        }, array_keys($categoryIds)));
+        
+        $sql = "SELECT 
+                b.id, b.title, b.content, b.views, b.created_at, b.updated_at,
+                u.username as author_name, 
+                f.url as cover_image_url
+            FROM $this->_table b
+            LEFT JOIN users u ON b.author_id = u.id
+            LEFT JOIN files f ON b.cover_image_id = f.id
+            WHERE (b.title LIKE :keyword OR b.content LIKE :keyword)
+            AND b.id IN (
+                SELECT cm.entity_id
+                FROM category_mappings cm
+                WHERE cm.entity_type = 'blogs' 
+                AND cm.category_id IN ($placeholders)
+                GROUP BY cm.entity_id
+                HAVING COUNT(DISTINCT cm.category_id) = :category_count
+            )
+            ORDER BY b.created_at DESC";
+        
+        // Add limit and offset if provided
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            if ($offset !== null) {
+                $sql .= " OFFSET :offset";
+            }
+        }
+        
+        // Prepare parameters
+        $params = [
+            ':keyword' => '%' . $keyword . '%',
+            ':category_count' => $categoryCount
+        ];
+        
+        foreach ($categoryIds as $key => $id) {
+            $params[':cat_id' . $key] = $id;
+        }
+        
+        if ($limit !== null) {
+            $params[':limit'] = $limit;
+            if ($offset !== null) {
+                $params[':offset'] = $offset;
+            }
+        }
+        
+        $result = $this->db->execute($sql, $params);
+        return $result['data'];
+    }
 }

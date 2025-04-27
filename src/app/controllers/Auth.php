@@ -228,7 +228,6 @@ class Auth extends Controller
         // Lấy thông tin người dùng
         $user = $fb->getUserInfo();
         echo '<pre>' . print_r($user, true) . '</pre>';
-        echo $user->getProperty('email');
         // User is logged in with a long-lived access token.
         // You can redirect them to a members-only page.
         //header('Location: https://example.com/members.php');          

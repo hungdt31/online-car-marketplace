@@ -204,15 +204,15 @@ $profile = $account->getProfile();
                                 <div class="text-warning"><?= $ratingStars; ?></div>
                                 <p><?php echo $comment['content']; ?></p>
                                 <?php
-                                    // kiểm tra xem có file đính kèm không
-                                    if (!empty($comment['comment_file'])) {
-                                        $fileType = pathinfo($comment['comment_file'], PATHINFO_EXTENSION);
-                                        if (in_array($fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-                                            echo '<img src="' . htmlspecialchars($comment['comment_file']) . '" class="img-fluid" alt="Comment File">';
-                                        } else if (in_array($fileType, ['mp4', 'avi', 'mov'])) {
-                                            echo '<video controls class="w-100"><source src="' . htmlspecialchars($comment['comment_file']) . '" type="video/' . $fileType . '"></video>';
-                                        }
+                                // kiểm tra xem có file đính kèm không
+                                if (!empty($comment['comment_file'])) {
+                                    $fileType = pathinfo($comment['comment_file'], PATHINFO_EXTENSION);
+                                    if (in_array($fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                        echo '<img src="' . htmlspecialchars($comment['comment_file']) . '" class="img-fluid" alt="Comment File">';
+                                    } else if (in_array($fileType, ['mp4', 'avi', 'mov'])) {
+                                        echo '<video controls class="w-100"><source src="' . htmlspecialchars($comment['comment_file']) . '" type="video/' . $fileType . '"></video>';
                                     }
+                                }
                                 ?>
                                 <div>
                                     <strong><?= htmlspecialchars($comment['username']); ?></strong>
@@ -434,7 +434,7 @@ $profile = $account->getProfile();
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" value="<?php echo $profile['id'] . '-' . $info['id']; ?>" id="uc_id">Save changes</button>
+                <button type="submit" class="btn btn-primary save-comment-btn" data-user-id="<?php echo $profile['id']; ?>" data-car-id="<?php echo $info['id']; ?>">Save changes</button>
             </div>
         </div>
     </div>
