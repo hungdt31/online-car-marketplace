@@ -24,4 +24,23 @@ class CategoryModel extends Model
         $result = $this->db->execute($sql);
         return $result['data'];
     }
+
+    public function getCategoryTypeBlog()
+    {
+        $sql = "
+            SELECT 
+                cat.id,
+                cat.name,
+                cat.description,
+                cat.type,
+                COUNT(cm.category_id) AS reference_count
+            FROM categories cat
+            LEFT JOIN category_mappings cm ON cat.id = cm.category_id AND cm.entity_type = 'blogs'
+            GROUP BY cat.id, cat.name, cat.description, cat.type
+            ORDER BY reference_count DESC
+            LIMIT 3;
+        ";
+        $result = $this->db->execute($sql);
+        return $result['data'];
+    }
 }

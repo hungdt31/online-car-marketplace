@@ -32,7 +32,7 @@
         [
             'name' => 'Blogs',
             'icon' => 'bi bi-postcard-heart',
-            'link' => _WEB_ROOT . '/admin/orders',
+            'link' => _WEB_ROOT . '/blogs-management',
         ],
         [
             'name' => 'Categories',
