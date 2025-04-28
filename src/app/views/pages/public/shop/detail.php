@@ -252,6 +252,7 @@ $profile = $account->getProfile();
                 </div>
             </div>
 
+            <!-- Hours Opening -->
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Opening Hours</h5>
@@ -259,7 +260,7 @@ $profile = $account->getProfile();
                 <div class="card-body">
                     <div class="time-row">
                         <span class="status"><i class="bi bi-unlock-fill me-1"></i>Open</span>
-                        <span class="time btn btn-light">00:00 - 23:30</span>
+                        <span class="time btn btn-light">08:00 - 22:00</span>
                     </div>
                     <div class="time-row">
                         <span class="day">Sunday</span>
@@ -267,39 +268,100 @@ $profile = $account->getProfile();
                     </div>
                     <div class="time-row">
                         <span class="day">Monday</span>
-                        <span class="time">00:00 - 23:30</span>
+                        <span class="time">08:00 - 22:00</span>
                     </div>
                     <div class="time-row">
                         <span class="day">Tuesday</span>
-                        <span class="time">00:00 - 23:30</span>
+                        <span class="time">08:00 - 22:00</span>
                     </div>
                     <div class="time-row">
                         <span class="day">Wednesday</span>
-                        <span class="time">00:00 - 23:30</span>
+                        <span class="time">08:00 - 22:00</span>
                     </div>
                     <div class="time-row">
                         <span class="day">Thursday</span>
-                        <span class="time">00:00 - 23:30</span>
+                        <span class="time">08:00 - 22:00</span>
                     </div>
                     <div class="time-row">
                         <span class="day">Friday</span>
-                        <span class="time">00:00 - 23:30</span>
+                        <span class="time">08:00 - 22:00</span>
                     </div>
                     <div class="time-row">
                         <span class="day">Saturday</span>
-                        <span class="time">00:00 - 23:30</span>
+                        <span class="time">08:00 - 19:00</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- Schedule Test Drive Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Schedule Purchase Appointment</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/shop/scheduleAppointment" method="POST" id="scheduleForm">
+                        <input type="hidden" name="carId" value="<?php echo $info['id']; ?>">
+                        <input type="hidden" name="userId" value="<?php echo $profile['id']; ?>">
+
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName"
+                                value="<?php echo isset($profile['fname']) ? htmlspecialchars($profile['fname'] . ' ' . $profile['lname']) : ''; ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber"
+                                value="<?php echo isset($profile['phone']) ? htmlspecialchars($profile['phone']) : ''; ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="<?php echo isset($profile['email']) ? htmlspecialchars($profile['email']) : ''; ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointmentDate" class="form-label">Select Date</label>
+                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate"
+                                min="<?php echo date('Y-m-d'); ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointmentTime" class="form-label">Select Time</label>
+                            <input type="time" class="form-control" id="appointmentTime" name="appointmentTime" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointmentPurpose" class="form-label">Purpose</label>
+                            <select class="form-select" id="appointmentPurpose" name="appointmentPurpose" required>
+                                <option value="" selected disabled>Select purpose</option>
+                                <option value="test_drive">Test Drive</option>
+                                <option value="inspection">Vehicle Inspection</option>
+                                <option value="purchase">Purchase Discussion</option>
+                                <option value="financing">Financing Options</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointmentNotes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="appointmentNotes" name="appointmentNotes" rows="3"
+                                placeholder="Any specific requests or questions..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Schedule Appointment</button>
+                    </form>
                 </div>
             </div>
 
             <!-- Related Vehicles -->
             <?php if (!empty($info['related_cars'])): ?>
-                <div class="card pb-4">
+                <div class="card pb-4 shadow-none">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Related Vehicles</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <?php foreach ($info['related_cars'] as $related): ?>
                                 <div>
                                     <div class="card h-100">
