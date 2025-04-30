@@ -10,7 +10,7 @@ class Home extends Controller{
         $this->car_model = $this->model('CarModel');
     }
     public function index() {
-        $this->renderUser([
+        $this->renderHome([
             'page_title' => 'Home',
             'view' => 'public/home',
             'content' => [
@@ -43,7 +43,7 @@ class Home extends Controller{
         echo 'Keyword: '.$keyword;
     }
     public function contact() {
-        $this->renderUser([
+        $this->renderHome([
             'page_title' => 'Contact us',
             'view' => 'public/contact'
         ]);

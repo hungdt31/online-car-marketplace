@@ -1,6 +1,9 @@
 <?php
 $account = SessionFactory::createSession('account');
 $profile = $account->getProfile();
+global $opening_hours;
+global $earliestOpeningTime;
+global $latestClosingTime;
 ?>
 <div class="container-fluid px-4 py-3">
     <!-- Main Content Grid -->
@@ -260,36 +263,18 @@ $profile = $account->getProfile();
                 <div class="card-body">
                     <div class="time-row">
                         <span class="status"><i class="bi bi-unlock-fill me-1"></i>Open</span>
-                        <span class="time btn btn-light">08:00 - 22:00</span>
+                        <span class="time btn btn-light"><?= $earliestOpeningTime . '-' . $latestClosingTime ?></span>
                     </div>
-                    <div class="time-row">
-                        <span class="day">Sunday</span>
-                        <span class="time">12:00 - 19:00</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="day">Monday</span>
-                        <span class="time">08:00 - 22:00</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="day">Tuesday</span>
-                        <span class="time">08:00 - 22:00</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="day">Wednesday</span>
-                        <span class="time">08:00 - 22:00</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="day">Thursday</span>
-                        <span class="time">08:00 - 22:00</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="day">Friday</span>
-                        <span class="time">08:00 - 22:00</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="day">Saturday</span>
-                        <span class="time">08:00 - 19:00</span>
-                    </div>
+                    <?php
+                    foreach ($opening_hours as $day => $hours) {
+                        if ($hours['open'] && $hours['close']) {
+                            echo '<div class="time-row">';
+                            echo '<span class="date">' . htmlspecialchars($day) . '</span>';
+                            echo '<span class="time">' . htmlspecialchars($hours['open']) . ' - ' . htmlspecialchars($hours['close']) . '</span>';
+                            echo '</div>';
+                        }
+                    }
+                    ?>
                 </div>
             </div>
 
@@ -302,24 +287,6 @@ $profile = $account->getProfile();
                     <form action="/shop/scheduleAppointment" method="POST" id="scheduleForm">
                         <input type="hidden" name="carId" value="<?php echo $info['id']; ?>">
                         <input type="hidden" name="userId" value="<?php echo $profile['id']; ?>">
-
-                        <div class="mb-3">
-                            <label for="fullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="fullName" name="fullName"
-                                value="<?php echo isset($profile['fname']) ? htmlspecialchars($profile['fname'] . ' ' . $profile['lname']) : ''; ?>" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="phoneNumber" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber"
-                                value="<?php echo isset($profile['phone']) ? htmlspecialchars($profile['phone']) : ''; ?>" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                value="<?php echo isset($profile['email']) ? htmlspecialchars($profile['email']) : ''; ?>" required>
-                        </div>
 
                         <div class="mb-3">
                             <label for="appointmentDate" class="form-label">Select Date</label>
@@ -405,32 +372,7 @@ $profile = $account->getProfile();
 <style>
     <?php
     RenderSystem::renderOne('assets', 'static/css/shop/detail.css', []);
-    ?>.color-picker {
-        width: 1.8rem;
-        height: 1.8rem;
-        border-radius: 50%;
-        overflow: hidden;
-        padding: 0;
-        border: none;
-        cursor: pointer;
-        position: relative;
-        margin: 2px;
-        vertical-align: middle;
-    }
-
-    .color-picker::-webkit-color-swatch-wrapper {
-        padding: 0;
-    }
-
-    .color-picker::-webkit-color-swatch {
-        border: none;
-        border-radius: 50%;
-    }
-
-    .color-picker::-moz-color-swatch {
-        border: none;
-        border-radius: 50%;
-    }
+    ?>
 </style>
 
 <!-- Modal -->
@@ -447,8 +389,8 @@ $profile = $account->getProfile();
                     <input type="text" class="form-control" id="commentTitle" placeholder="Enter title" name="commentTitle">
                 </div>
                 <div class="mb-3">
-                    <label for="commentContent" class="form-label fw-bold">Content</label>
-                    <div class="editor-container"></div>
+                    <label for="editorContent" class="form-label fw-bold">Content</label>
+                    <div class="editor-container" data-default="Good experience!"></div>
                 </div>
                 <div class="mb-4">
                     <label for="star-rating" class="form-label fw-bold">Rating</label>

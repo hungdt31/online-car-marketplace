@@ -241,7 +241,7 @@ $(document).ready(function () {
         processData: false, // Important for FormData
         contentType: false, // Important for FormData
         success: function (result) {
-          console.log(result);
+          // console.log(result);
 
           if (typeof toastr !== "undefined") {
             result.success

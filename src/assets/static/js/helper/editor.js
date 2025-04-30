@@ -8,7 +8,7 @@ import Color from "https://esm.sh/@tiptap/extension-color";
 const editor = new Editor({
   element: document.querySelector(".editor-container"),
   extensions: [StarterKit, Image, TextStyle, Color],
-  content: "<p>Write your comment here...</p>",
+  content: document.querySelector(".editor-container").dataset.default,
   editorProps: {
     attributes: {
       class: "form-control editor-content p-3",
@@ -111,8 +111,9 @@ toolbar.appendChild(colorPicker);
 // Add a hidden field to store HTML content
 const hiddenField = document.createElement("input");
 hiddenField.type = "hidden";
-hiddenField.name = "commentContent";
-hiddenField.id = "commentContent";
+hiddenField.name = "editorContent";
+hiddenField.id = "editorContent";
+hiddenField.value = editor.getHTML(); // Set initial value to the current content
 document.querySelector(".editor-container").parentNode.appendChild(hiddenField);
 
 // Update hidden field when content changes

@@ -13,7 +13,12 @@ class UserModel extends Model {
         return hash_hmac($this->algo, $password, $this->secret_key);
     }
     public function findOne($data) {
-        $sql = "SELECT * FROM $this->_table WHERE email = :email";
+        $sql = "
+        SELECT u.*, f.url AS avatar 
+        FROM $this->_table u
+        LEFT JOIN files f ON u.avatar_id = f.id
+        WHERE u.email = :email
+        ";
         $params = [':email' => $data['email']];
         $result = $this->db->execute($sql, $params, true);
         if ($result['success'] && $result['data']) {
@@ -31,6 +36,12 @@ class UserModel extends Model {
             }
         }
         return false;
+    }
+    public function findById($id) {
+        $sql = "SELECT * FROM $this->_table WHERE id = :id";
+        $params = [':id' => $id];
+        $result = $this->db->execute($sql, $params, true);
+        return $result['data'];
     }
     public function findAll() {
         $sql = "SELECT * FROM $this->_table";
@@ -65,12 +76,29 @@ class UserModel extends Model {
         }
         return $result;
     }
-    public function updateUser($id, $email, $password, $role) {
-        $sql = "UPDATE $this->_table SET email = '$email', password = '$password', role = '$role' WHERE id = $id";
-        $result = $this->db->execute($sql);
-        return $result;
+    public function updateOne($id, $data) {
+        $sql = "
+        UPDATE $this->_table
+        SET email = :email, username = :username, fname = :fname, 
+        lname = :lname, bio = :bio, phone = :phone, 
+        address = :address, gender = :gender
+        WHERE id = :id
+        ";
+        $params = [
+            ':email' => $data['email'],
+            ':username' => $data['username'],
+            ':fname' => $data['fname'],
+            ':lname' => $data['lname'],
+            ':bio' => $data['bio'],
+            ':phone' => $data['phone'],
+            ':address' => $data['address'],
+            ':gender' => $data['gender'],
+            ':id' => $id,
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
     }
-    public function deleteUser($id) {
+    public function deleteOne($id) {
         $sql = "DELETE FROM $this->_table WHERE id = $id";
         $result = $this->db->execute($sql);
         return $result;

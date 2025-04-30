@@ -19,8 +19,8 @@ class Controller {
             require_once _DIR_ROOT.'/app/views/'.$_view.'.php';
         }
     }
-    public function renderUser ($data=[]) {
-        $this->render('layouts/user', $data);
+    public function renderHome ($data=[]) {
+        $this->render('layouts/home', $data);
     }
     public function renderAdmin ($data=[]) {
         $this->render('layouts/admin', $data);
