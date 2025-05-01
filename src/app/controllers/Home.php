@@ -25,6 +25,12 @@ class Home extends Controller{
             'view' => 'public/about'
         ]);
     }
+    public function help() {
+        $this->renderUser([
+            'page_title' => 'Help Center',
+            'view' => 'public/help'
+        ]);
+    }
     public function getCarsByCategory() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $arrayIds = [];

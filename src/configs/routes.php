@@ -13,3 +13,4 @@ $routes['cars-management'] = 'admin/cars';
 $routes['car-assets/(:num)'] = 'admin/cars/assets/$1';
 $routes['dashboard'] = 'admin/dashboard';
 $routes['blogs-management'] = 'admin/posts';
+$routes['help'] = 'home/help';
