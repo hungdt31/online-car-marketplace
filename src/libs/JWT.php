@@ -50,11 +50,11 @@ class JwtAuth {
         $this->token_from_cookie = [
             'access' => [
                 'expire' => intval(getenv('ACCESS_TOKEN_EXPIRE')),
-                'value' => $_COOKIE['access_token']
+                'value' => isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : null
             ],
             'refresh' => [
                 'expire' => intval(getenv('REFRESH_TOKEN_EXPIRE')),
-                'value' => $_COOKIE['refresh_token']
+                'value' => isset($_COOKIE['refresh_token']) ? $_COOKIE['refresh_token'] : null
             ]
         ];
     }

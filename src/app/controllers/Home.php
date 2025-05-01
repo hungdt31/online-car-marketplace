@@ -19,6 +19,12 @@ class Home extends Controller{
             ]
         ]);
     }
+    public function about() {
+        $this->renderUser([
+            'page_title' => 'About Us',
+            'view' => 'public/about'
+        ]);
+    }
     public function getCarsByCategory() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $arrayIds = [];

@@ -1,0 +1,15 @@
+{
+    "name": "php-docker-mvc",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "tailwindcss -i ./src/assets/css/main.css -o ./src/assets/dist/css/tailwind.css --watch"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "tailwindcss": "^3.4.17"
+    }
+}

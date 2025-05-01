@@ -1,6 +1,9 @@
 <!-- Meta Tags -->
 <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Tailwind CSS -->
+<link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/dist/css/tailwind.css" />
+
 <!-- Bootstrap CSS and JS -->
 <script src="<?php echo _WEB_ROOT ?>/assets/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="<?php echo _WEB_ROOT ?>/assets/dist/css/bootstrap.min.css" />

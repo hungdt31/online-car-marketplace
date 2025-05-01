@@ -5,6 +5,7 @@ $routes['san-pham/chi-tiet/(:num)'] = 'product/detail/$1'; // Chỉ chấp nhậ
 $routes['trang-chu'] = 'home';
 $routes['tin-tuc/.+-(\d+).html'] = 'news/category/$1';
 $routes['contact'] = 'home/contact';
+$routes['about'] = 'home/about';
 $routes['account'] = 'user/account';
 $routes['auth/google-redirect'] = 'auth/googleAuth';
 $routes['auth/facebook-redirect'] = 'auth/facebookAuth';
