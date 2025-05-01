@@ -4,10 +4,12 @@ class Account extends Controller
 {
     private $jwt;
     private $user_model;
+    private $appointments_model;
     public function __construct()
     {
         $this->jwt = new JwtAuth();
         $this->user_model = $this->model('UserModel');
+        $this->appointments_model = $this->model('AppointmentModel');
     }
     public function index()
     {
@@ -16,11 +18,13 @@ class Account extends Controller
             ['name' => 'Account', 'url' => '']
         ];
         $profile = SessionFactory::createSession('account')->getProfile();
+        $appointments = $this->appointments_model->getAll($profile['id']);
         $this->renderGeneral([
             'page_title' => 'Account',
             'view' => 'protected/account',
             'content' => [
                 'profile' => $profile,
+                'appointments' => $appointments,
                 'header' => [
                     'title' => $profile ? $profile['fname']. ' '. $profile['lname'] : 'My account',
                     'description' => $breadcrumbs

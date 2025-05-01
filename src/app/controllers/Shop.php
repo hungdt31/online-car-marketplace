@@ -5,6 +5,7 @@ class Shop extends Controller{
     protected $file_model;
     protected $user_model;
     protected $shop_session;
+    protected $appointment_model;
     public $data = [];
     
     public function __construct() {
@@ -12,6 +13,7 @@ class Shop extends Controller{
         $this->comment_model = $this->model('CommentModel');
         $this->file_model = $this->model('FileModel');
         $this->user_model = $this->model('UserModel');
+        $this->appointment_model = $this->model('AppointmentModel');
         $this->shop_session = SessionFactory::createSession('shop');
     }
     
@@ -329,5 +331,29 @@ class Shop extends Controller{
             $subject,
             $message
         );
+    }
+
+    public function schedule() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Save appointment to database
+            $result = $this->appointment_model->create($_POST);
+            
+            if ($result) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Appointment scheduled successfully!'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Failed to schedule appointment.'
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Invalid request method.'
+            ]);
+        }
     }
 }

@@ -1,6 +1,5 @@
 <?php
 $currentTab = $_GET['tab'] ?? 'profile';
-// echo '<pre>' . print_r($profile, true) . '</pre>';
 ?>
 <div class="profile-container">
     <!-- Top Navigation Area -->
@@ -45,7 +44,7 @@ $currentTab = $_GET['tab'] ?? 'profile';
     <?php elseif ($currentTab === 'appointments'): ?>
         <?php
             RenderSystem::renderOne('components', 'Account/appointments', [
-                'profile' => $profile
+                'appointments' => $appointments,
             ]);
         ?>
     <?php endif; ?>

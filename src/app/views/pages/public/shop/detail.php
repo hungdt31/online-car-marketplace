@@ -279,47 +279,12 @@ global $latestClosingTime;
             </div>
 
             <!-- Schedule Test Drive Card -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Schedule Purchase Appointment</h5>
-                </div>
-                <div class="card-body">
-                    <form action="/shop/scheduleAppointment" method="POST" id="scheduleForm">
-                        <input type="hidden" name="carId" value="<?php echo $info['id']; ?>">
-                        <input type="hidden" name="userId" value="<?php echo $profile['id']; ?>">
-
-                        <div class="mb-3">
-                            <label for="appointmentDate" class="form-label">Select Date</label>
-                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate"
-                                min="<?php echo date('Y-m-d'); ?>" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="appointmentTime" class="form-label">Select Time</label>
-                            <input type="time" class="form-control" id="appointmentTime" name="appointmentTime" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="appointmentPurpose" class="form-label">Purpose</label>
-                            <select class="form-select" id="appointmentPurpose" name="appointmentPurpose" required>
-                                <option value="" selected disabled>Select purpose</option>
-                                <option value="test_drive">Test Drive</option>
-                                <option value="inspection">Vehicle Inspection</option>
-                                <option value="purchase">Purchase Discussion</option>
-                                <option value="financing">Financing Options</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="appointmentNotes" class="form-label">Additional Notes</label>
-                            <textarea class="form-control" id="appointmentNotes" name="appointmentNotes" rows="3"
-                                placeholder="Any specific requests or questions..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100">Schedule Appointment</button>
-                    </form>
-                </div>
-            </div>
+            <?php
+            RenderSystem::renderOne('components', 'Shop/schedule', [
+                'car_id' => $info['id'],
+                'user_id' => $profile['id'],
+            ]);
+            ?>
 
             <!-- Related Vehicles -->
             <?php if (!empty($info['related_cars'])): ?>

@@ -11,7 +11,7 @@
     <?php
     $this->render('pages/'. $view, $content);
     ?>
-    <script type="text/javascript" src="<?php echo _WEB_ROOT ?>/assets/static/js/auth.js"></script>
+    <script type="text/javascript" src="<?php echo _WEB_ROOT ?>/assets/static/js/pages/auth.js"></script>
 </body>
 
 </html>

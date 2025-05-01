@@ -44,52 +44,52 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  if (scheduleForm) {
-    scheduleForm.addEventListener("submit", function (e) {
-      e.preventDefault();
+  // if (scheduleForm) {
+  //   scheduleForm.addEventListener("submit", function (e) {
+  //     e.preventDefault();
 
-      const fullName = document.getElementById("fullName").value;
-      const phoneNumber = document.getElementById("phoneNumber").value;
-      const email = document.getElementById("email").value;
-      const date = document.getElementById("appointmentDate").value;
-      const time = document.getElementById("appointmentTime").value;
-      const purpose = document.getElementById("appointmentPurpose").value;
+  //     const fullName = document.getElementById("fullName").value;
+  //     const phoneNumber = document.getElementById("phoneNumber").value;
+  //     const email = document.getElementById("email").value;
+  //     const date = document.getElementById("appointmentDate").value;
+  //     const time = document.getElementById("appointmentTime").value;
+  //     const purpose = document.getElementById("appointmentPurpose").value;
 
-      if (!fullName || !phoneNumber || !email || !date || !time || !purpose) {
-        alert("Please fill in all required fields");
-        return;
-      }
+  //     if (!fullName || !phoneNumber || !email || !date || !time || !purpose) {
+  //       alert("Please fill in all required fields");
+  //       return;
+  //     }
 
-      // Validate email format
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        alert("Please enter a valid email address");
-        return;
-      }
+  //     // Validate email format
+  //     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //     if (!emailPattern.test(email)) {
+  //       alert("Please enter a valid email address");
+  //       return;
+  //     }
 
-      // Validate phone number (basic validation)
-      const phonePattern = /^[0-9]{10,15}$/;
-      if (!phonePattern.test(phoneNumber.replace(/[\s-()]/g, ""))) {
-        alert("Please enter a valid phone number");
-        return;
-      }
+  //     // Validate phone number (basic validation)
+  //     const phonePattern = /^[0-9]{10,15}$/;
+  //     if (!phonePattern.test(phoneNumber.replace(/[\s-()]/g, ""))) {
+  //       alert("Please enter a valid phone number");
+  //       return;
+  //     }
 
-      // Convert time to check if within business hours (assuming 9AM-6PM)
-      const hourSelected = parseInt(time.split(":")[0]);
-      if (hourSelected < 9 || hourSelected >= 18) {
-        if (
-          !confirm(
-            "The selected time is outside regular business hours (9AM-6PM). Would you like to proceed anyway?"
-          )
-        ) {
-          return;
-        }
-      }
+  //     // Convert time to check if within business hours (assuming 9AM-6PM)
+  //     const hourSelected = parseInt(time.split(":")[0]);
+  //     if (hourSelected < 9 || hourSelected >= 18) {
+  //       if (
+  //         !confirm(
+  //           "The selected time is outside regular business hours (9AM-6PM). Would you like to proceed anyway?"
+  //         )
+  //       ) {
+  //         return;
+  //       }
+  //     }
 
-      // If validation passes, submit the form
-      this.submit();
-    });
-  }
+  //     // If validation passes, submit the form
+  //     this.submit();
+  //   });
+  // }
 });
 
 // Add this to your existing script or create a new script block
