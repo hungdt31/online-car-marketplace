@@ -68,7 +68,7 @@
         submitButton.disabled = true;
         submitButton.innerText = "Sending...";
 
-        xhr.open("POST", "product/sendMail", true);
+        xhr.open("POST", "shop/sendMail", true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 submitButton.disabled = false;

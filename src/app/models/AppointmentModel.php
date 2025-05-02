@@ -44,5 +44,13 @@ class AppointmentModel extends Model {
         $result = $this->db->execute($sql, $params);
         return $result['success'];
     }
-
+    public function updateStatus($id, $status) {
+        $sql = "UPDATE {$this->_table} SET status = :status WHERE id = :id";
+        $params = [
+            ':status' => $status,
+            ':id' => $id,
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
 }

@@ -113,4 +113,14 @@ class UserModel extends Model {
         $result = $this->db->execute($sql);
         return $result['data'];
     }
+    public function updateResetPasswordToken($data) {
+        $sql = "UPDATE $this->_table SET reset_token = :token, reset_token_expires = :expires_at WHERE email = :email";
+        $params = [
+            ':token' => $data['token'],
+            ':expires_at' => $data['expires_at'],
+            ':email' => $data['email'],
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
 }

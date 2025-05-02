@@ -38,6 +38,13 @@ class Auth extends Controller
                 "email" => $email,
                 "password" => $password
             ];
+            if (empty($email) || empty($password)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Email and password are required'
+                ]);
+                exit();
+            }
             // Kiểm tra email và password
             $result = $this->user_model->findOne($payload);
             if ($result) {
@@ -68,6 +75,13 @@ class Auth extends Controller
     public function signup()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Username, email and password are required'
+                ]);
+                exit();
+            }
             $response = $this->user_model->createOne([
                 'username' => $_POST['username'],
                 'email' => $_POST['email'],
@@ -79,6 +93,70 @@ class Auth extends Controller
                 'message' => !empty($response['success'])
                     ? 'Successfully signed up, ' . $_POST['email']
                     : 'Failed to sign up: ' . $response['message']
+            ]);
+        }
+    }
+    public function forgotPassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = $_POST['email'];
+            $user = $this->user_model->findOne(['email' => $email]);
+
+            if ($user['success']) {
+                // Generate reset token
+                $token = bin2hex(random_bytes(32));
+                $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+                // Save token to database
+                $this->user_model->updateResetPasswordToken(
+                    [
+                        'email' => $email,
+                        'token' => $token,
+                        'expires_at' => $expires
+                    ]
+                );
+
+                // Send reset email
+                $resetLink = _WEB_ROOT . "/reset-password?token=" . $token;
+                $subject = "Password Reset Request";
+                $message = "Click the following link to reset your password: " . $resetLink . "\n\n";
+                $message .= "This link will expire in 1 hour.";
+
+                try {
+                    Mailer::send(
+                        [
+                            'address' => getenv('EMAIL_USERNAME'),
+                            'name' => 'Admin'
+                        ],
+                        [
+                            'address' => $email,
+                            'name' => 'User'
+                        ],
+                        [
+                            'address' => $email,
+                        ],
+                        $subject,
+                        $message
+                    );
+                    $this->renderAuth([
+                        'page_title' => 'Forgot password',
+                        'view' => 'auth/forgotPassword',
+                        'success' => 'Password reset link has been sent to your email.'
+                    ]);
+                } catch (Exception $e) {
+                    // Handle error if email sending fails
+                    $this->renderAuth([
+                        'page_title' => 'Forgot password',
+                        'view' => 'auth/forgotPassword',
+                        'error' => 'Failed to send reset email. Please try again.'
+                    ]);
+                    return;
+                }
+            }
+        } else {
+            $this->renderAuth([
+                'page_title' => 'Forgot password',
+                'view' => 'auth/forgotPassword'
             ]);
         }
     }
@@ -231,5 +309,65 @@ class Auth extends Controller
         // User is logged in with a long-lived access token.
         // You can redirect them to a members-only page.
         //header('Location: https://example.com/members.php');          
+    }
+    public function resetPassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $token = $_POST['token'];
+            $password = $_POST['password'];
+            $confirm_password = $_POST['confirm_password'];
+            
+            // Validate passwords match
+            if ($password !== $confirm_password) {
+                $this->renderAuth([
+                    'page_title' => 'Reset password',
+                    'view' => 'auth/resetPassword',
+                    'error' => 'Passwords do not match.'
+                ]);
+                return;
+            }
+            
+            // Find user by token
+            $user = $this->user_model->findOne([
+                'reset_token' => $token,
+                'reset_token_expires >' => date('Y-m-d H:i:s')
+            ]);
+            
+            if ($user['success']) {
+                // Update password and clear reset token
+                $this->user_model->updateOne(
+                    ['email' => $user['data']['email']],
+                    [
+                        'password' => password_hash($password, PASSWORD_DEFAULT),
+                        'reset_token' => null,
+                        'reset_token_expires' => null
+                    ]
+                );
+                
+                $this->renderAuth([
+                    'page_title' => 'Reset password',
+                    'view' => 'auth/resetPassword',
+                    'success' => 'Password has been reset successfully. You can now login with your new password.'
+                ]);
+            } else {
+                $this->renderAuth([
+                    'page_title' => 'Reset password',
+                    'view' => 'auth/resetPassword',
+                    'error' => 'Invalid or expired reset token. Please request a new password reset link.'
+                ]);
+            }
+        } else {
+            // Show reset form
+            $token = $_GET['token'] ?? '';
+            if (empty($token)) {
+                header('Location: /auth/forgotPassword');
+                exit;
+            }
+            
+            $this->renderAuth([
+                'page_title' => 'Reset password',
+                'view' => 'auth/resetPassword'
+            ]);
+        }
     }
 }

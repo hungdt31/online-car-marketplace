@@ -5,6 +5,7 @@ class Route
     private $public_routes = [
         '/auth',
         'home',
+        'forgot-password',
     ];
     public function handleRoute($url)
     {

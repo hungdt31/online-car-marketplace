@@ -54,4 +54,20 @@ class Account extends Controller
             ]);
         }
     }
+    public function cancelAppointment()
+    {
+        $appointmentId = $_POST['appointment_id'];
+        $status = $this->appointments_model->updateStatus($appointmentId, 'cancelled');
+        if ($status) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Cancel appointment successfully!',
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Cancel appointment failed!',
+            ]);
+        }
+    }
 }

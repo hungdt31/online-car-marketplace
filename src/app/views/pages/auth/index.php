@@ -39,21 +39,34 @@ if (isset($_GET['code'])) {
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form id="form-sign-up" action="/auth/signup" method="post">
-			<h1>Create Account</h1>
+			<h1>Create an Account</h1>
 			<div class="social-container">
-				<a href="<?= isset($fbUrl) ? htmlspecialchars($fbUrl) : '#' ?>" class="social">
+				<!-- <a href="<?= isset($fbUrl) ? htmlspecialchars($fbUrl) : '#' ?>" class="social">
 					<i class="fab fa-facebook-f"></i>
-				</a>
+				</a> -->
 				<a href="<?= isset($ggUrl) ? htmlspecialchars($ggUrl) : '#' ?>" class="social" id="gg-sign-up">
-                    <i class="fab fa-google-plus-g"></i>
-                </a>
-				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/google.png" alt="Google" style="width: 20px; height: 20px; margin-right: 5px;" />
+					<strong>Google</strong>
+				</a>
+				<a href="#" class="social">
+					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/linkedin.png" alt="Facebook" style="width: 20px; height: 20px; margin-right: 5px;" />
+					<strong>Linkedin </strong>
+				</a>
 			</div>
 			<span>or use your email for registration</span>
 			<input type="text" placeholder="Username" name="username" />
 			<input type="email" placeholder="Email" name="email" />
-			<input type="password" placeholder="Password" name="password" />
-			<button type="submit" id="signUpBtn">Submit</button>
+			<div class="password-container" style="position: relative; width: 100%;">
+				<input type="password" placeholder="Password" name="password" id="password-signin" />
+				<i class="fas fa-eye-slash toggle-password"
+					style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #777;"
+					data-toggle="password"
+					data-target="#password-signin"></i>
+			</div>
+			<div class="mt-3" id="signup-group-btn">
+				<button type="button" id="clearSignUpBtn" class="btn btn-danger" style="min-width: 150px;">Clear</button>
+				<button type="submit" id="signUpBtn" class="btn btn-primary" style="min-width: 150px;">Submit</button>
+			</div>
 			<div class="loader" id="loader-sign-up" style="display: none;"></div>
 		</form>
 	</div>
@@ -61,33 +74,53 @@ if (isset($_GET['code'])) {
 		<form id="form-sign-in">
 			<h1>Sign in</h1>
 			<div class="social-container">
-				<a href="<?= isset($fbUrl) ? htmlspecialchars($fbUrl) : '#' ?>" class="social">
+				<!-- <a href="<?= isset($fbUrl) ? htmlspecialchars($fbUrl) : '#' ?>" class="social">
 					<i class="fab fa-facebook-f"></i>
-				</a>
+				</a> -->
 				<a href="<?= isset($ggUrl) ? htmlspecialchars($ggUrl) : '#' ?>" class="social" id="gg-sign-in">
-                    <i class="fab fa-google-plus-g"></i>
-                </a>
-				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/google.png" alt="Google" style="width: 20px; height: 20px; margin-right: 5px;" />
+					<strong>Google</strong>
+				</a>
+				<a href="#" class="social">
+					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/linkedin.png" alt="Facebook" style="width: 20px; height: 20px; margin-right: 5px;" />
+					<strong>Linkedin </strong>
+				</a>
 			</div>
 			<span>or use your account</span>
 			<input type="email" placeholder="Email" name="email" />
-			<input type="password" placeholder="Password" name="password" />
-			<a href="#">Forgot your password?</a>
-			<button type="submit" id="signInBtn">Submit</button>
+			<div class="password-container" style="position: relative; width: 100%;">
+				<input type="password" placeholder="Password" name="password" id="password-signup" />
+				<i class="fas fa-eye-slash toggle-password"
+					style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #777;"
+					data-toggle="password"
+					data-target="#password-signup"></i>
+			</div>
+			<a href="/forgot-password">Forgot your password?</a>
+			<div id="signin-group-btn">
+				<button type="button" id="clearSignInBtn" class="btn btn-danger" style="min-width: 150px;">Clear</button>
+				<button type="submit" id="signInBtn" class="btn btn-primary" style="min-width: 150px;">Submit</button>
+			</div>
+
 			<div class="loader" id="loader-sign-in" style="display: none;"></div>
 		</form>
 	</div>
 	<div class="overlay-container">
 		<div class="overlay">
 			<div class="overlay-panel overlay-left">
+				<a href="/" style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+					<img src="<?= htmlspecialchars(_WEB_ROOT) ?>/assets/static/images/carvan-logo.svg" alt="Carvan Logo" width="100">
+				</a>
 				<h1>Welcome Back!</h1>
 				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn" type="submit">Sign In</button>
+				<button class="ghost-btn" id="signIn">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
+				<a href="/" style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+					<img src="<?= htmlspecialchars(_WEB_ROOT) ?>/assets/static/images/carvan-logo.svg" alt="Carvan Logo" width="100">
+				</a>
 				<h1>Hello, Friend!</h1>
 				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp">Sign Up</button>
+				<button class="ghost-btn" id="signUp">Sign Up</button>
 			</div>
 		</div>
 	</div>
@@ -98,7 +131,7 @@ if (isset($_GET['code'])) {
 		$('#form-sign-in').submit(function(e) {
 			e.preventDefault();
 			var form = $(this);
-			let btn = document.getElementById('signInBtn')
+			let btn = document.getElementById('signin-group-btn');
 			let loader = document.getElementById('loader-sign-in');
 			loader.style.display = 'block';
 			btn.hidden = true;
@@ -130,7 +163,7 @@ if (isset($_GET['code'])) {
 		$('#form-sign-up').submit(function(e) {
 			e.preventDefault();
 			var form = $(this);
-			let btn = document.getElementById('signUpBtn');
+			let btn = document.getElementById('signup-group-btn');
 			let loader = document.getElementById('loader-sign-up');
 
 			// Hiển thị loader và ẩn nút đăng ký ngay lập tức
@@ -158,13 +191,27 @@ if (isset($_GET['code'])) {
 				});
 			}, 1500);
 		});
+
+		// Handle clear button for sign-in form
+		$('#form-sign-in .btn-danger').click(function(e) {
+			e.preventDefault(); // Prevent form submission
+			$('#form-sign-in input').val(''); // Clear all inputs in the sign-in form
+			toastr.info('Sign in form cleared');
+		});
+		
+		// Handle clear button for sign-up form
+		$('#form-sign-up .btn-danger').click(function(e) {
+			e.preventDefault(); // Prevent form submission
+			$('#form-sign-up input').val(''); // Clear all inputs in the sign-up form
+			toastr.info('Sign up form cleared');
+		});
 	});
-	document.addEventListener("DOMContentLoaded", function () {
-		document.getElementById("gg-sign-up").addEventListener("click", function () {
+	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById("gg-sign-up").addEventListener("click", function() {
 			document.cookie = "authType=signup"; // Lưu trạng thái đăng ký
 		});
 
-		document.getElementById("gg-sign-in").addEventListener("click", function () {
+		document.getElementById("gg-sign-in").addEventListener("click", function() {
 			document.cookie = "authType=signin"; // Lưu trạng thái đăng nhập
 		});
 	});

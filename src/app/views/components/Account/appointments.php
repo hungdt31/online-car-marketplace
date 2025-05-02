@@ -516,7 +516,7 @@
 
             // Send AJAX request to cancel appointment
             $.ajax({
-                url: '/user/appointments/cancel',
+                url: '/user/account/cancelAppointment',
                 type: 'POST',
                 data: {
                     appointment_id: appointmentId
