@@ -6,10 +6,12 @@ class Auth extends Controller
 {
     private $jwt;
     private $user_model;
+    private $file_model;
     public function __construct()
     {
         $this->jwt = new JwtAuth();
         $this->user_model = $this->model('UserModel');
+        $this->file_model = $this->model('FileModel');
     }
     public function index()
     {
@@ -199,13 +201,21 @@ class Auth extends Controller
 
         $isCreated = $this->user_model->findOne(['email' => $userinfo->email]);
         if (!$isCreated['data']) {
+            $this->file_model->addFile([
+                'name' => $userinfo['id'] . '-google-avatar',
+                'fkey' => $userinfo['id'],
+                'path' => $userinfo['picture'],
+                'type' => 'image'
+            ]);
+            $file = $this->file_model->getFile(['fkey' => $userinfo['id']]);
             $response = $this->user_model->createOne([
                 'username' => $userinfo->name,
                 'email' => $userinfo->email,
                 'fname' => $userinfo->givenName,
                 'lname' => $userinfo->familyName,
                 'provider' => 'google',
-                'role' => 'user'
+                'role' => 'user',
+                'avatar_id' => $file['id']
             ]);
             if ($response['success']) {
                 header('Location: /auth?code=account_created');
@@ -380,6 +390,82 @@ class Auth extends Controller
                         'error' => 'Invalid or expired reset token. Please request a new password reset link.'
                     ]
                 ]);
+            }
+        }
+    }
+    public function githubAuth()
+    {
+        $github = new GitHubClient();
+
+        if (!isset($_GET['code'])) {
+            exit("Login failed");
+        }
+
+        $token = $github->getAccessToken($_GET['code']);
+        if (!isset($token['access_token'])) {
+            header('Location: /auth?code=cannot_link_provider');
+            exit;
+        }
+
+        $userInfo = $github->getUserInfo($token['access_token']);
+        $email = $github->getUserEmail($token['access_token']);
+
+        if (!$email) {
+            header('Location: /auth?code=cannot_link_provider');
+            exit;
+        }
+
+        $isCreated = $this->user_model->findOne(['email' => $email]);
+        if (!$isCreated['data']) {
+            $this->file_model->addFile([
+                'name' => $userInfo['login'] . '-github-avatar',
+                'fkey' => $userInfo['id'],
+                'path' => $userInfo['avatar_url'],
+                'type' => 'image'
+            ]);
+            $file = $this->file_model->getFile(['fkey' => $userInfo['id']]);
+            $response = $this->user_model->createOne([
+                'username' => $userInfo['login'],
+                'email' => $email,
+                'provider' => 'github',
+                'role' => 'user',
+                'fname' => $userInfo['name'] ? explode(' ', $userInfo['name'])[0] : null,
+                'lname' => $userInfo['name'] ? implode(' ', array_slice(explode(' ', $userInfo['name']), 1)) : null,
+                'bio' => $userInfo['bio'],
+                'address' => $userInfo['location'],
+                'avatar_id' => $file['id'],
+            ]);
+
+            if ($response['success']) {
+                header('Location: /auth?code=account_created');
+            } else {
+                header('Location: /auth?code=cannot_link_provider');
+            }
+        } else {
+            if (isset($_COOKIE['authType'])) {
+                $authType = $_COOKIE['authType'];
+                if ($authType == 'signin') {
+                    $provider = $isCreated['data']['provider'];
+                    if ($provider == 'github') {
+                        $accountSession = SessionFactory::createSession('account');
+                        $accountSession->setProfile($isCreated['data']);
+                        $payload = [
+                            "email" => $isCreated['data']['email'],
+                            "role" => $isCreated['data']['role']
+                        ];
+                        $this->jwt->encodeDataToCookie($payload);
+                        $role = $isCreated['data']['role'];
+                        if ($role == 'admin') {
+                            header('Location: /admin/dashboard');
+                        } else {
+                            header('Location: /account');
+                        }
+                    } else {
+                        header('Location: /auth?code=login_method_mismatch');
+                    }
+                } else {
+                    header('Location: /auth?code=account_already_registered');
+                }
             }
         }
     }

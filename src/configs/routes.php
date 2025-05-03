@@ -8,6 +8,7 @@ $routes['contact'] = 'home/contact';
 $routes['account'] = 'user/account';
 $routes['auth/google-redirect'] = 'auth/googleAuth';
 $routes['auth/facebook-redirect'] = 'auth/facebookAuth';
+$routes['auth/github-redirect'] = 'auth/githubAuth';
 $routes['cars-management'] = 'admin/cars';
 $routes['car-assets/(:num)'] = 'admin/cars/assets/$1';
 $routes['dashboard'] = 'admin/dashboard';

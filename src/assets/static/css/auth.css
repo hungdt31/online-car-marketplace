@@ -240,6 +240,9 @@ input {
 
 .social-container {
     margin: 20px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
 }
 
 .social-container a {
@@ -251,7 +254,6 @@ input {
     gap: 5px;
     margin: 0 5px;
     height: 40px;
-    min-width: 150px;
 }
 
 footer {

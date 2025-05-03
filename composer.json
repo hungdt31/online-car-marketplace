@@ -12,6 +12,7 @@
         "firebase/php-jwt": "^6.11",
         "google/apiclient": "^2.18",
         "facebook/graph-sdk": "^5.1",
-        "aws/aws-sdk-php": "^3.342"
+        "aws/aws-sdk-php": "^3.342",
+        "guzzlehttp/guzzle": "^7.9"
     }
 }

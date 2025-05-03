@@ -15,6 +15,10 @@ $ggUrl = $client->createAuthUrl();
 $fb = new FacebookClient();
 $fbUrl = $fb->getLoginUrl();
 
+// đăng nhập với github
+$github = new GitHubClient();
+$githubUrl = $github->getLoginUrl();
+
 // thông báo đăng nhập
 global $oauth_notice;
 $notice = null;
@@ -28,7 +32,7 @@ if (isset($_GET['code'])) {
 }
 ?>
 <?php if ($notice): ?>
-	<div class="alert alert-<?php echo $notice['status'] ?> alert-dismissible" role="alert">
+	<div class="alert alert-<?php echo $notice['status'] ?> alert-dismissible mb-0" role="alert">
 		<div>
 			<?php echo $notice['message'] ?>
 		</div>
@@ -41,17 +45,18 @@ if (isset($_GET['code'])) {
 		<form id="form-sign-up" action="/auth/signup" method="post">
 			<h1>Create an Account</h1>
 			<div class="social-container">
-				<!-- <a href="<?= isset($fbUrl) ? htmlspecialchars($fbUrl) : '#' ?>" class="social">
-					<i class="fab fa-facebook-f"></i>
-				</a> -->
 				<a href="<?= isset($ggUrl) ? htmlspecialchars($ggUrl) : '#' ?>" class="social" id="gg-sign-up">
 					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/google.png" alt="Google" style="width: 20px; height: 20px; margin-right: 5px;" />
 					<strong>Google</strong>
 				</a>
-				<a href="#" class="social">
+				<a href="<?= isset($githubUrl) ? htmlspecialchars($githubUrl) : '#' ?>" class="social" id="github-sign-up">
+				<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/github.png" alt="Github" style="width: 20px; height: 20px; margin-right: 5px;" />
+					<strong>GitHub</strong>
+				</a>
+				<!-- <a href="#" class="social">
 					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/linkedin.png" alt="Facebook" style="width: 20px; height: 20px; margin-right: 5px;" />
 					<strong>Linkedin </strong>
-				</a>
+				</a> -->
 			</div>
 			<span>or use your email for registration</span>
 			<input type="text" placeholder="Username" name="username" />
@@ -81,10 +86,14 @@ if (isset($_GET['code'])) {
 					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/google.png" alt="Google" style="width: 20px; height: 20px; margin-right: 5px;" />
 					<strong>Google</strong>
 				</a>
-				<a href="#" class="social">
+				<a href="<?= isset($githubUrl) ? htmlspecialchars($githubUrl) : '#' ?>" class="social" id="github-sign-in">
+				<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/github.png" alt="Github" style="width: 20px; height: 20px; margin-right: 5px;" />
+					<strong>GitHub</strong>
+				</a>
+				<!-- <a href="#" class="social">
 					<img src="<?php echo _WEB_ROOT ?>/assets/static/images/social/linkedin.png" alt="Facebook" style="width: 20px; height: 20px; margin-right: 5px;" />
 					<strong>Linkedin </strong>
-				</a>
+				</a> -->
 			</div>
 			<span>or use your account</span>
 			<input type="email" placeholder="Email" name="email" />
@@ -212,6 +221,14 @@ if (isset($_GET['code'])) {
 		});
 
 		document.getElementById("gg-sign-in").addEventListener("click", function() {
+			document.cookie = "authType=signin"; // Lưu trạng thái đăng nhập
+		});
+
+		document.getElementById("github-sign-up").addEventListener("click", function() {
+			document.cookie = "authType=signup"; // Lưu trạng thái đăng ký
+		});
+
+		document.getElementById("github-sign-in").addEventListener("click", function() {
 			document.cookie = "authType=signin"; // Lưu trạng thái đăng nhập
 		});
 	});

@@ -38,7 +38,12 @@ class UserModel extends Model {
         return false;
     }
     public function findById($id) {
-        $sql = "SELECT * FROM $this->_table WHERE id = :id";
+        $sql = "
+        SELECT u.*, f.url AS avatar 
+        FROM $this->_table u
+        LEFT JOIN files f ON u.avatar_id = f.id
+        WHERE u.id = :id
+        ";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
         return $result['data'];
@@ -53,7 +58,7 @@ class UserModel extends Model {
         if (isset($data['password'])) {
             $hashedPassword = $this->hashPassword($data['password']);
         }
-        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, fname, lname) VALUES (:email, :username, :password, :role, :provider, :fname, :lname)";
+        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, fname, lname, bio, address, avatar_id) VALUES (:email, :username, :password, :role, :provider, :fname, :lname, :bio, :address, :avatar_id)";
         $params = [
             ':email' => $data['email'],
             ':username' => $data['username'],
@@ -62,6 +67,9 @@ class UserModel extends Model {
             ':provider' => $data['provider'],
             ':fname' => $data['fname'],
             ':lname' => $data['lname'],
+            ':bio' => $data['bio'],
+            ':address' => $data['address'],
+            ':avatar_id' => $data['avatar_id'],
         ];
         $result = $this->db->execute($sql, $params);
         if (isset($result['errorCode'])) {
