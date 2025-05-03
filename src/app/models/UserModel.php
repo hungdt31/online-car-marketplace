@@ -123,4 +123,20 @@ class UserModel extends Model {
         $result = $this->db->execute($sql, $params);
         return $result['success'];
     }
+    public function getUserByResetToken($token) {
+        $sql = "SELECT * FROM $this->_table WHERE reset_token = :token AND reset_token_expires > NOW()";
+        $params = [':token' => $token];
+        $result = $this->db->execute($sql, $params, true);
+        return $result['data'];
+    }
+    public function updatePassword($data) {
+        $hashedPassword = $this->hashPassword($data['password']);
+        $sql = "UPDATE $this->_table SET password = :password, reset_token = NULL, reset_token_expires = NULL WHERE email = :email";
+        $params = [
+            ':password' => $hashedPassword,
+            ':email' => $data['email'],
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
 }

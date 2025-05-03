@@ -31,18 +31,18 @@ class Mailer
         try {
             $mailer = self::getInstance();
             // Người gửi
-            echo $sendFrom['address'];
-            echo $sendFrom['name'];
+            // echo $sendFrom['address'];
+            // echo $sendFrom['name'];
             // Người nhận
-            echo $to['address'];
-            echo $to['name'];
+            // echo $to['address'];
+            // echo $to['name'];
             // Người nhận phản hồi
-            echo $replyTo['address'];
-            echo $replyTo['name'];
+            // echo $replyTo['address'];
+            // echo $replyTo['name'];
             // Gửi email
-            echo $subject;
-            echo $body;
-            echo $altbody;
+            // echo $subject;
+            // echo $body;
+            // echo $altbody;
             $mailer->mail->setFrom($sendFrom['address'], $sendFrom['name']);
             $mailer->mail->addAddress($to['address'], $to['name']);
             $mailer->mail->addReplyTo($replyTo['address'], $replyTo['name']);       
@@ -52,10 +52,17 @@ class Mailer
             $mailer->mail->Body    = $body;
             $mailer->mail->AltBody = $altbody;
             $mailer->mail->send();
-            echo '<pre>'.print_r($mailer->mail, true).'</pre>';
+            // echo '<pre>'.print_r($mailer->mail, true).'</pre>';
+            return [
+                'success' => true,
+                'message' => 'Message has been sent',
+            ];
         }
         catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$e->getMessage()}";
+            return [
+                'success' => false,
+                'message' => 'Message could not be sent. Mailer Error: ' . $e->getMessage(),
+            ];
         }
     }
 }
