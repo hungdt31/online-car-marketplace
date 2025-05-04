@@ -11,7 +11,7 @@ $menuItems = [
 ];
 
 $currentUser = SessionFactory::createSession('account');
-/* if ($currentUser->getProfile()) {
+if ($currentUser->getProfile()) {
     $userItems = [
         'HelpPage' => ['url' => '/help', 'icon' => 'fa-question-circle', 'title' => 'Help'],
         'CartPage' => ['url' => '/cart', 'icon' => 'fa-shopping-cart', 'title' => 'Cart'],
@@ -21,12 +21,12 @@ $currentUser = SessionFactory::createSession('account');
     $userItems = [
         'SignIn' => ['url' => '/auth', 'name' => 'Sign In / Sign Up'],
     ];
-} */
-  $userItems = [
+}
+ /*  $userItems = [
         'HelpPage' => ['url' => '/help', 'icon' => 'fa-question-circle', 'title' => 'Help'],
         'CartPage' => ['url' => '/cart', 'icon' => 'fa-shopping-cart', 'title' => 'Cart'],
         'AccountPage' => ['url' => '/account', 'icon' => 'fa-user', 'title' => 'Account']
-    ];
+    ]; */
 ?>
 <div class="nav">
     <div class="spacer"></div>

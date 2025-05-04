@@ -19,15 +19,23 @@ class App
         $this->__params = [];
         $this->handleUrl();
     }
-    public function getUrl()
-    {
-        if (!empty($_SERVER['PATH_INFO'])) {
-            $url = $_SERVER['PATH_INFO'];
-        } else {
-            $url = '/';
-        }
-        return $url;
+public function getUrl()
+{
+    $uri = $_SERVER['REQUEST_URI'];
+    $scriptName = dirname($_SERVER['SCRIPT_NAME']);
+
+    // Loại bỏ phần scriptName nếu có (trường hợp chạy trong subfolder)
+    if (strpos($uri, $scriptName) === 0) {
+        $uri = substr($uri, strlen($scriptName));
     }
+
+    // Bỏ query string
+    $uri = strtok($uri, '?');
+
+    return rtrim($uri, '/') ?: '/';
+}
+
+
     public function handleUrl()
     {
         $url = $this->getUrl();

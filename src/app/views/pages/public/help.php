@@ -9,7 +9,7 @@ $page_title = 'Help Center';
             <h2 class="mb-4" style="font-weight: bold;">Common Questions</h2>
             <div class="accordion" id="faqAccordion">
                 <?php
-                $faqs = [
+                 $faqs = [
                     [
                         'question' => 'What documents are required to rent a car?',
                         'answer' => "You'll need a valid driver's license, a government-issued ID (like a passport or national ID), and a credit card for the security deposit."
@@ -24,7 +24,7 @@ $page_title = 'Help Center';
                     ],
                     [
                         'question' => ' Are there any mileage limits?',
-                        'answer' => 'Most rentals come with unlimited mileage. Some luxury or specialty vehicles may have mileage restrictions. Please check the vehicle’s details.'
+                        "answer" => "Most rentals come with unlimited mileage. Some luxury or specialty vehicles may have mileage restrictions. Please check the vehicle's details."
                     ],
                     [
                         'question' => 'What happens if the car breaks down?',
@@ -71,6 +71,24 @@ $page_title = 'Help Center';
             </div>
         </div>
     </div>
+    <form action="/help/send-question" method="POST" class="mt-5 p-4 border rounded bg-light">
+        <h5 class="mb-3 fw-bold">Still need help? Send us your question:</h5>
+        <div class="mb-3">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" class="form-control" name="name">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Your Email</label>
+            <input type="email" class="form-control" name="email">
+        </div>
+
+        <div class="mb-3">
+            <label for="question" class="form-label">Your Question</label>
+            <textarea class="form-control" name="question" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Question</button>
+    </form>
+
 </div>
 
 <style>
@@ -105,3 +123,64 @@ $page_title = 'Help Center';
     transform: translateY(-5px);
 }
 </style>
+
+<?php if (isset($success_message)): ?>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <?= htmlspecialchars($success_message) ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php endif; ?>
+
+<?php if (isset($error_message)): ?>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <?= htmlspecialchars($error_message) ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<?php endif; ?>
+
+<script>
+document.querySelector('form[action="/help/send-question"]').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.innerHTML;
+
+    submitButton.disabled = true;
+    submitButton.innerHTML = 'Sending...';
+
+    fetch('/help/send-question', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                alert(data.message);
+                // Reset form
+                this.reset();
+            } else {
+                // Show error message
+                alert(data.message || 'Failed to send question. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        })
+        .finally(() => {
+            // Re-enable submit button and restore original text
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+        });
+});
+</script>
