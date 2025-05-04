@@ -20,9 +20,9 @@
             'link' => _WEB_ROOT . '/dashboard',
         ],
         [
-            'name' => 'Users',
+            'name' => 'Appointments',
             'icon' => 'bi bi-person',
-            'link' => _WEB_ROOT . '/admin/users',
+            'link' => _WEB_ROOT . '/appointments-management',
         ],
         [
             'name' => 'Cars',
@@ -37,7 +37,7 @@
         [
             'name' => 'Categories',
             'icon' => 'bi bi-tags',
-            'link' => _WEB_ROOT . '/admin/categories',
+            'link' => _WEB_ROOT . '/categories-management',
         ],
         [
             'name' => 'Settings',

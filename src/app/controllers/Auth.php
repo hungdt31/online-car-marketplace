@@ -424,13 +424,17 @@ class Auth extends Controller
                 'type' => 'image'
             ]);
             $file = $this->file_model->getFile(['fkey' => $userInfo['id']]);
+            $names = explode(' ', $userInfo['name']);
+            $fname = $names[0] ?? null;
+            array_shift($names);
+            $lname = implode(' ', $names) ?? null;
             $response = $this->user_model->createOne([
                 'username' => $userInfo['login'],
                 'email' => $email,
                 'provider' => 'github',
                 'role' => 'user',
-                'fname' => $userInfo['name'] ? explode(' ', $userInfo['name'])[0] : null,
-                'lname' => $userInfo['name'] ? implode(' ', array_slice(explode(' ', $userInfo['name']), 1)) : null,
+                'fname' => $fname,
+                'lname' => $lname,
                 'bio' => $userInfo['bio'],
                 'address' => $userInfo['location'],
                 'avatar_id' => $file['id'],

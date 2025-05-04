@@ -8,7 +8,7 @@
   <!-- Dashboard Header -->
   <div class="dashboard-header">
     <h4 class="mb-0">Car Management Dashboard</h4>
-    <p class="text-white-50 mb-0">Manage your vehicle inventory</p>
+    <p class="text-white-50 mt-2 mb-2">Manage your vehicle inventory</p>
   </div>
 
   <!-- Control Bar -->
@@ -350,53 +350,40 @@
 
     xhr.send(formData);
   });
-  document.getElementById("searchInput").addEventListener("keyup", function() {
-    var filter = this.value.toLowerCase();
-    var rows = document.querySelectorAll("#carTableBody tr");
-    var found = false;
-
-    rows.forEach(function(row) {
-      var name = row.querySelector(".car-name").textContent.toLowerCase();
-      if (name.includes(filter)) {
-        row.style.display = "";
-        found = true;
-      } else {
-        row.style.display = "none";
-      }
-    });
-
-    document.getElementById("noResultsMessage").classList.toggle("d-none", found);
-  });
   document.addEventListener("DOMContentLoaded", function() {
-    var rowsPerPage = 5; // Số xe mỗi trang
-    var rows = document.querySelectorAll(".car-row");
-    var searchInput = document.getElementById("searchInput");
-    var pagination = document.getElementById("pagination");
-    var noResultsMessage = document.getElementById("noResultsMessage");
-    var currentPage = 1;
+    // Variables for pagination and sorting
+    const rowsPerPage = 5; // Number of items per page
+    const rows = document.querySelectorAll(".car-row");
+    const searchInput = document.getElementById("searchInput");
+    const pagination = document.getElementById("pagination");
+    const noResultsMessage = document.getElementById("noResultsMessage");
+    let currentPage = 1;
+    let sortState = {
+      column: null,
+      direction: 'asc'
+    };
 
-    function updateTable() {
-      var filter = searchInput.value.toLowerCase();
-      var filteredRows = Array.from(rows).filter(row => row.querySelector(".car-name").textContent.toLowerCase().includes(filter));
-
-      // Hiển thị thông báo nếu không tìm thấy xe
-      noResultsMessage.classList.toggle("d-none", filteredRows.length > 0);
-
-      // Tính toán số trang
-      var totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-      if (currentPage > totalPages) currentPage = totalPages || 1;
-
-      // Cập nhật hiển thị
-      filteredRows.forEach((row, index) => {
-        row.style.display = (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) ? "" : "none";
-      });
-
-      updatePagination(totalPages);
-    }
-
+    // Declare all functions first
     function updatePagination(totalPages) {
       pagination.innerHTML = "";
 
+      // Add Previous button
+      if (totalPages > 1) {
+        let prevLi = document.createElement("li");
+        prevLi.classList.add("page-item");
+        if (currentPage === 1) prevLi.classList.add("disabled");
+        prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+        prevLi.addEventListener("click", function(e) {
+          e.preventDefault();
+          if (currentPage > 1) {
+            currentPage--;
+            updateTable();
+          }
+        });
+        pagination.appendChild(prevLi);
+      }
+
+      // Add page numbers
       for (let i = 1; i <= totalPages; i++) {
         let li = document.createElement("li");
         li.classList.add("page-item");
@@ -409,22 +396,41 @@
         });
         pagination.appendChild(li);
       }
+
+      // Add Next button
+      if (totalPages > 1) {
+        let nextLi = document.createElement("li");
+        nextLi.classList.add("page-item");
+        if (currentPage === totalPages) nextLi.classList.add("disabled");
+        nextLi.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+        nextLi.addEventListener("click", function(e) {
+          e.preventDefault();
+          if (currentPage < totalPages) {
+            currentPage++;
+            updateTable();
+          }
+        });
+        pagination.appendChild(nextLi);
+      }
     }
 
-    searchInput.addEventListener("keyup", updateTable);
-    updateTable();
-  });
+    function getCellValue(row, column) {
+      const mapping = {
+        'id': 0,
+        'name': 1,
+        'location': 2,
+        'fuel_type': 3,
+        'price': 4
+      };
 
-  // Sorting functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    let sortState = {
-      column: null,
-      direction: 'asc'
-    };
+      const cell = row.cells[mapping[column]];
+      return cell ? cell.textContent.trim() : '';
+    }
 
-    // Function to sort table data
     function sortTable(column) {
       const table = document.getElementById('carTableBody');
+      if (!table) return;
+
       const rows = Array.from(table.getElementsByTagName('tr'));
       const headers = document.querySelectorAll('th.sortable');
 
@@ -444,23 +450,25 @@
 
       // Update header appearance
       const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
-      currentHeader.classList.add(sortState.direction);
-      currentHeader.querySelector('i').className = `fas fa-sort-${sortState.direction === 'asc' ? 'up' : 'down'} ms-1`;
+      if (currentHeader) {
+        currentHeader.classList.add(sortState.direction);
+        currentHeader.querySelector('i').className = `fas fa-sort-${sortState.direction === 'asc' ? 'up' : 'down'} ms-1`;
+      }
 
       // Sort the rows
       rows.sort((a, b) => {
         let aValue = getCellValue(a, column);
         let bValue = getCellValue(b, column);
 
-        // Handle numeric sorting for ID and Price
+        // Handle numeric sorting for ID
         if (column === 'id') {
           return sortState.direction === 'asc' ?
             parseInt(aValue) - parseInt(bValue) :
             parseInt(bValue) - parseInt(aValue);
         }
 
+        // Handle price sorting
         if (column === 'price') {
-          // Remove '$' and ',' from price strings and convert to numbers
           aValue = parseFloat(aValue.replace(/[$,]/g, ''));
           bValue = parseFloat(bValue.replace(/[$,]/g, ''));
           return sortState.direction === 'asc' ? aValue - bValue : bValue - aValue;
@@ -474,54 +482,73 @@
 
       // Reorder the table
       rows.forEach(row => table.appendChild(row));
-
-      // Update pagination after sorting
-      updateTable();
     }
 
-    // Helper function to get cell value
-    function getCellValue(row, column) {
-      const mapping = {
-        'id': 0,
-        'name': 1,
-        'location': 2,
-        'fuel_type': 3,
-        'price': 4
-      };
+    // Define updateTable function BEFORE anyone tries to use it
+    function updateTable() {
+      const filter = searchInput.value.toLowerCase();
+      const filteredRows = Array.from(rows).filter(row =>
+        row.querySelector(".car-name").textContent.toLowerCase().includes(filter)
+      );
 
-      const cell = row.cells[mapping[column]];
-      return cell.textContent.trim();
+      // Show no results message if needed
+      noResultsMessage.classList.toggle("d-none", filteredRows.length > 0);
+
+      // Calculate pagination
+      const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+      if (currentPage > totalPages) {
+        currentPage = totalPages || 1;
+      }
+
+      // Update display
+      filteredRows.forEach((row, index) => {
+        row.style.display = (index >= (currentPage - 1) * rowsPerPage &&
+          index < currentPage * rowsPerPage) ? "" : "none";
+      });
+
+      // Update pagination controls
+      updatePagination(totalPages);
+
+      // Apply sorting if a column is selected
+      if (sortState.column) {
+        sortTable(sortState.column);
+      }
     }
 
     // Add click event listeners to sortable headers
     document.querySelectorAll('th.sortable').forEach(header => {
       header.addEventListener('click', () => {
         const column = header.getAttribute('data-sort');
-        sortTable(column);
+        if (column) {
+          sortTable(column);
+          // Re-apply pagination after sorting
+          updateTable();
+        }
       });
-    });
 
-    // Add sorting indicators hover effect
-    document.querySelectorAll('th.sortable').forEach(header => {
+      // Add hover effect for sort indicators
       header.addEventListener('mouseover', () => {
         if (!header.classList.contains('asc') && !header.classList.contains('desc')) {
-          header.querySelector('i').style.opacity = '0.5';
+          const icon = header.querySelector('i');
+          if (icon) icon.style.opacity = '0.5';
         }
       });
+
       header.addEventListener('mouseout', () => {
         if (!header.classList.contains('asc') && !header.classList.contains('desc')) {
-          header.querySelector('i').style.opacity = '0.2';
+          const icon = header.querySelector('i');
+          if (icon) icon.style.opacity = '0.2';
         }
       });
     });
 
-    // Enhance the existing updateTable function to maintain sorting
-    const originalUpdateTable = updateTable;
-    updateTable = function() {
-      originalUpdateTable();
-      if (sortState.column) {
-        sortTable(sortState.column);
-      }
-    };
+    // Search functionality
+    searchInput.addEventListener("keyup", function() {
+      currentPage = 1; // Reset to first page on search
+      updateTable();
+    });
+
+    // Initial table setup
+    updateTable();
   });
 </script>

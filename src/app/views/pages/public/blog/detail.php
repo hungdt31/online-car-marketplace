@@ -59,7 +59,7 @@
                             <div>
                                 <h5 class="mb-1"><?php echo htmlspecialchars($blog['author_name']); ?></h5>
                                 <p class="text-muted mb-3">Author</p>
-                                <p class="mb-0">Passionate automotive writer with expertise in luxury vehicles and the latest technological advancements in the automotive industry.</p>
+                                <p class="mb-0"><?php echo $blog['author_bio'] ?></p>
                             </div>
                         </div>
                     </div>

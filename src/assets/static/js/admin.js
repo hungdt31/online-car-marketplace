@@ -37,27 +37,30 @@ document.addEventListener("DOMContentLoaded", function (event) {
 });
 
 // Fix modal stacking
-$(document).on('show.bs.modal', '.modal', function () {
-    const zIndex = 1040 + (10 * $('.modal:visible').length);
-    $(this).css('z-index', zIndex);
-    setTimeout(function() {
-        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
-    }, 0);
+$(document).on("show.bs.modal", ".modal", function () {
+  const zIndex = 1040 + 10 * $(".modal:visible").length;
+  $(this).css("z-index", zIndex);
+  setTimeout(function () {
+    $(".modal-backdrop")
+      .not(".modal-stack")
+      .css("z-index", zIndex - 1)
+      .addClass("modal-stack");
+  }, 0);
 });
 
 // Fix scroll jump
-$(document).on('hidden.bs.modal', '.modal', function () {
-    $('.modal:visible').length && $(document.body).addClass('modal-open');
+$(document).on("hidden.bs.modal", ".modal", function () {
+  $(".modal:visible").length && $(document.body).addClass("modal-open");
 });
 
 // Fix modal open on mobile
-$(document).on('shown.bs.modal', '.modal', function() {
-    if($('.modal:visible').length) {
-        $('body').addClass('modal-open');
-    }
+$(document).on("shown.bs.modal", ".modal", function () {
+  if ($(".modal:visible").length) {
+    $("body").addClass("modal-open");
+  }
 });
 
 // Prevent modal from closing when clicking inside
-$(document).on('click', '.modal-content', function(e) {
-    e.stopPropagation();
+$(document).on("click", ".modal-content", function (e) {
+  e.stopPropagation();
 });

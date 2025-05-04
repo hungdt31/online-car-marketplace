@@ -3,11 +3,13 @@ class Cars extends Controller
 {
     public $car_model;
     public $file_model;
+    public $category_model;
     public $jwt;
     public function __construct()
     {
         $this->car_model = $this->model('CarModel');
         $this->file_model = $this->model('FileModel');
+        $this->category_model = $this->model('CategoryModel');
         $this->jwt = new JwtAuth();
     }
 
@@ -26,6 +28,7 @@ class Cars extends Controller
 
     public function assets($id)
     {
+        $categories = $this->category_model->getAllCategories();
         $car = $this->car_model->getCar($id);
         $this->renderAdmin([
             'page_title' => 'Assets of ' . $car['name'],
@@ -35,7 +38,9 @@ class Cars extends Controller
                 'car_id' => $id,
                 'car_name' => $car['name'],
                 'car_overview' => $car['overview'],
-                'car_capabilities' => json_decode($car['capabilities'], true)
+                'car_capabilities' => json_decode($car['capabilities'], true),
+                'car_categories' => $this->category_model->getCategoryForCar($id),
+                'categories' => $categories,
             ]
         ]);
     }
@@ -140,6 +145,50 @@ class Cars extends Controller
                 echo json_encode([
                     "success" => false,
                     "message" => "Failed to update car details."
+                ]);
+            }
+        }
+    }
+
+    public function toggleCategory()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $car_id = $_POST['car_id'] ?? null;
+            $category_id = $_POST['category_id'] ?? null;
+            $action = $_POST['action'] ?? null;
+
+            if (empty($car_id) || empty($category_id) || empty($action)) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Car ID, Category ID and Action are required."
+                ]);
+                return;
+            }
+
+            $message = "Invalid action.";
+            if ($action === 'add') {
+                $result = $this->category_model->addCategoryForCar($car_id, $category_id);
+                $result ? $message = "Category added to car successfully!" : $message = "Failed to add category to car.";
+            } elseif ($action === 'remove') {
+                $result = $this->category_model->removeCategoryFromCar($car_id, $category_id);
+                $result ? $message = "Category removed from car successfully!" : $message = "Failed to remove category from car.";
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => $message
+                ]);
+                return;
+            }
+
+            if ($result) {
+                echo json_encode([
+                    "success" => true,
+                    "message" => $message
+                ]);
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => $message
                 ]);
             }
         }

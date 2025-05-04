@@ -10,7 +10,7 @@ $profile = $session->getProfile();
     </div>
     <div class="d-flex align-items-center gap-3 p-2" style="max-width: 350px;">
         <div class="header_img">
-            <img src="https://i.imgur.com/hczKIze.jpg" alt="Avatar" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+            <img src="<?= $profile['avatar'] ?>" alt="Avatar" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
         </div>
         <div class="d-flex flex-column">
             <p class="mb-0 fw-semibold text-dark"><?= $profile['username'] ?></p>

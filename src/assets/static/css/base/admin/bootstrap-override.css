@@ -115,7 +115,7 @@ a {
 }
 
 .nav_logo {
-    margin-bottom: 2rem
+    margin-bottom: 2rem;
 }
 
 .nav_logo-icon {
@@ -459,4 +459,62 @@ body.modal-open {
 /* Add transition for rows */
 .table tbody tr {
     transition: all 0.2s ease-in-out;
+}
+
+
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: var(--border-radius);
+    color: white;
+}
+
+/* Search Bar Styling */
+.search-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+#searchInput {
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    width: 300px;
+    transition: var(--transition);
+}
+
+#searchInput:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+/* Button Styling */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.btn-add {
+    background: linear-gradient(135deg, var(--accent-color), #2980b9);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
 }

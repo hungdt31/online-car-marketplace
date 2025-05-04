@@ -15,3 +15,4 @@ $routes['dashboard'] = 'admin/dashboard';
 $routes['blogs-management'] = 'admin/posts';
 $routes['forgot-password'] = 'auth/forgotPassword';
 $routes['reset-password'] = 'auth/resetPassword';
+$routes['categories-management'] = 'admin/categories';

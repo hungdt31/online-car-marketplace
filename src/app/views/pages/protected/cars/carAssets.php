@@ -31,6 +31,69 @@
         </button>
     </div>
 
+    <!-- Categories Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-tags me-1"></i>
+                Categories
+            </div>
+            <div class="badge bg-light text-dark category-counter">
+                <span id="selectedCategoriesCount">0</span> selected
+            </div>
+        </div>
+        <div class="card-body">
+            <form id="carCategoriesForm">
+                <input type="hidden" name="car_id" value="<?php echo $car_id; ?>">
+                
+                <!-- Search and Filter Controls -->
+                <div class="row mb-4">
+                    <!-- Search Box -->
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="categorySearch" placeholder="Search categories...">
+                        </div>
+                    </div>
+                    
+                    <!-- Type Filter -->
+                    <div class="col-md-4">
+                        <select class="form-select" id="categoryTypeFilter">
+                            <option value="">All Types</option>
+                            <?php 
+                            $types = ['Color', 'Style', 'Feature', 'Performance', 'Safety', 'Comfort', 'Technology', 'Material', 'Size', 'Fuel'];
+                            foreach ($types as $type): 
+                            ?>
+                                <option value="<?= strtolower($type) ?>"><?= $type ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Categories List -->
+                <div class="d-flex flex-wrap gap-2 mb-5" id="categoryList">
+                    <?php
+                        $cate_ids = array_column($car_categories, 'id');
+                        foreach ($categories as $category) {
+                            $isChecked = in_array($category['id'], $cate_ids) ? 'primary' : 'secondary';
+                            echo '<button type="button" class="btn btn-outline-' . $isChecked . ' category-item" data-id="' . $category['id'] . '" data-type="' . strtolower($category['type']) . '" data-name="' . strtolower($category['name']) . '">';
+                            echo htmlspecialchars($category['name']);
+                            echo '<input type="checkbox" name="categories[]" value="' . $category['id'] . '" ' . ($isChecked == 'primary' ? 'checked' : '') . ' class="d-none">';
+                            echo '</button>';
+                        }
+                    ?>
+                </div>
+                
+                <!-- No results message -->
+                <div id="noResults" class="text-center py-4 d-none">
+                    <p class="text-muted">No categories match your search</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Media Grid -->
     <div class="card mb-4">
         <div class="card-header bg-primary text-white d-flex flex-wrap gap-3 justify-content-between align-items-center">
@@ -170,7 +233,9 @@
             </form>
         </div>
     </div>
+
 </div>
+
 
 <!-- Upload Modal -->
 <div class="modal fade" id="uploadModal" tabindex="-1">

@@ -8,7 +8,7 @@
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <h4 class="mb-0">Blog Management Dashboard</h4>
-        <p class="text-white-50 mb-0">Manage your blog posts and content</p>
+        <p class="text-white-50 mb-2 mt-2">Manage your blog posts and content</p>
     </div>
 
     <!-- Control Bar -->

@@ -93,7 +93,7 @@ class BlogModel extends Model
     {
         $sql = "SELECT 
                 b.id, b.title, b.content, b.views, b.created_at, b.updated_at,
-                u.username as author_name, u.id as author_id,
+                u.username as author_name, u.id as author_id,  u.bio as author_bio,
                 f.url as cover_image_url
             FROM $this->_table b
             LEFT JOIN users u ON b.author_id = u.id
