@@ -208,4 +208,19 @@ class Posts extends Controller
             }
         }
     }
+
+    public function detail($id)
+    {
+        $post = $this->blog_model->getBlogById($id);
+        $categories = $this->category_model->getTopCategory();
+        $this->renderAdmin([
+            'page_title' => 'Blog Detail',
+            'view' => 'protected/posts/postDetail',
+            'content' => [
+                'title' => 'Blog Post Detail',
+                'post' => $post,
+                'categories' => $categories
+            ]
+        ]);
+    }
 }

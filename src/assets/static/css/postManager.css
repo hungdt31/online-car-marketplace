@@ -1,78 +1,8 @@
-/* Custom CSS for enhanced UI */
-.dashboard-header {
-    background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
-    padding: 1.5rem;
-    border-radius: 8px;
-    color: white;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.search-wrapper {
-    position: relative;
-    max-width: 300px;
-}
-
-.search-wrapper .search-icon {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translateY(-50%);
-    color: #6c757d;
-}
-
-.search-wrapper input {
-    padding-left: 35px;
-    border-radius: 20px;
-    border: 1px solid #ced4da;
-    transition: all 0.3s ease;
-}
-
-.search-wrapper input:focus {
-    box-shadow: 0 0 5px rgba(78, 115, 223, 0.5);
-    border-color: #4e73df;
-}
-
-.filter-wrapper .form-select {
-    border-radius: 20px;
-    border: 1px solid #ced4da;
-    transition: all 0.3s ease;
-    padding: 0.5rem 2rem;
-}
-
-.filter-wrapper .form-select:focus {
-    box-shadow: 0 0 5px rgba(78, 115, 223, 0.5);
-    border-color: #4e73df;
-}
-
-.btn-add {
-    background-color: #3D90D7;
-    border-color: #3D90D7;
-    border-radius: 20px;
-    padding: 0.5rem 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.btn-add:hover {
-    background-color: #3A59D1;
-    border-color: #3A59D1;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .table-container {
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-}
-
-.table thead th {
-    background-color: #f8f9fa;
-    color: #333;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    padding: 1rem;
 }
 
 .table tbody tr {
