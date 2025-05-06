@@ -13,7 +13,7 @@
     echo '<div style="min-height: 100vh; display: flex; flex-direction: column;">';
     $this->render('components/Header/index');
     echo '<div style="flex: 1;">';
-    $this->render('pages/'. $view,  $content);
+    $this->render('pages/' . $view, $content);
     echo '</div>';
     $this->render('components/Footer/index');
     echo '</div>';

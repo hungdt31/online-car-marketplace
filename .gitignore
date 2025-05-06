@@ -5,3 +5,4 @@ vendor
 default.env
 override.env
 sql/main.sql
+node_modules

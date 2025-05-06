@@ -22,33 +22,38 @@ if ($currentUser->getProfile()) {
         'SignIn' => ['url' => '/auth', 'name' => 'Sign In / Sign Up'],
     ];
 }
+/*  $userItems = [
+       'HelpPage' => ['url' => '/help', 'icon' => 'fa-question-circle', 'title' => 'Help'],
+       'CartPage' => ['url' => '/cart', 'icon' => 'fa-shopping-cart', 'title' => 'Cart'],
+       'AccountPage' => ['url' => '/account', 'icon' => 'fa-user', 'title' => 'Account']
+   ]; */
 ?>
 <div class="nav">
     <button class="toggle-nav">
         <i class="fa-solid fa-bars"></i>
-    </button>
-    <div class="overlay"></div>
-    <div class="sys-nav">
-        <?php foreach ($menuItems as $item): ?>
-            <!-- So sánh URL hiện tại với URL của mục, nếu trùng thì thêm class "active" -->
-            <a href="<?= $item['url'] ?>" class="<?= $currentUrl === $item['url'] ? 'active' : '' ?>">
+        </button>
+        <div class="overlay"></div>
+        <div class="sys-nav">
+            <?php foreach ($menuItems as $item): ?>
+                <!-- So sánh URL hiện tại với URL của mục, nếu trùng thì thêm class "active" -->
+                <a href="<?= $item['url'] ?>" class="<?= $currentUrl === $item['url'] ? 'active' : '' ?>">
                 <?= $item['name'] ?>
-            </a>
-        <?php endforeach; ?>
-    </div>
-    <div class="user-nav">
-        <?php
-        foreach ($userItems as $item) {
-            if (isset($item['icon'])) {
-                // Nếu có icon, hiển thị dạng biểu tượng
-                echo '<a href="' . $item['url'] . '" title="' . $item['title'] . '"><i class="fa ' . $item['icon'] . '"></i></a>';
-            } else {
-                // Nếu không có icon, hiển thị dạng văn bản
-                echo '<a href="' . $item['url'] . '">' . $item['name'] . '</a>';
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <div class="user-nav">
+            <?php
+            foreach ($userItems as $item) {
+                if (isset($item['icon'])) {
+                    // Nếu có icon, hiển thị dạng biểu tượng
+                    echo '<a href="' . $item['url'] . '" title="' . $item['title'] . '"><i class="fa ' . $item['icon'] . '"></i></a>';
+                } else {
+                    // Nếu không có icon, hiển thị dạng văn bản
+                    echo '<a href="' . $item['url'] . '">' . $item['name'] . '</a>';
+                }
             }
-        }
-        ?>
-    </div>
+            ?>
+        </div>
 </div>
 
 <style>
@@ -59,11 +64,13 @@ if ($currentUser->getProfile()) {
         padding: 15px 20px;
         width: 100%;
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
         background-color: rgba(78, 108, 251, 0.2);
+        /* Màu xanh trong suốt */
         backdrop-filter: blur(10px);
+        /* Làm mờ nền phía sau */
         -webkit-backdrop-filter: blur(10px);
-        position: relative;
-        z-index: 999;
+        /* Hỗ trợ Safari */
     }
 
     .nav a {
@@ -79,125 +86,83 @@ if ($currentUser->getProfile()) {
         border-radius: 5px;
     }
 
-    .sys-nav {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
+    .sys-nav,
     .user-nav {
         display: flex;
         gap: 15px;
-        align-items: center;
-        margin-left: auto; /* Đẩy user-nav sang phải */
+    }
+
+    .sys-nav {
+        justify-self: center;
+    }
+
+    .spacer {
+        flex: 1;
+    }
+
+    /* Định dạng cho mục active (dạng nút) */
+    .nav a.active {
+        background-color: #4E6CFB;
+        /* Màu nền giống nút */
+        border-radius: 50px;
+        /* Bo tròn giống nút */
+        color: white;
+        /* Màu chữ */
+        padding: 10px 20px;
+        /* Khoảng cách bên trong để giống nút */
+    }
+
+    /* Đảm bảo hiệu ứng hover không ảnh hưởng đến mục active */
+    .nav a.active:hover {
+        background-color: #3b55d9;
+        /* Giữ màu nền khi hover */
+    }
+
+    /* CSS mới để thêm z-index và định dạng biểu tượng */
+    .nav {
+        z-index: 999;
+        /* Thêm z-index để đảm bảo nav luôn ở trên cùng */
     }
 
     .user-nav a i {
         font-size: 20px;
+        /* Kích thước biểu tượng */
     }
 
     .toggle-nav {
         padding: 10px;
+        /* Khoảng cách bên trong */
         min-width: 40px;
+        /* Chiều rộng */
         color: white;
         border: none;
+        /* Bỏ viền */
         display: none;
-        background-color: transparent;
-        cursor: pointer;
-        z-index: 1000;
-    }
-
-    .nav a.active {
-        background-color: #4E6CFB;
-        border-radius: 50px;
-        color: white;
-        padding: 10px 20px;
-    }
-
-    .nav a.active:hover {
-        background-color: #3b55d9;
-    }
-
-    .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-        z-index: 998;
-        transition: all 0.3s ease;
+        /* Ẩn nút toggle */
+        background-color: rgba(0, 0, 0, 0);
+        /* Nền trong suốt */
+        backdrop-filter: blur(10px);
+        /* Thêm hiệu ứng blur phía sau */
+        -webkit-backdrop-filter: blur(10px);
+        /* Hỗ trợ cho các trình duyệt Webkit (Safari) */
     }
 
     @media screen and (max-width: 768px) {
-        .nav {
-            justify-content: flex-end;
+
+        .sys-nav,
+        .spacer {
+            display: none;
         }
 
         .toggle-nav {
             display: block;
-            position: relative;
-            z-index: 1000;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        .sys-nav {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(78, 108, 251, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            z-index: 999;
-            transform: translateX(0);
-            transition: all 0.3s ease;
-        }
-
-        .sys-nav.active {
-            display: flex;
-        }
-
-        .user-nav {
-            display: none;
-            position: fixed;
-            top: 20px; /* Đặt ở trên cùng */
-            right: 70px; /* Cách nút toggle */
-            background-color: transparent;
-            flex-direction: row;
-            justify-content: flex-end;
-            gap: 20px;
-            z-index: 999;
-            margin-left: 0;
-        }
-
-        .user-nav.active {
-            display: flex;
-        }
-
-        body.menu-active {
-            overflow: hidden;
+            /* Hiển thị nút toggle */
         }
     }
 </style>
 
 <script>
-    document.querySelector('.toggle-nav').addEventListener('click', function() {
+    document.querySelector('.toggle-nav').addEventListener('click', function () {
         document.querySelector('.sys-nav').classList.toggle('active');
         document.querySelector('.user-nav').classList.toggle('active');
         document.querySelector('.overlay').classList.toggle('active');
@@ -205,7 +170,7 @@ if ($currentUser->getProfile()) {
     });
 
     // Đóng menu khi click vào overlay
-    document.querySelector('.overlay').addEventListener('click', function() {
+    document.querySelector('.overlay').addEventListener('click', function () {
         document.querySelector('.sys-nav').classList.remove('active');
         document.querySelector('.user-nav').classList.remove('active');
         document.querySelector('.overlay').classList.remove('active');

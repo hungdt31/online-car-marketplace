@@ -2,3 +2,6 @@
 .idea
 error.log
 vendor
+.node_modules
+.env
+

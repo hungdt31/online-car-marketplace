@@ -98,7 +98,7 @@ class Auth extends Controller
         $instance = new GoogleClient();
         $client = $instance->getClient();
 
-        if (! isset($_GET["code"])) {
+        if (!isset($_GET["code"])) {
             exit("Login failed");
         }
 
@@ -178,7 +178,7 @@ class Auth extends Controller
             exit;
         }
 
-        if (! isset($accessToken)) {
+        if (!isset($accessToken)) {
             if ($helper->getError()) {
                 header('HTTP/1.0 401 Unauthorized');
                 echo "Error: " . $helper->getError() . "\n";
@@ -210,7 +210,7 @@ class Auth extends Controller
         //$tokenMetadata->validateUserId('123');
         $tokenMetadata->validateExpiration();
 
-        if (! $accessToken->isLongLived()) {
+        if (!$accessToken->isLongLived()) {
             // Exchanges a short-lived access token for a long-lived one
             try {
                 $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);

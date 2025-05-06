@@ -8,7 +8,7 @@
             </div>
             <div class="category-filters">
                 <div class="category-item active">All</div>
-                <?php foreach ($top_category as $category) : ?>
+                <?php foreach ($top_category as $category): ?>
                     <div class="category-item" data-category="<?= $category['category_id']; ?>">
                         <?= $category['category_name']; ?>
                     </div>
