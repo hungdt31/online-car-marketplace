@@ -106,4 +106,12 @@ class FileModel extends Model
         $result = $this->db->execute($sql, $params, true);
         return $result['data'];
     }
+
+    public function deleteOne($id)
+    {
+        $sql = "DELETE FROM $this->_table WHERE id = :id";
+        $params = [':id' => $id];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
 }

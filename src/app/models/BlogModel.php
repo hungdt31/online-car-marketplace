@@ -92,9 +92,9 @@ class BlogModel extends Model
     public function getBlogById($id)
     {
         $sql = "SELECT 
-                b.id, b.title, b.content, b.views, b.created_at, b.updated_at,
-                u.username as author_name, u.id as author_id,  u.bio as author_bio,
-                f.url as cover_image_url
+                b.id, b.title, b.content, b.views, b.cover_image_id, b.created_at, b.updated_at, b.status,
+                u.username as author_name, u.id as author_id, u.bio as author_bio,
+                f.url as cover_image_url, f.fkey as cover_image_key
             FROM $this->_table b
             LEFT JOIN users u ON b.author_id = u.id
             LEFT JOIN files f ON b.cover_image_id = f.id
@@ -316,5 +316,26 @@ class BlogModel extends Model
         
         $result = $this->db->execute($sql, $params);
         return $result['data'];
+    }
+
+    public function updateOne($id, $data)
+    {
+        $sql = "UPDATE $this->_table SET 
+                title = :title, 
+                content = :content,
+                status = :status,
+                cover_image_id = :cover_image_id
+            WHERE id = :id";
+        
+        $params = [
+            ':title' => $data['title'],
+            ':content' => $data['content'],
+            ':status' => $data['status'],
+            ':cover_image_id' => $data['cover_image_id'],
+            ':id' => $id
+        ];
+
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
     }
 }

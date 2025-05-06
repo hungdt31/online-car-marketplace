@@ -96,6 +96,36 @@ class CategoryModel extends Model
         return $result['data'];
     }
 
+    function getCategoryForBlog($blog_id)
+    {
+        $sql = "SELECT * FROM $this->_table WHERE id IN (SELECT category_id FROM category_mappings WHERE entity_type = 'blogs' AND entity_id = :blog_id)";
+        $params = [':blog_id' => $blog_id];
+        $result = $this->db->execute($sql, $params);
+        return $result['data'];
+    }
+
+    function addCategoryForBlog($blog_id, $category_id)
+    {
+        $sql = "INSERT INTO category_mappings (entity_type, entity_id, category_id) VALUES ('blogs', :blog_id, :category_id)";
+        $params = [
+            ':blog_id' => $blog_id,
+            ':category_id' => $category_id
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
+
+    function removeCategoryFromBlog($blog_id, $category_id)
+    {
+        $sql = "DELETE FROM category_mappings WHERE entity_type = 'blogs' AND entity_id = :blog_id AND category_id = :category_id";
+        $params = [
+            ':blog_id' => $blog_id,
+            ':category_id' => $category_id
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
+
     function addCategoryForCar($car_id, $category_id)
     {
         $sql = "INSERT INTO category_mappings (entity_type, entity_id, category_id) VALUES ('cars', :car_id, :category_id)";

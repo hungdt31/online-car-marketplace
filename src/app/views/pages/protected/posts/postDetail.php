@@ -4,8 +4,6 @@
 // $post contains: id, title, content, views, created_at, updated_at, author_name, author_id, author_bio, cover_image_url, categories
 ?>
 
-
-
 <div class="container py-4">
     <!-- Breadcrumb Navigation -->
     <nav aria-label="breadcrumb" class="mb-3">
@@ -38,7 +36,7 @@
                     <button id="cancelBtn" class="btn btn-outline-secondary btn-sm px-3 ms-2" style="display:none;">
                         <i class="fas fa-times me-2"></i>Cancel
                     </button>
-                    <button id="saveBtn" class="btn btn-success btn-sm px-3 ms-2" style="display:none;">
+                    <button id="saveBtn" class="btn btn-success btn-sm px-3 ms-2" style="display:none;" data-cover-image-id="<?= htmlspecialchars($post['cover_image_id']) ?>">
                         <i class="fas fa-save me-2"></i>Save
                     </button>
                 </div>
@@ -105,9 +103,23 @@
             <form id="postForm">
                 <input type="hidden" id="postId" value="<?= htmlspecialchars($post['id']) ?>">
 
-                <div class="mb-3">
-                    <label for="title" class="form-label fw-bold">Title</label>
-                    <input type="text" class="form-control" id="title" value="<?= htmlspecialchars($post['title']) ?>" disabled>
+                <div class="d-flex gap-3 align-items-center mb-4">
+                    <div class="flex-grow-1">
+                        <label for="title" class="form-label fw-bold">Title</label>
+                        <input type="text" class="form-control" id="title" value="<?= htmlspecialchars($post['title']) ?>" disabled>
+                    </div>
+
+                    <div>
+                        <label for="status" class="form-label fw-bold">Status</label>
+                        <select class="form-select" id="status" disabled>
+                            <option value="draft" <?= $post['status'] === 'draft' ? 'selected' : '' ?>>Draft</option>
+                            <option value="pending" <?= $post['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
+                            <option value="published" <?= $post['status'] === 'published' ? 'selected' : '' ?>>Published</option>
+                            <option value="scheduled" <?= $post['status'] === 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
+                            <option value="archived" <?= $post['status'] === 'archived' ? 'selected' : '' ?>>Archived</option>
+                            <option value="deleted" <?= $post['status'] === 'deleted' ? 'selected' : '' ?>>Deleted</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -128,23 +140,71 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Cover Image Preview</label>
+                    <!-- <label class="form-label fw-bold">Cover Image Preview</label> -->
                     <div class="image-preview-container">
                         <img id="imagePreview" src="<?= htmlspecialchars($post['cover_image_url']) ?>" class="img-thumbnail" style="max-height: 300px;">
                     </div>
                 </div>
 
-                <!-- Display categories -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Categories</label>
-                    <div id="categoriesContainer" class="d-flex flex-wrap gap-1">
-                        <?php if (!empty($post['categories'])): ?>
-                            <?php foreach ($post['categories'] as $category): ?>
-                                <span class="badge bg-primary"><?= htmlspecialchars($category['name']) ?></span>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <span class="badge bg-secondary">Uncategorized</span>
-                        <?php endif; ?>
+                <!-- Enhanced Categories Section -->
+                <div class="card mb-4 mt-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-tags me-1"></i>
+                            Categories
+                        </div>
+                        <div class="badge bg-light text-dark category-counter">
+                            <span id="selectedCategoriesCount"><?= !empty($post['categories']) ? count($post['categories']) : '0' ?></span> selected
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <form id="carCategoriesForm">
+                                <input type="hidden" name="blog_id" value="<?php echo $post['id']; ?>">
+                                <!-- Search Box -->
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="categorySearch" placeholder="Search categories...">
+                                    </div>
+                                </div>
+
+                                <!-- Type Filter -->
+                                <div class="col-md-4">
+                                    <select class="form-select" id="categoryTypeFilter">
+                                        <option value="">All Types</option>
+                                        <?php
+                                        $types = ['Color', 'Style', 'Feature', 'Performance', 'Safety', 'Comfort', 'Technology', 'Material', 'Size', 'Fuel'];
+                                        foreach ($types as $type):
+                                        ?>
+                                            <option value="<?= strtolower($type) ?>"><?= $type ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Categories List -->
+                        <div class="d-flex flex-wrap gap-2 mb-3" id="categoryList">
+                            <?php
+                            $cate_ids = array_column($blog_categories, 'id');
+                            foreach ($categories as $category) {
+                                $isChecked = in_array($category['id'], $cate_ids) ? 'primary' : 'secondary';
+                                echo '<button type="button" class="btn btn-outline-' . $isChecked . ' category-item" data-id="' . $category['id'] . '" data-type="' . strtolower($category['type']) . '" data-name="' . strtolower($category['name']) . '">';
+                                echo htmlspecialchars($category['name']);
+                                echo '<input type="checkbox" name="categories[]" value="' . $category['id'] . '" ' . ($isChecked == 'primary' ? 'checked' : '') . ' class="d-none">';
+                                echo '</button>';
+                            }
+                            // Display all categories with appropriate selection state
+                            ?>
+                        </div>
+
+                        <!-- No results message -->
+                        <div id="noResults" class="text-center py-4 d-none">
+                            <p class="text-muted">No categories match your search</p>
+                        </div>
                     </div>
                 </div>
 
@@ -155,69 +215,9 @@
 </div> <!-- container -->
 
 <style>
-    /* Enhanced styling for post detail page */
-    .content-view {
-        min-height: 200px;
-        max-height: 500px;
-        overflow-y: auto;
-    }
-
-    .content-view img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .image-preview-container {
-        display: flex;
-        justify-content: center;
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        padding: 10px;
-        border-radius: 4px;
-    }
-
-    .image-preview-container img {
-        object-fit: contain;
-        max-width: 100%;
-    }
-
-    .post-metadata {
-        background-color: #f8f9fa;
-        border: 1px solid #e9ecef;
-    }
-
-    .editor-container .tiptap {
-        min-height: 300px;
-        max-height: 500px;
-        overflow-y: auto;
-        padding: 1rem;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-    }
-
-    .editor-menubar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        padding: 8px;
-        background-color: #f8f9fa;
-        border: 1px solid #ced4da;
-        border-bottom: none;
-        border-radius: 0.25rem 0.25rem 0 0;
-    }
-
-    .editor-menubar button {
-        padding: 4px 8px;
-        background: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-
-    .editor-menubar button.is-active {
-        background-color: #e9ecef;
-        border-color: #adb5bd;
-    }
+    <?php
+    RenderSystem::renderOne("assets", "static/css/posts/postDetail.css");
+    ?>
 </style>
 
 <script type="module">
@@ -225,275 +225,7 @@
     // Include the necessary JavaScript libraries for the editor
     RenderSystem::renderOne("assets", "static/js/helper/editor.js");
     ?>
-    document.addEventListener("DOMContentLoaded", function() {
-        const editBtn = document.getElementById("editBtn");
-        const cancelBtn = document.getElementById("cancelBtn");
-        const saveBtn = document.getElementById("saveBtn");
-        const form = document.getElementById("postForm");
-        const inputs = form.querySelectorAll("input:not([type=hidden]):not([type=file])");
-        const coverImageInput = document.getElementById("coverImage");
-        const imagePreview = document.getElementById("imagePreview");
-        const uploadBtn = document.getElementById("uploadBtn");
-        const imageUpload = document.getElementById("imageUpload");
-        const contentView = document.getElementById("contentView");
-        const editorContainer = document.querySelector(".editor-container");
-
-        // Store original values
-        const originalValues = {};
-        inputs.forEach(input => {
-            originalValues[input.id] = input.value;
-        });
-
-        // Original image source
-        const originalImageSrc = imagePreview.src;
-        let originalContent = contentView.innerHTML;
-        let editor = null;
-
-        // Handle file upload button
-        uploadBtn.addEventListener("click", function() {
-            imageUpload.click();
-        });
-
-        // Handle file selection
-        imageUpload.addEventListener("change", function() {
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    // Preview the image
-                    imagePreview.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Update image preview when cover image URL changes
-        coverImageInput.addEventListener("input", function() {
-            if (this.value.trim() !== "") {
-                imagePreview.src = this.value;
-            }
-        });
-
-        // Edit button functionality
-        editBtn.addEventListener("click", async function() {
-            // Show spinner while loading editor
-            editBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-            editBtn.disabled = true;
-
-            // Enable form inputs
-            inputs.forEach(input => {
-                input.disabled = false;
-            });
-
-            uploadBtn.disabled = false;
-
-            // Show editor, hide content view
-            contentView.style.display = "none";
-            editorContainer.style.display = "block";
-
-            // Update button states
-            editBtn.style.display = "none";
-            cancelBtn.style.display = "inline-block";
-            saveBtn.style.display = "inline-block";
-
-            // Reset edit button state (in case user cancels and tries again)
-            editBtn.innerHTML = '<i class="fas fa-edit me-2"></i>Edit';
-            editBtn.disabled = false;
-        });
-
-        // Cancel button functionality
-        cancelBtn.addEventListener("click", function() {
-            const editorContent = document.querySelector(".editor-container .tiptap");
-            // Reset to original values
-            inputs.forEach(input => {
-                input.value = originalValues[input.id];
-                input.disabled = true;
-            });
-
-            // Reset image
-            imagePreview.src = originalImageSrc;
-            uploadBtn.disabled = true;
-            imageUpload.value = "";
-
-            // Hide editor, restore content view
-            editorContainer.style.display = "none";
-            contentView.style.display = "block";
-            contentView.innerHTML = originalContent;
-
-            if (editorContent) {
-                editorContent.innerHTML = originalContent;
-            }
-
-            // Cleanup editor if it exists
-            if (editor && typeof editor.destroy === 'function') {
-                editor.destroy();
-                editor = null;
-            }
-
-            // Update button states
-            editBtn.style.display = "inline-block";
-            cancelBtn.style.display = "none";
-            saveBtn.style.display = "none";
-
-            // Show toast notification
-            showToast('Changes discarded', 'info');
-        });
-
-        // Save button functionality
-        saveBtn.addEventListener("click", function() {
-            // Collect form data
-            const postId = document.getElementById("postId").value;
-            const title = document.getElementById("title").value;
-
-            // Get content from editor or fallback
-            let content;
-            if (document.getElementById("editorContent")) {
-                content = document.getElementById("editorContent").value;
-            } else if (document.getElementById("fallbackEditor")) {
-                content = document.getElementById("fallbackEditor").value;
-            } else {
-                content = contentView.innerHTML;
-            }
-
-            // Create form data object for file upload
-            const formData = new FormData();
-            formData.append("id", postId);
-            formData.append("title", title);
-            formData.append("content", content);
-
-            // If a file was selected, add it to the form data
-            if (imageUpload.files && imageUpload.files[0]) {
-                formData.append("cover_image", imageUpload.files[0]);
-            } else {
-                // Otherwise use the URL
-                formData.append("cover_image_url", coverImageInput.value);
-            }
-
-            // Show loading state
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
-            saveBtn.disabled = true;
-
-            // Send AJAX request
-            fetch("/api/posts/" + postId, {
-                    method: "POST",
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest"
-                    },
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Show success toast
-                    showToast('Post updated successfully!', 'success');
-
-                    // Update original content
-                    originalContent = content;
-                    contentView.innerHTML = content;
-
-                    // Update original image source
-                    originalImageSrc = imagePreview.src;
-
-                    // If there was a new URL set in the response, update the input
-                    if (data.cover_image_url) {
-                        coverImageInput.value = data.cover_image_url;
-                        originalValues[coverImageInput.id] = data.cover_image_url;
-                    }
-
-                    // Disable form inputs
-                    inputs.forEach(input => {
-                        input.disabled = true;
-                        originalValues[input.id] = input.value; // Update original values
-                    });
-
-                    // Hide editor, show content view
-                    editorContainer.style.display = "none";
-                    contentView.style.display = "block";
-
-                    // Cleanup editor if it exists
-                    if (editor && typeof editor.destroy === 'function') {
-                        editor.destroy();
-                        editor = null;
-                    }
-
-                    uploadBtn.disabled = true;
-                    imageUpload.value = "";
-
-                    // Update button states
-                    editBtn.style.display = "inline-block";
-                    cancelBtn.style.display = "none";
-                    saveBtn.style.display = "none";
-                    saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save';
-                    saveBtn.disabled = false;
-                })
-                .catch(error => {
-                    console.error("Error updating post:", error);
-
-                    // Show error toast
-                    showToast('Failed to update post. Please try again.', 'error');
-
-                    // Reset button state
-                    saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save';
-                    saveBtn.disabled = false;
-                });
-        });
-
-        // Helper function to show toast messages
-        function showToast(message, type = 'success') {
-            // Create toast container if it doesn't exist
-            let toastContainer = document.querySelector(".toast-container");
-            if (!toastContainer) {
-                toastContainer = document.createElement("div");
-                toastContainer.className = "toast-container position-fixed bottom-0 end-0 p-3";
-                toastContainer.style.zIndex = "5";
-                document.body.appendChild(toastContainer);
-            }
-
-            // Set toast color based on type
-            let bgClass = 'bg-success';
-            let icon = 'fa-check-circle';
-
-            if (type === 'error') {
-                bgClass = 'bg-danger';
-                icon = 'fa-exclamation-circle';
-            } else if (type === 'info') {
-                bgClass = 'bg-info';
-                icon = 'fa-info-circle';
-            }
-
-            // Create toast HTML
-            const toastHtml = `
-            <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="fas ${icon} me-2"></i>${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        `;
-
-            // Add toast to container
-            toastContainer.insertAdjacentHTML("beforeend", toastHtml);
-
-            // Initialize and show the toast
-            const toastElement = toastContainer.lastElementChild;
-            const toast = new bootstrap.Toast(toastElement, {
-                autohide: true,
-                delay: 3000
-            });
-            toast.show();
-
-            // Remove toast after it's hidden
-            toastElement.addEventListener('hidden.bs.toast', function() {
-                this.remove();
-            });
-        }
-    });
+    <?php
+    RenderSystem::renderOne("assets", "static/js/pages/posts/postDetail.js");
+    ?>
 </script>

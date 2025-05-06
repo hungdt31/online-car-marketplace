@@ -65,38 +65,76 @@ class Posts extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        if ($_SERVER["REQUEST_METHOD"] === "GET") {
-            $post = $this->blog_model->getBlogById($id);
-            $categories = $this->category_model->getTopCategory();
+    public function update($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $_POST;
+            $blog = $this->blog_model->getBlogById($id);
             
-            $this->renderAdmin([
-                'page_title' => 'Edit Blog Post',
-                'view' => 'protected/posts/postEdit',
-                'content' => [
-                    'title' => 'Edit Blog Post',
-                    'post' => $post,
-                    'categories' => $categories
-                ]
-            ]);
-        } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $result = $this->blog_model->updateBlog($id, $_POST);
-            if ($result) {
-                // Handle category mappings
-                if (isset($_POST['categories'])) {
-                    // First delete all existing category mappings
-                    $this->blog_model->deleteAllBlogCategories($id);
-                    
-                    // Then add new ones
-                    foreach ($_POST['categories'] as $categoryId) {
-                        $this->blog_model->addBlogCategory($id, $categoryId);
+            if (!$blog) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Blog not found'
+                ]);
+                return;
+            }
+
+            if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
+                $aws = new AwsS3Service();
+                $uploadFile = $aws->uploadFile($_FILES['cover_image'], 'blog_covers');
+                if ($uploadFile) {
+                    // tạo record mới cho bảng files
+                    $addFileStatus = $this->file_model->addFile([
+                        'name' => $_FILES['cover_image']['name'],
+                        'fkey' => $uploadFile['fileKey'],
+                        'path' => $uploadFile['fileUrl'],
+                        'size' => $_FILES['cover_image']['size'],
+                        'type' => $_FILES['cover_image']['type']
+                    ]);
+                    if ($addFileStatus) {
+                        $file = $this->file_model->getFile(['fkey' => $uploadFile['fileKey']]);
+                        // Cập nhật lại blog với file mới và xóa file cũ
+                        if ($blog['cover_image_id']) {
+                            $aws->deleteFile($blog['cover_image_key']);
+                            $this->file_model->deleteOne($blog['cover_image_id']);
+                        }
+                        $data['cover_image_id'] = $file['id'];
+                        $updateStatus = $this->blog_model->updateOne($id, $data);
+                        if ($updateStatus) {
+                            echo json_encode([
+                                "success" => true,
+                                "message" => "Blog post updated successfully!"
+                            ]);
+                        } else {
+                            echo json_encode([
+                                "success" => false,
+                                "message" => "Fail to update blog!"
+                            ]);
+                        }
+                    } else {
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Fail to add file!"
+                        ]);
                     }
+                    return;
                 }
-                
-                echo json_encode(["success" => true, "message" => "Blog post updated successfully!"]);
+                echo json_encode([
+                    "success" => false,
+                    "message" => "File upload failed!"
+                ]);
             } else {
-                echo json_encode(["success" => false, "message" => "Failed to update blog post."]);
+                $updateStatus = $this->blog_model->updateOne($id, $data);
+                if ($updateStatus) {
+                    echo json_encode([
+                        "success" => true,
+                        "message" => "Blog updated successfully!"
+                    ]);
+                } else {
+                    echo json_encode([
+                        "success" => false,
+                        "message" => "Fail to update blog!"
+                    ]);
+                }
             }
         }
     }
@@ -212,15 +250,60 @@ class Posts extends Controller
     public function detail($id)
     {
         $post = $this->blog_model->getBlogById($id);
-        $categories = $this->category_model->getTopCategory();
+        $categories = $this->category_model->getAllCategories();
+        $blog_categories = $this->category_model->getCategoryForBlog($id);
         $this->renderAdmin([
             'page_title' => 'Blog Detail',
             'view' => 'protected/posts/postDetail',
             'content' => [
-                'title' => 'Blog Post Detail',
                 'post' => $post,
-                'categories' => $categories
+                'categories' => $categories,
+                'blog_categories' => $blog_categories,
             ]
         ]);
+    }
+
+    public function toggleCategory()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $blog_id = $_POST['blog_id'] ?? null;
+            $category_id = $_POST['category_id'] ?? null;
+            $action = $_POST['action'] ?? null;
+
+            if (empty($blog_id) || empty($category_id) || empty($action)) {
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Blog ID, Category ID and Action are required."
+                ]);
+                return;
+            }
+
+            $message = "Invalid action.";
+            if ($action === 'add') {
+                $result = $this->category_model->addCategoryForBlog($blog_id, $category_id);
+                $result ? $message = "Category added to blog successfully!" : $message = "Failed to add category to blog.";
+            } elseif ($action === 'remove') {
+                $result = $this->category_model->removeCategoryFromBlog($blog_id, $category_id);
+                $result ? $message = "Category removed from blog successfully!" : $message = "Failed to remove category from blog.";
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => $message
+                ]);
+                return;
+            }
+
+            if ($result) {
+                echo json_encode([
+                    "success" => true,
+                    "message" => $message
+                ]);
+            } else {
+                echo json_encode([
+                    "success" => false,
+                    "message" => $message
+                ]);
+            }
+        }
     }
 }
