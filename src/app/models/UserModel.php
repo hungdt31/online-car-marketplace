@@ -39,7 +39,7 @@ class UserModel extends Model {
     }
     public function findById($id) {
         $sql = "
-        SELECT u.*, f.url AS avatar 
+        SELECT u.*, f.url AS avatar, f.fkey AS avatar_key, f.id AS avatar_id
         FROM $this->_table u
         LEFT JOIN files f ON u.avatar_id = f.id
         WHERE u.id = :id
@@ -49,7 +49,13 @@ class UserModel extends Model {
         return $result['data'];
     }
     public function findAll() {
-        $sql = "SELECT * FROM $this->_table";
+        $sql = "
+        SELECT u.*, f.url as avatar_url 
+        FROM $this->_table u 
+        LEFT JOIN files f ON f.id = u.avatar_id 
+        WHERE u.role = 'user'
+        ORDER BY u.created_at DESC
+        ";
         $result = $this->db->execute($sql);
         return $result['data'];
     }
@@ -58,7 +64,7 @@ class UserModel extends Model {
         if (isset($data['password'])) {
             $hashedPassword = $this->hashPassword($data['password']);
         }
-        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, fname, lname, bio, address, avatar_id) VALUES (:email, :username, :password, :role, :provider, :fname, :lname, :bio, :address, :avatar_id)";
+        $sql = "INSERT INTO $this->_table (email, username, password, role, provider, fname, lname, phone, bio, address, avatar_id) VALUES (:email, :username, :password, :role, :provider, :fname, :lname, :phone, :bio, :address, :avatar_id)";
         $params = [
             ':email' => $data['email'],
             ':username' => $data['username'],
@@ -67,6 +73,7 @@ class UserModel extends Model {
             ':provider' => $data['provider'],
             ':fname' => $data['fname'],
             ':lname' => $data['lname'],
+            ':phone' => $data['phone'],
             ':bio' => $data['bio'],
             ':address' => $data['address'],
             ':avatar_id' => $data['avatar_id'],
@@ -101,6 +108,25 @@ class UserModel extends Model {
             ':phone' => $data['phone'],
             ':address' => $data['address'],
             ':gender' => $data['gender'],
+            ':id' => $id,
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
+    public function updateByAdmin($id, $data) {
+        $sql = "
+        UPDATE $this->_table
+        SET username = :username, email = :email, 
+        phone = :phone, role = :role,
+        status = :status
+        WHERE id = :id
+        ";
+        $params = [
+            ':username' => $data['username'],
+            ':email' => $data['email'],
+            ':phone' => $data['phone'],
+            ':role' => $data['role'],
+            ':status' => $data['status'],
             ':id' => $id,
         ];
         $result = $this->db->execute($sql, $params);
@@ -143,6 +169,15 @@ class UserModel extends Model {
         $params = [
             ':password' => $hashedPassword,
             ':email' => $data['email'],
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
+    public function updateStatus($id, $status) {
+        $sql = "UPDATE $this->_table SET status = :status WHERE id = :id";
+        $params = [
+            ':status' => $status,
+            ':id' => $id
         ];
         $result = $this->db->execute($sql, $params);
         return $result['success'];

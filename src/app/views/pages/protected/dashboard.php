@@ -139,23 +139,23 @@
     <!-- Content Row -->
     <div class="row">
         <!-- Recent Blogs -->
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-6 mb-4 equal-height-cards">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 fw-bold text-primary">Recent Blog Posts</h6>
-                    <a href="/blog-management" class="btn btn-sm">
+                    <a href="/blogs-management" class="btn btn-sm">
                         <i class="fas fa-newspaper me-1"></i>View All
                     </a>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($recentBlogs)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th style="width: 50%">Blog Post</th>
                                         <th>Author & Date</th>
-                                        <th class="text-end"></th>
+                                        <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -180,7 +180,30 @@
                                                         <div class="fw-medium text-truncate" style="max-width: 250px;" title="<?= htmlspecialchars($blog['title']) ?>">
                                                             <?= htmlspecialchars($blog['title']) ?>
                                                         </div>
-                                                        <div class="badge bg-<?= $blog['status'] === 'published' ? 'success' : 'warning' ?> text-white small">
+                                                        <div class="badge text-white small <?php
+                                                                                            switch ($blog['status']) {
+                                                                                                case 'published':
+                                                                                                    echo 'bg-success';
+                                                                                                    break;
+                                                                                                case 'draft':
+                                                                                                    echo 'bg-secondary';
+                                                                                                    break;
+                                                                                                case 'pending':
+                                                                                                    echo 'bg-info';
+                                                                                                    break;
+                                                                                                case 'scheduled':
+                                                                                                    echo 'bg-primary';
+                                                                                                    break;
+                                                                                                case 'archived':
+                                                                                                    echo 'bg-dark';
+                                                                                                    break;
+                                                                                                case 'deleted':
+                                                                                                    echo 'bg-danger';
+                                                                                                    break;
+                                                                                                default:
+                                                                                                    echo 'bg-warning';
+                                                                                            }
+                                                                                            ?>">
                                                             <?= ucfirst(htmlspecialchars($blog['status'])) ?>
                                                         </div>
                                                     </div>
@@ -196,15 +219,10 @@
                                                     <?= date('M j, Y', strtotime($blog['date'])) ?>
                                                 </div>
                                             </td>
-                                            <td class="text-center">
-                                                <div class="btn-group btn-group-sm">
-                                                    <a href="/blogs-management/details/<?= $blog['id'] ?? '' ?>" class="btn btn-outline-info" target="_blank">
-                                                        More details
-                                                    </a>
-                                                    <!-- <a href="/blog-management/edit/<?= $blog['id'] ?? '' ?>" class="btn btn-outline-primary">
-                                                    <i class="fas fa-edit"></i>
-                                                </a> -->
-                                                </div>
+                                            <td class="text-end">
+                                                <a href="/blogs-management/details/<?= $blog['id'] ?? '' ?>" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye me-1"></i>View
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -229,7 +247,7 @@
         </div>
 
         <!-- Recent Users -->
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-6 mb-4 equal-height-cards">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 fw-bold text-primary">Recent Users</h6>
@@ -240,7 +258,7 @@
                 <div class="card-body">
                     <?php if (!empty($recentUsers)): ?>
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th style="width: 45%">User</th>
@@ -268,7 +286,7 @@
                                                     <?php endif; ?>
                                                     <div>
                                                         <div class="fw-medium"><?= htmlspecialchars($user['username']) ?></div>
-                                                        <div class="text-muted small"><?= htmlspecialchars($user['email']) ?></div>
+                                                        <div class="text-muted small text-truncate" style="max-width: 200px;"><?= htmlspecialchars($user['email']) ?></div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -462,5 +480,48 @@
         border-radius: 4px;
         border: 1px solid #dee2e6;
         flex-shrink: 0;
+    }
+
+    /* Đảm bảo cả hai card có chiều cao bằng nhau */
+    .equal-height-cards {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .equal-height-cards .card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .equal-height-cards .card-body {
+        flex: 1;
+        overflow: auto;
+    }
+
+    .equal-height-cards .table-responsive {
+        max-height: 380px;
+        overflow-y: auto;
+    }
+
+    /* Đảm bảo header và footer cố định khi scroll */
+    .equal-height-cards .table thead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
+    }
+
+    /* Style cho trạng thái status */
+    .badge-archived {
+        background-color: #6c757d;
+    }
+
+    .badge-published {
+        background-color: #198754;
+    }
+
+    .badge-draft {
+        background-color: #6c757d;
     }
 </style>

@@ -41,15 +41,4 @@ class Dashboard extends Controller{
             ]
         ]);
     }
-    public function userManagement() {
-        $payload = SessionFactory::createSession('account')->getProfile();
-        $this->renderAdmin([
-            'page_title' => 'User Management',
-            'view' => 'protected/userManager',
-            'content' => [
-                'title' => 'User Management',
-                'payload' => $payload
-            ]
-        ]);
-    }
 }

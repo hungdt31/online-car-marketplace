@@ -1,0 +1,360 @@
+/* Base styles */
+.user-manager-container {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+}
+
+.filter-bar {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+/* User styles */
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #fff;
+    font-size: 16px;
+    background-color: #6c757d;
+}
+
+.user-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 30px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.role-admin {
+    background-color: #ffeceb;
+    color: #dc3545;
+}
+
+.role-user {
+    background-color: #e8f4ff;
+    color: #0d6efd;
+}
+
+.status-active {
+    background-color: #e6fff2;
+    color: #198754;
+}
+
+.status-suspended {
+    background-color: #fff8e1;
+    color: #ffc107;
+}
+
+.status-inactive {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Table styles */
+.users-table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.users-table thead {
+    background-color: #f8f9fa;
+}
+
+.users-table th {
+    font-weight: 600;
+    color: #495057;
+    padding: 15px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.users-table td {
+    padding: 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.users-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.sortable {
+    cursor: pointer;
+}
+
+.sortable:hover {
+    background-color: #f0f0f0;
+}
+
+.sortable i {
+    opacity: 0.3;
+    margin-left: 5px;
+}
+
+.sortable.asc i,
+.sortable.desc i {
+    opacity: 1;
+}
+
+/* Action buttons */
+.actions-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.actions-dropdown .dropdown-item i {
+    margin-right: 10px;
+    width: 16px;
+}
+
+.actions-dropdown .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Action Icon Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+.btn-view {
+    background-color: #e3f2fd;
+    color: #0d6efd;
+    border-color: #cfe2ff;
+}
+
+.btn-view:hover {
+    background-color: #d9ecff;
+    border-color: #0d6efd;
+}
+
+.btn-edit {
+    background-color: #e8f5e9;
+    color: #198754;
+    border-color: #d1e7dd;
+}
+
+.btn-edit:hover {
+    background-color: #d1e7dd;
+    border-color: #198754;
+}
+
+.btn-suspend {
+    background-color: #fff8e1;
+    color: #ffc107;
+    border-color: #fff3cd;
+}
+
+.btn-suspend:hover {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+}
+
+.btn-reactivate {
+    background-color: #e8f5e9;
+    color: #198754;
+    border-color: #d1e7dd;
+}
+
+.btn-reactivate:hover {
+    background-color: #d1e7dd;
+    border-color: #198754;
+}
+
+.btn-delete {
+    background-color: #feeceb;
+    color: #dc3545;
+    border-color: #f8d7da;
+}
+
+.btn-delete:hover {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+}
+
+/* Confirmation Modal Styling */
+.confirmation-modal .modal-body {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.confirmation-modal .modal-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+.confirmation-modal .modal-icon.warning {
+    background-color: #fff8e1;
+    color: #ffc107;
+}
+
+.confirmation-modal .modal-icon.danger {
+    background-color: #feeceb;
+    color: #dc3545;
+}
+
+.confirmation-modal .modal-icon i {
+    font-size: 2rem;
+}
+
+.confirmation-modal .modal-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.confirmation-modal .modal-footer {
+    justify-content: center;
+    padding-top: 0;
+    border-top: none;
+}
+
+.confirmation-modal .btn-confirm-suspend {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #fff;
+}
+
+.confirmation-modal .btn-confirm-delete {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Tooltip styling */
+.tooltip-inner {
+    background-color: #343a40;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before, .bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: #343a40;
+}
+
+/* User Details Modal */
+.user-details-container {
+    padding: 0;
+}
+
+.user-details-header {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.user-details-header .avatar-lg {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    object-fit: cover;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-details-content {
+    padding: 20px;
+}
+
+.user-details-item {
+    margin-bottom: 15px;
+}
+
+.user-details-label {
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+}
+
+.user-details-value {
+    color: #212529;
+}
+
+.provider-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.provider-google {
+    background-color: #f2f9fe;
+    color: #4285f4;
+}
+
+.provider-github {
+    background-color: #f0f0f0;
+    color: #24292e;
+}
+
+.provider-credential {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+/* Search input */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-wrapper .form-control {
+    padding-left: 40px;
+    border-radius: 30px;
+    border: 1px solid #dee2e6;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+}

@@ -139,35 +139,9 @@
                         <input type="text" class="form-control" id="title" name="title" placeholder="Enter post title" required>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="category_id" class="form-label">Category</label>
-                            <select class="form-control" id="category_id" name="category_id">
-                                <option value="">Select a category</option>
-                                <?php if (!empty($categories)) : ?>
-                                    <?php foreach ($categories as $category) : ?>
-                                        <option value="<?= htmlspecialchars($category['id']) ?>"><?= htmlspecialchars($category['name']) ?></option>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" name="status">
-                                <option value="published">Published</option>
-                                <option value="draft">Draft</option>
-                            </select>
-                        </div>
-                    </div>
-
                     <div class="mb-3">
                         <label for="cover_image" class="form-label">Cover Image</label>
                         <input type="file" class="form-control" id="cover_image" name="cover_image">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="summary" class="form-label">Summary</label>
-                        <textarea class="form-control" id="summary" name="summary" rows="2" placeholder="Enter post summary"></textarea>
                     </div>
 
                     <div class="mb-3">
