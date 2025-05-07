@@ -253,7 +253,7 @@ class Posts extends Controller
         $categories = $this->category_model->getAllCategories();
         $blog_categories = $this->category_model->getCategoryForBlog($id);
         $this->renderAdmin([
-            'page_title' => 'Blog Detail',
+            'page_title' => $post['title'],
             'view' => 'protected/posts/postDetail',
             'content' => [
                 'post' => $post,

@@ -60,17 +60,17 @@ class Database
                 'success' => true,
                 'message' => 'Execute successfully!'
             ];
-            if (stripos(trim($sql), 'SELECT') === 0) {
-                if ($single) {
-                    $response['data'] = $stmt->fetch(PDO::FETCH_ASSOC);
-                } else {
-                    $response['data'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                }
+            if ($single) {
+                $response['data'] = $stmt->fetch(PDO::FETCH_ASSOC);
             } else {
-                // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
-                $response['rowCount'] = $stmt->rowCount();
-                $response['lastInsertId'] = $this->conn->lastInsertId();
+                $response['data'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
+            // if (stripos(trim($sql), 'SELECT') === 0) {
+            // } else {
+                // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
+            $response['rowCount'] = $stmt->rowCount();
+            $response['lastInsertId'] = $this->conn->lastInsertId();
+            // }
 
             return $response; 
         } catch (PDOException $exception) {

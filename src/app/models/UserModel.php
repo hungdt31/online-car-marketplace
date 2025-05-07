@@ -147,4 +147,35 @@ class UserModel extends Model {
         $result = $this->db->execute($sql, $params);
         return $result['success'];
     }
+    public function getCount() {
+        $sql = "
+        SELECT 
+            COUNT(*) AS total_users,
+            SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_users,
+            SUM(CASE WHEN YEAR(created_at) = YEAR(NOW())
+                    AND MONTH(created_at) = MONTH(NOW()) THEN 1 ELSE 0 END) AS new_users
+        FROM $this->_table;
+        ";
+        $result = $this->db->execute($sql, [], true);
+        return $result['data'];
+    }
+    public function getRecentUsers($limit = 5) {
+        $sql = "
+        SELECT 
+            u.id,
+            u.username,
+            u.email,
+            u.created_at,
+            f.url AS avatar_url
+        FROM 
+            $this->_table u
+        LEFT JOIN 
+            files f ON u.avatar_id = f.id
+        ORDER BY 
+            u.created_at DESC
+        LIMIT $limit;
+        ";
+        $result = $this->db->execute($sql, []);
+        return $result['data'];
+    }
 }

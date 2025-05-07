@@ -338,4 +338,66 @@ class BlogModel extends Model
         $result = $this->db->execute($sql, $params);
         return $result['success'];
     }
+
+    public function getStatsView() {
+        $sql = "
+        WITH current_month AS (
+            SELECT SUM(views) AS current_month_views
+            FROM $this->_table
+            WHERE updated_at >= '2025-05-01 00:00:00' 
+            AND updated_at < '2025-06-01 00:00:00'
+        ),
+        previous_month AS (
+            SELECT SUM(views) AS previous_month_views
+            FROM $this->_table
+            WHERE updated_at >= '2025-04-01 00:00:00' 
+            AND updated_at < '2025-05-01 00:00:00'
+        )
+        SELECT 
+            current_month.current_month_views AS total_views_this_month,
+            ((current_month.current_month_views - previous_month.previous_month_views) / NULLIF(previous_month.previous_month_views, 0)) * 100 AS percentage_difference
+        FROM 
+            current_month, previous_month
+        WHERE 
+            previous_month.previous_month_views IS NOT NULL;
+        ";
+        $result = $this->db->execute($sql, [], true);
+        return $result['data'];
+    }
+
+    public function getCount() {
+        $sql = "
+        SELECT 
+            COUNT(*) AS total_blogs,
+            SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) AS published_blogs,
+            SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft_blogs
+        FROM blogs;
+        ";
+        $result = $this->db->execute($sql, [], true);
+        return $result['data'];
+    }
+
+    public function getRecentBlogs($limit = 5) {
+        $sql = "
+        SELECT 
+            b.id,
+            b.title,
+            u.username AS author,
+            b.updated_at AS date,
+            b.status,
+            f.url AS cover_image_url
+        FROM 
+            $this->_table b
+        LEFT JOIN 
+            users u ON b.author_id = u.id
+        LEFT JOIN 
+            files f ON b.cover_image_id = f.id
+        ORDER BY 
+            b.updated_at DESC
+        LIMIT $limit;
+        ";
+
+        $result = $this->db->execute($sql, []);
+        return $result['data'];
+    }
 }

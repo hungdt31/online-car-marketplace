@@ -17,3 +17,5 @@ $routes['forgot-password'] = 'auth/forgotPassword';
 $routes['reset-password'] = 'auth/resetPassword';
 $routes['categories-management'] = 'admin/categories';
 $routes['blogs-management/details/(:num)'] = 'admin/posts/detail/$1';
+$routes['users-management'] = 'admin/dashboard/userManagement';
+$routes['settings'] = 'admin/dashboard/settings';

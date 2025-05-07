@@ -20,9 +20,9 @@
             'link' => _WEB_ROOT . '/dashboard',
         ],
         [
-            'name' => 'Appointments',
+            'name' => 'Users',
             'icon' => 'bi bi-person',
-            'link' => _WEB_ROOT . '/appointments-management',
+            'link' => _WEB_ROOT . '/users-management',
         ],
         [
             'name' => 'Cars',
@@ -42,7 +42,7 @@
         [
             'name' => 'Settings',
             'icon' => 'bi bi-gear',
-            'link' => _WEB_ROOT . '/admin/settings',
+            'link' => _WEB_ROOT . '/settings',
         ]
     ]]);
     $this->render('pages/' . $view,  $content);
