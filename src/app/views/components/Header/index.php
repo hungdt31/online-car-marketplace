@@ -70,13 +70,13 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1;
+        z-index: 0;
     }
 
     /* Đảm bảo nội dung trong .header nằm trên lớp mờ */
     .header>* {
         position: relative;
-        z-index: 2;
+        /* z-index: 2; */
     }
 
     .searchContainer {

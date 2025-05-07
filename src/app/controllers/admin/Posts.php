@@ -5,7 +5,7 @@ class Posts extends Controller
     public $file_model;
     public $category_model;
     public $jwt;
-    
+
     public function __construct()
     {
         $this->blog_model = $this->model('BlogModel');
@@ -31,33 +31,45 @@ class Posts extends Controller
 
     public function add()
     {
-        if ($_SERVER["REQUEST_METHOD"] === "GET") {
-            // Get all categories for the select dropdown
-            $categories = $this->category_model->getTopCategory();
-            
-            $this->renderAdmin([
-                'page_title' => 'Add New Blog Post',
-                'view' => 'protected/posts/postAdd',
-                'content' => [
-                    'title' => 'Add New Blog Post',
-                    'categories' => $categories
-                ]
-            ]);
-        } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Get current user as author
             $session = SessionFactory::createSession('account');
             $user = $session->getProfile();
-            $_POST['author_id'] = $user['id'];
-            
-            $result = $this->blog_model->addBlog($_POST);
-            if ($result) {
-                // Handle category mappings if categories were selected
-                if (isset($_POST['categories']) && is_array($_POST['categories'])) {
-                    foreach ($_POST['categories'] as $categoryId) {
-                        $this->blog_model->addBlogCategory($result, $categoryId);
+            if (!$user) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'User not found'
+                ]);
+                return;
+            }
+            $data = [
+                'title' => $_POST['title'],
+                'content' => $_POST['content'],
+                'author_id' => $user['id']
+            ];
+
+            if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
+                $aws = new AwsS3Service();
+                $uploadFile = $aws->uploadFile($_FILES['cover_image'], 'blog_covers');
+                if ($uploadFile) {
+                    // tạo record mới cho bảng files
+                    $addFileStatus = $this->file_model->addFile([
+                        'name' => $_FILES['cover_image']['name'],
+                        'fkey' => $uploadFile['fileKey'],
+                        'path' => $uploadFile['fileUrl'],
+                        'size' => $_FILES['cover_image']['size'],
+                        'type' => $_FILES['cover_image']['type']
+                    ]);
+                    if ($addFileStatus) {
+                        $file = $this->file_model->getFile(['fkey' => $uploadFile['fileKey']]);
+                        $data['cover_image_id'] = $file['id'];
                     }
                 }
-                
+            }
+
+
+            $result = $this->blog_model->addBlog($data);
+            if ($result) {
                 echo json_encode(["success" => true, "message" => "Blog post added successfully!"]);
             } else {
                 echo json_encode(["success" => false, "message" => "Failed to add blog post."]);
@@ -65,11 +77,12 @@ class Posts extends Controller
         }
     }
 
-    public function update($id) {
+    public function update($id)
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = $_POST;
             $blog = $this->blog_model->getBlogById($id);
-            
+
             if (!$blog) {
                 echo json_encode([
                     'success' => false,
@@ -142,15 +155,31 @@ class Posts extends Controller
     public function delete($id)
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            // First delete all category mappings
-            $this->blog_model->deleteAllBlogCategories($id);
-            
-            // Then delete the blog post
-            $result = $this->blog_model->deleteBlog($id);
+            $blog = $this->blog_model->getBlogById($id);
+            if (!$blog) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Blog not found'
+                ]);
+                return;
+            }
+            // Delete the blog post
+            if ($blog['cover_image_id']) {
+                $aws = new AwsS3Service();
+                $aws->deleteFile($blog['cover_image_key']);
+                $this->file_model->deleteOne($blog['cover_image_id']);
+            }
+            $result = $this->blog_model->deleteOne($id);
             if ($result) {
-                echo json_encode(["success" => true, "message" => "Blog post deleted successfully!"]);
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Blog post deleted successfully!"
+                ]);
             } else {
-                echo json_encode(["success" => false, "message" => "Failed to delete blog post."]);
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Failed to delete blog post."
+                ]);
             }
         }
     }
@@ -161,7 +190,7 @@ class Posts extends Controller
             $result = $this->file_model->uploadFile('blog_covers');
             if ($result) {
                 echo json_encode([
-                    "success" => true, 
+                    "success" => true,
                     "message" => "Cover image uploaded successfully!",
                     "file_id" => $result,
                     "file_url" => $this->file_model->getFileUrl($result)

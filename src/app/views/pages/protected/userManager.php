@@ -24,7 +24,7 @@
     <!-- Filter Bar -->
     <div class="filter-bar d-flex flex-wrap gap-3 align-items-center">
       <!-- Search -->
-      <div class="search-wrapper me-3 flex-grow-1">
+      <div class="search-wrapper flex-grow-1">
         <i class="fas fa-search"></i>
         <input type="text" id="searchInput" class="form-control" placeholder="Search users...">
       </div>

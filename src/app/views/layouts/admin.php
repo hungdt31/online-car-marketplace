@@ -26,7 +26,7 @@
         ],
         [
             'name' => 'Cars',
-            'icon' => 'bi bi-box',
+            'icon' => 'bi bi-car-front-fill',
             'link' => _WEB_ROOT . '/cars-management',
         ],
         [

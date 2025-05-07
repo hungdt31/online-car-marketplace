@@ -1,4 +1,242 @@
 $(document).ready(function () {
+  // Khai báo biến toàn cục cho việc sắp xếp
+  let sortState = {
+    column: null,
+    direction: "asc"
+  };
+  
+  // Khởi tạo rows là tất cả các dòng trong bảng
+  const rows = $(".post-row").get();
+  const rowsPerPage = 10; // Số mục trên mỗi trang
+  let currentPage = 1;
+
+  // ==== Xử lý sắp xếp bảng ====
+  $("th.sortable").click(function() {
+    const column = $(this).data("sort");
+    handleSort(column);
+  });
+  
+  function handleSort(column) {
+    // Reset tất cả các header
+    $("th.sortable").removeClass("asc desc");
+    $("th.sortable i").attr("class", "fas fa-sort ms-1").css("opacity", "0.2");
+
+    // Cập nhật trạng thái sắp xếp
+    if (sortState.column === column) {
+      sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
+    } else {
+      sortState.column = column;
+      sortState.direction = "asc";
+    }
+
+    // Cập nhật giao diện của header đang được sắp xếp
+    const currentHeader = $(`th[data-sort="${column}"]`);
+    currentHeader.addClass(sortState.direction);
+    currentHeader.find("i").attr("class", 
+      `fas fa-sort-${sortState.direction === "asc" ? "up" : "down"} ms-1`
+    ).css("opacity", "1");
+
+    // Tiến hành sắp xếp dữ liệu
+    sortTable();
+    
+    // Cập nhật hiển thị của bảng sau khi sắp xếp
+    updateTable();
+  }
+
+  function sortTable() {
+    const column = sortState.column;
+    const direction = sortState.direction;
+    
+    if (!column) return;
+
+    // Định nghĩa mapping từ tên cột sang số thứ tự cột
+    const columnMap = {
+      "id": 0,
+      "title": 1,
+      "author": 2,
+      "views": 3,
+      "created_at": 4
+    };
+    
+    const columnIndex = columnMap[column];
+    
+    // Sắp xếp mảng rows
+    rows.sort(function(a, b) {
+      let aValue = getCellValue(a, columnIndex);
+      let bValue = getCellValue(b, columnIndex);
+      
+      // Xử lý các kiểu dữ liệu khác nhau
+      switch(column) {
+        case "id":
+        case "views":
+          // Sắp xếp số
+          aValue = parseInt(aValue, 10) || 0;
+          bValue = parseInt(bValue, 10) || 0;
+          return direction === "asc" ? aValue - bValue : bValue - aValue;
+          
+        case "created_at":
+          // Sắp xếp ngày tháng
+          aValue = new Date(aValue).getTime() || 0;
+          bValue = new Date(bValue).getTime() || 0;
+          return direction === "asc" ? aValue - bValue : bValue - aValue;
+          
+        default:
+          // Sắp xếp chuỗi
+          return direction === "asc" 
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+      }
+    });
+    
+    // Áp dụng thứ tự mới vào DOM
+    const tbody = $("#blogTableBody");
+    $.each(rows, function(index, row) {
+      tbody.append(row);
+    });
+  }
+  
+  function getCellValue(row, index) {
+    // Trích xuất giá trị từ ô cụ thể
+    let cell = $(row).find("td").eq(index);
+    
+    // Xử lý trường hợp đặc biệt cho title (vì có thể chứa hình ảnh)
+    if (index === 1) { // Cột title
+      return $(cell).find("span").text().trim();
+    }
+    
+    return $(cell).text().trim();
+  }
+  
+  // ==== Xử lý tìm kiếm và phân trang ====
+  function updateTable() {
+    // Lọc các dòng theo từ khóa tìm kiếm
+    const searchTerm = $("#searchInput").val().toLowerCase();
+    const filteredRows = rows.filter(function(row) {
+      const title = $(row).find(".post-title span").text().toLowerCase();
+      return title.includes(searchTerm);
+    });
+    
+    // Hiển thị thông báo không có kết quả nếu cần
+    if (filteredRows.length === 0) {
+      $("#noResultsMessage").removeClass("d-none");
+      $("#pagination").hide();
+    } else {
+      $("#noResultsMessage").addClass("d-none");
+      $("#pagination").show();
+    }
+    
+    // Tính toán phân trang
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+    if (currentPage > totalPages) {
+      currentPage = Math.max(1, totalPages);
+    }
+    
+    // Ẩn tất cả các dòng
+    $(rows).hide();
+    
+    // Hiển thị các dòng của trang hiện tại
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, filteredRows.length);
+    
+    for (let i = startIndex; i < endIndex; i++) {
+      $(filteredRows[i]).show();
+    }
+    
+    // Cập nhật điều khiển phân trang
+    updatePagination(totalPages);
+  }
+  
+  function updatePagination(totalPages) {
+    const pagination = $("#pagination");
+    pagination.empty();
+    
+    if (totalPages <= 1) return;
+    
+    // Nút Previous
+    let prevLi = $("<li>").addClass("page-item");
+    if (currentPage === 1) prevLi.addClass("disabled");
+    
+    $("<a>")
+      .addClass("page-link")
+      .html("&laquo;")
+      .attr("href", "#")
+      .on("click", function(e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+          currentPage--;
+          updateTable();
+        }
+      })
+      .appendTo(prevLi);
+    
+    pagination.append(prevLi);
+    
+    // Số trang
+    for (let i = 1; i <= totalPages; i++) {
+      let li = $("<li>").addClass("page-item");
+      if (i === currentPage) li.addClass("active");
+      
+      $("<a>")
+        .addClass("page-link")
+        .text(i)
+        .attr("href", "#")
+        .on("click", function(e) {
+          e.preventDefault();
+          currentPage = i;
+          updateTable();
+        })
+        .appendTo(li);
+      
+      pagination.append(li);
+    }
+    
+    // Nút Next
+    let nextLi = $("<li>").addClass("page-item");
+    if (currentPage === totalPages) nextLi.addClass("disabled");
+    
+    $("<a>")
+      .addClass("page-link")
+      .html("&raquo;")
+      .attr("href", "#")
+      .on("click", function(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+          currentPage++;
+          updateTable();
+        }
+      })
+      .appendTo(nextLi);
+    
+    pagination.append(nextLi);
+  }
+  
+  // Xử lý tìm kiếm
+  $("#searchInput").on("keyup", function() {
+    currentPage = 1; // Reset về trang đầu tiên khi tìm kiếm
+    updateTable();
+  });
+  
+  // Hiệu ứng hover cho các tiêu đề có thể sắp xếp
+  $("th.sortable").hover(
+    function() {
+      if (!$(this).hasClass("asc") && !$(this).hasClass("desc")) {
+        $(this).find("i").css("opacity", "0.5");
+      }
+    },
+    function() {
+      if (!$(this).hasClass("asc") && !$(this).hasClass("desc")) {
+        $(this).find("i").css("opacity", "0.2");
+      }
+    }
+  );
+  
+  // Khởi tạo bảng lần đầu
+  updateTable();
+  
+  // =========================
+  // Các phần xử lý form đã có
+  // =========================
+  
   // Add post functionality
   $("#addPostForm").submit(function (event) {
     event.preventDefault();
@@ -52,6 +290,7 @@ document
     submitButton.innerHTML =
       '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Deleting...';
 
+    console.log("Deleting post with ID:", postId);
     $.ajax({
       url: `/admin/posts/delete/${postId}`,
       type: "POST",
@@ -76,230 +315,3 @@ document
       },
     });
   });
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Variables for pagination and sorting
-  const rowsPerPage = 5; // Number of items per page
-  const rows = document.querySelectorAll(".post-row");
-  const searchInput = document.getElementById("searchInput");
-  const pagination = document.getElementById("pagination");
-  const noResultsMessage = document.getElementById("noResultsMessage");
-  let currentPage = 1;
-  let sortState = {
-    column: null,
-    direction: "asc",
-  };
-
-  // Declare all functions first
-  function updatePagination(totalPages) {
-    pagination.innerHTML = "";
-
-    // Add Previous button
-    if (totalPages > 1) {
-      let prevLi = document.createElement("li");
-      prevLi.classList.add("page-item");
-      if (currentPage === 1) prevLi.classList.add("disabled");
-      prevLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
-      prevLi.addEventListener("click", function (e) {
-        e.preventDefault();
-        if (currentPage > 1) {
-          currentPage--;
-          updateTable();
-        }
-      });
-      pagination.appendChild(prevLi);
-    }
-
-    // Add page numbers
-    for (let i = 1; i <= totalPages; i++) {
-      let li = document.createElement("li");
-      li.classList.add("page-item");
-      if (i === currentPage) li.classList.add("active");
-      li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-      li.addEventListener("click", function (e) {
-        e.preventDefault();
-        currentPage = i;
-        updateTable();
-      });
-      pagination.appendChild(li);
-    }
-
-    // Add Next button
-    if (totalPages > 1) {
-      let nextLi = document.createElement("li");
-      nextLi.classList.add("page-item");
-      if (currentPage === totalPages) nextLi.classList.add("disabled");
-      nextLi.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
-      nextLi.addEventListener("click", function (e) {
-        e.preventDefault();
-        if (currentPage < totalPages) {
-          currentPage++;
-          updateTable();
-        }
-      });
-      pagination.appendChild(nextLi);
-    }
-  }
-
-  function getCellValue(row, column) {
-    const mapping = {
-      id: 0,
-      title: 1,
-      author: 2,
-      views: 3,
-      created_at: 4,
-    };
-
-    const cell = row.cells[mapping[column]];
-    return cell ? cell.textContent.trim() : "";
-  }
-
-  function sortTable(column) {
-    const table = document.getElementById("blogTableBody");
-    if (!table) return;
-
-    const rows = Array.from(table.getElementsByTagName("tr"));
-    const headers = document.querySelectorAll("th.sortable");
-
-    // Reset all headers
-    headers.forEach((header) => {
-      header.classList.remove("asc", "desc");
-      header.querySelector("i").className = "fas fa-sort ms-1";
-    });
-
-    // Update sort state
-    if (sortState.column === column) {
-      sortState.direction = sortState.direction === "asc" ? "desc" : "asc";
-    } else {
-      sortState.column = column;
-      sortState.direction = "asc";
-    }
-
-    // Update header appearance
-    const currentHeader = document.querySelector(`th[data-sort="${column}"]`);
-    if (currentHeader) {
-      currentHeader.classList.add(sortState.direction);
-      currentHeader.querySelector("i").className = `fas fa-sort-${
-        sortState.direction === "asc" ? "up" : "down"
-      } ms-1`;
-    }
-
-    // Sort the rows
-    rows.sort((a, b) => {
-      let aValue = getCellValue(a, column);
-      let bValue = getCellValue(b, column);
-
-      // Handle numeric sorting
-      if (column === "id" || column === "views") {
-        return sortState.direction === "asc"
-          ? parseInt(aValue) - parseInt(bValue)
-          : parseInt(bValue) - parseInt(aValue);
-      }
-
-      // Handle date sorting
-      if (column === "created_at") {
-        const dateA = new Date(aValue);
-        const dateB = new Date(bValue);
-        return sortState.direction === "asc" ? dateA - dateB : dateB - dateA;
-      }
-
-      // String comparison for other columns
-      return sortState.direction === "asc"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    });
-
-    // Reorder the table
-    rows.forEach((row) => table.appendChild(row));
-  }
-
-  // Define updateTable function
-  function updateTable() {
-    const filter = searchInput.value.toLowerCase();
-    const filteredRows = Array.from(rows).filter((row) =>
-      row
-        .querySelector(".post-title")
-        .textContent.toLowerCase()
-        .includes(filter)
-    );
-
-    // Show no results message if needed
-    noResultsMessage.classList.toggle("d-none", filteredRows.length > 0);
-
-    // Calculate pagination
-    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-    if (currentPage > totalPages) {
-      currentPage = totalPages || 1;
-    }
-
-    // Update display
-    filteredRows.forEach((row, index) => {
-      row.style.display =
-        index >= (currentPage - 1) * rowsPerPage &&
-        index < currentPage * rowsPerPage
-          ? ""
-          : "none";
-    });
-
-    // Update pagination controls
-    updatePagination(totalPages);
-
-    // Apply sorting if a column is selected
-    if (sortState.column) {
-      sortTable(sortState.column);
-    }
-  }
-
-  // Add click event listeners to sortable headers
-  document.querySelectorAll("th.sortable").forEach((header) => {
-    header.addEventListener("click", () => {
-      const column = header.getAttribute("data-sort");
-      if (column) {
-        sortTable(column);
-        // Re-apply pagination after sorting
-        updateTable();
-      }
-    });
-
-    // Add hover effect for sort indicators
-    header.addEventListener("mouseover", () => {
-      if (
-        !header.classList.contains("asc") &&
-        !header.classList.contains("desc")
-      ) {
-        const icon = header.querySelector("i");
-        if (icon) icon.style.opacity = "0.5";
-      }
-    });
-
-    header.addEventListener("mouseout", () => {
-      if (
-        !header.classList.contains("asc") &&
-        !header.classList.contains("desc")
-      ) {
-        const icon = header.querySelector("i");
-        if (icon) icon.style.opacity = "0.2";
-      }
-    });
-  });
-
-  // Search functionality
-  searchInput.addEventListener("keyup", function () {
-    currentPage = 1; // Reset to first page on search
-    updateTable();
-  });
-
-  // Initialize rich text editors if needed
-  if (typeof tinymce !== "undefined") {
-    tinymce.init({
-      selector: "#content",
-      height: 300,
-      plugins: "link image code table lists",
-      toolbar:
-        "undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code",
-    });
-  }
-
-  // Initial table setup
-  updateTable();
-});

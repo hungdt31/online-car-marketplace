@@ -17,14 +17,14 @@ class BlogModel extends Model
             LEFT JOIN users u ON b.author_id = u.id
             LEFT JOIN files f ON b.cover_image_id = f.id
             ORDER BY b.created_at DESC";
-        
+
         if ($limit !== null) {
             $sql .= " LIMIT :limit";
             if ($offset !== null) {
                 $sql .= " OFFSET :offset";
             }
         }
-        
+
         $params = [];
         if ($limit !== null) {
             $params[':limit'] = $limit;
@@ -32,7 +32,7 @@ class BlogModel extends Model
                 $params[':offset'] = $offset;
             }
         }
-        
+
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
@@ -46,7 +46,7 @@ class BlogModel extends Model
             LEFT JOIN files f ON b.cover_image_id = f.id
             ORDER BY b.created_at DESC
             LIMIT :limit";
-        
+
         $params = [':limit' => $limit];
         $result = $this->db->execute($sql, $params);
         return $result['data'];
@@ -65,12 +65,12 @@ class BlogModel extends Model
             WHERE cm.category_id = :category_id
             ORDER BY b.created_at DESC
             LIMIT :limit";
-        
+
         $params = [
             ':category_id' => $categoryId,
             ':limit' => $limit
         ];
-        
+
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
@@ -84,7 +84,7 @@ class BlogModel extends Model
             GROUP BY c.id, c.name
             HAVING post_count > 0
             ORDER BY post_count DESC";
-        
+
         $result = $this->db->execute($sql);
         return $result['data'];
     }
@@ -99,27 +99,27 @@ class BlogModel extends Model
             LEFT JOIN users u ON b.author_id = u.id
             LEFT JOIN files f ON b.cover_image_id = f.id
             WHERE b.id = :id";
-        
+
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
-        
+
         if ($result['success'] && isset($result['data'])) {
             // Increment views
             $this->incrementViews($id);
-            
+
             // Get categories for this blog
             $categoriesSql = "SELECT 
                     c.id, c.name
                 FROM categories c
                 JOIN category_mappings cm ON c.id = cm.category_id
                 WHERE cm.entity_id = :blog_id AND cm.entity_type = 'blogs'";
-            
+
             $categoriesResult = $this->db->execute($categoriesSql, [':blog_id' => $id]);
             $result['data']['categories'] = $categoriesResult['data'] ?? [];
-            
+
             return $result['data'];
         }
-        
+
         return null;
     }
 
@@ -140,40 +140,40 @@ class BlogModel extends Model
             LEFT JOIN files f ON b.cover_image_id = f.id
             WHERE b.title LIKE :keyword OR b.content LIKE :keyword
             ORDER BY b.created_at DESC";
-        
+
         $params = [':keyword' => '%' . $keyword . '%'];
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
-    
+
     public function getPostsByIds(array $ids)
     {
         if (empty($ids)) {
             return [];
         }
-        
+
         // Create placeholders for IDs
-        $placeholders = implode(',', array_map(function($i) { 
-            return ':id' . $i; 
+        $placeholders = implode(',', array_map(function ($i) {
+            return ':id' . $i;
         }, array_keys($ids)));
-        
+
         $sql = "SELECT 
                 b.id, b.title, b.created_at,
                 f.url as cover_image_url
             FROM $this->_table b
             LEFT JOIN files f ON b.cover_image_id = f.id
             WHERE b.id IN ($placeholders)";
-        
+
         // Prepare parameters
         $params = [];
         foreach ($ids as $key => $id) {
             $params[':id' . $key] = $id;
         }
-        
+
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
-    
+
     /**
      * Get blogs filtered by multiple category IDs - must have ALL categories
      * 
@@ -185,23 +185,23 @@ class BlogModel extends Model
     public function getBlogsByCategories(array $categoryIds, $limit = null, $offset = null)
     {
         error_log('Getting blogs for categories: ' . json_encode($categoryIds));
-        
+
         if (empty($categoryIds)) {
             error_log('No category IDs provided, returning all blogs');
             return $this->getList($limit, $offset);
         }
-        
+
         // We use a different approach to find posts with ALL categories
         // For each category, we need a matching entry in category_mappings
         // Count these matches and ensure they equal the number of category IDs
-        
+
         $categoryCount = count($categoryIds);
-        
+
         // Create placeholders for category IDs
-        $placeholders = implode(',', array_map(function($i) { 
-            return ':cat_id' . $i; 
+        $placeholders = implode(',', array_map(function ($i) {
+            return ':cat_id' . $i;
         }, array_keys($categoryIds)));
-        
+
         $sql = "SELECT 
                 b.id, b.title, b.content, b.views, b.created_at, b.updated_at,
                 u.username as author_name, 
@@ -218,7 +218,7 @@ class BlogModel extends Model
                 HAVING COUNT(DISTINCT cm.category_id) = :category_count
             )
             ORDER BY b.created_at DESC";
-        
+
         // Add limit and offset if provided
         if ($limit !== null) {
             $sql .= " LIMIT :limit";
@@ -226,23 +226,23 @@ class BlogModel extends Model
                 $sql .= " OFFSET :offset";
             }
         }
-        
+
         // Prepare parameters
         $params = [':category_count' => $categoryCount];
         foreach ($categoryIds as $key => $id) {
             $params[':cat_id' . $key] = $id;
         }
-        
+
         if ($limit !== null) {
             $params[':limit'] = $limit;
             if ($offset !== null) {
                 $params[':offset'] = $offset;
             }
         }
-        
+
         error_log('SQL: ' . $sql);
         error_log('Params: ' . json_encode($params));
-        
+
         $result = $this->db->execute($sql, $params);
         error_log('Found ' . count($result['data']) . ' blogs');
         return $result['data'];
@@ -262,15 +262,15 @@ class BlogModel extends Model
         if (empty($categoryIds)) {
             return $this->searchBlogs($keyword);
         }
-        
+
         // Count the number of categories to filter by
         $categoryCount = count($categoryIds);
-        
+
         // Create placeholders for category IDs
-        $placeholders = implode(',', array_map(function($i) { 
-            return ':cat_id' . $i; 
+        $placeholders = implode(',', array_map(function ($i) {
+            return ':cat_id' . $i;
         }, array_keys($categoryIds)));
-        
+
         $sql = "SELECT 
                 b.id, b.title, b.content, b.views, b.created_at, b.updated_at,
                 u.username as author_name, 
@@ -288,7 +288,7 @@ class BlogModel extends Model
                 HAVING COUNT(DISTINCT cm.category_id) = :category_count
             )
             ORDER BY b.created_at DESC";
-        
+
         // Add limit and offset if provided
         if ($limit !== null) {
             $sql .= " LIMIT :limit";
@@ -296,24 +296,24 @@ class BlogModel extends Model
                 $sql .= " OFFSET :offset";
             }
         }
-        
+
         // Prepare parameters
         $params = [
             ':keyword' => '%' . $keyword . '%',
             ':category_count' => $categoryCount
         ];
-        
+
         foreach ($categoryIds as $key => $id) {
             $params[':cat_id' . $key] = $id;
         }
-        
+
         if ($limit !== null) {
             $params[':limit'] = $limit;
             if ($offset !== null) {
                 $params[':offset'] = $offset;
             }
         }
-        
+
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
@@ -326,7 +326,7 @@ class BlogModel extends Model
                 status = :status,
                 cover_image_id = :cover_image_id
             WHERE id = :id";
-        
+
         $params = [
             ':title' => $data['title'],
             ':content' => $data['content'],
@@ -339,7 +339,8 @@ class BlogModel extends Model
         return $result['success'];
     }
 
-    public function getStatsView() {
+    public function getStatsView()
+    {
         $sql = "
         WITH current_month AS (
             SELECT SUM(views) AS current_month_views
@@ -365,7 +366,8 @@ class BlogModel extends Model
         return $result['data'];
     }
 
-    public function getCount() {
+    public function getCount()
+    {
         $sql = "
         SELECT 
             COUNT(*) AS total_blogs,
@@ -377,7 +379,8 @@ class BlogModel extends Model
         return $result['data'];
     }
 
-    public function getRecentBlogs($limit = 5) {
+    public function getRecentBlogs($limit = 5)
+    {
         $sql = "
         SELECT 
             b.id,
@@ -399,5 +402,32 @@ class BlogModel extends Model
 
         $result = $this->db->execute($sql, []);
         return $result['data'];
+    }
+
+    public function addBlog($data)
+    {
+        $sql = "INSERT INTO $this->_table (title, content, views, created_at, updated_at, author_id, cover_image_id) 
+                VALUES (:title, :content, :views, :created_at, :updated_at, :author_id, :cover_image_id)";
+
+        $params = [
+            ':title' => $data['title'],
+            ':content' => $data['content'],
+            ':views' => 0,
+            ':created_at' => date('Y-m-d H:i:s'),
+            ':updated_at' => date('Y-m-d H:i:s'),
+            ':author_id' => $data['author_id'],
+            ':cover_image_id' => $data['cover_image_id']
+        ];
+
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
+
+    public function deleteOne($id)
+    {
+        $sql = "DELETE FROM $this->_table WHERE id = :id";
+        $params = [':id' => $id];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
     }
 }
