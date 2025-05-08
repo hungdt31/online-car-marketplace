@@ -1,142 +1,152 @@
-body {
+/* body {
     font-family: 'Segoe UI', sans-serif;
     background: #f9f9f9;
     text-align: center;
-}
+} */
 
 .section-header-text-center h4 {
-    font-size: 1.5em;
-    text-align: center;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #000000;
+  font-size: 1.5em;
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #000000;
 }
 
 .section-header-text-center h2 {
-    text-align: center;
-    font-size: 3em;
-    color: #000000;
-    font-weight: 800;
-    margin-bottom: 20px;
+  text-align: center;
+  font-size: 3em;
+  color: #000000;
+  font-weight: 800;
+  margin-bottom: 20px;
 }
 
 .testimonial-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    align-items: flex-start;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .testimonial-left {
-    flex: 1;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
 }
 
 .speech-icon {
-    font-size: 100px;
-    vertical-align: middle; /* căn giữa theo chiều dọc với chữ */
+  font-size: 100px;
+  vertical-align: middle; /* căn giữa theo chiều dọc với chữ */
 }
 
-
 .review-content {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .review-header {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
 }
 
 .review-header h3 {
-    margin: 0;
+  margin: 0;
 }
 
 .stars {
-    color: #ffc107;
-    font-size: 1.2rem;
+  color: #ffc107;
+  font-size: 1.2rem;
 }
 
 .read-more {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #4e6ef1;
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #4e6ef1;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
 }
 .read-more:hover {
-    background-color: #2d409b;
+  background-color: #2d409b;
 }
 
 .testimonial-images {
-    flex: 1;
-    display: grid;
+  flex: 1;
+  /* display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
+    grid-gap: 10px; */
 }
 
 .testimonial-images img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
 }
 .review-content p {
-    text-align: left;
+  text-align: left;
 }
-
 
 /* --- Phần khung avatar đen bo tròn ở trên --- */
 .customer-avatars {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    box-sizing: border-box;
-    padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 0 20px;
+  cursor: pointer;
 }
 
 .avatar {
-    background: #000;
-    border-radius: 50px;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    max-width: 250px;
-    flex: 1 1 0;
+  background: #000;
+  border-radius: 50px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 250px;
+  flex: 1 1 0;
+}
+.avatar:hover {
+  background: #4e6ef1;
+  transition: background 0.3s ease;
 }
 
 .avatar img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .avatar .info {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    color: white;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  color: white;
 }
 
 .avatar .name {
-    font-size: 1em;
-    font-weight: bold;
-    margin: 0;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0;
 }
 
 .avatar .designation {
-    font-size: 0.85em;
-    margin: 0;
+  font-size: 0.85em;
+  margin: 0;
+}
+.testimonial-comment {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 15px;
+  text-align: justify; /* This will justify the text on both sides */
+  line-height: 1.6; /* Adjust line height for better readability */
 }
