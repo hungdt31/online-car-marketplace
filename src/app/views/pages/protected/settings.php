@@ -223,6 +223,18 @@ $customerContacts = [
                 <i class="fas fa-paint-brush"></i>
                 Appearance
             </a>
+            <a href="#faq" class="settings-sidebar-item">
+                <i class="fas fa-question-circle"></i>
+                FAQ Management
+            </a>
+            <a href="#help-questions" class="settings-sidebar-item">
+                <i class="fas fa-life-ring"></i>
+                Help Questions
+            </a>
+            <a href="#appointments" class="settings-sidebar-item">
+                <i class="fas fa-calendar-check"></i>
+                Appointments
+            </a>
             <a href="#advanced" class="settings-sidebar-item">
                 <i class="fas fa-tools"></i>
                 Advanced
@@ -267,6 +279,222 @@ $customerContacts = [
                         </button>
                     </div>
                 </form>
+            </div>
+            
+            <!-- FAQ Management Section -->
+            <div class="settings-section d-none" id="faq">
+                <div class="settings-section-header">
+                    <i class="fas fa-question-circle"></i>
+                    <h2 class="settings-section-title">FAQ Management</h2>
+                </div>
+                <p class="settings-description">Manage frequently asked questions and their categories</p>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <a href="/faq" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-2"></i>Go to FAQ Management
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Quick Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="faqSettingsForm">
+                            <div class="form-group d-flex align-items-center justify-content-between mb-3">
+                                <div>
+                                    <label class="form-label mb-0">Show FAQ on Homepage</label>
+                                    <p class="form-text mb-0">Display featured FAQs on your homepage</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="show_faq_homepage" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group d-flex align-items-center justify-content-between mb-3">
+                                <div>
+                                    <label class="form-label mb-0">Enable FAQ Search</label>
+                                    <p class="form-text mb-0">Allow users to search through your FAQs</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="enable_faq_search" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="faqsPerPage" class="form-label">FAQs Per Page</label>
+                                <select class="form-select" id="faqsPerPage" name="faqs_per_page">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                </select>
+                                <div class="form-text">Number of FAQs to display per page</div>
+                            </div>
+                            
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    Save FAQ Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Help Questions Section -->
+            <div class="settings-section d-none" id="help-questions">
+                <div class="settings-section-header">
+                    <i class="fas fa-life-ring"></i>
+                    <h2 class="settings-section-title">Help Questions</h2>
+                </div>
+                <p class="settings-description">Manage help questions submitted by users</p>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <a href="/help-question" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-2"></i>Go to Help Questions
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Notification Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="helpQuestionsSettingsForm">
+                            <div class="form-group d-flex align-items-center justify-content-between mb-3">
+                                <div>
+                                    <label class="form-label mb-0">Email Notifications</label>
+                                    <p class="form-text mb-0">Receive email when new help questions are submitted</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="help_email_notifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notificationEmail" class="form-label">Notification Email</label>
+                                <input type="email" class="form-control" id="notificationEmail" name="notification_email" 
+                                       value="support@example.com">
+                                <div class="form-text">Email address to receive notifications</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="autoResponseTemplate" class="form-label">Auto-Response Template</label>
+                                <textarea class="form-control" id="autoResponseTemplate" name="auto_response_template" 
+                                          rows="4">Thank you for your question. Our team will get back to you within 24 hours.</textarea>
+                                <div class="form-text">Template for automatic response emails</div>
+                            </div>
+                            
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    Save Notification Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Appointments Section -->
+            <div class="settings-section d-none" id="appointments">
+                <div class="settings-section-header">
+                    <i class="fas fa-calendar-check"></i>
+                    <h2 class="settings-section-title">Appointments</h2>
+                </div>
+                <p class="settings-description">Manage test drive and service appointments</p>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <a href="/appointments-management" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-2"></i>Go to Appointments Management
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Appointment Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="appointmentsSettingsForm">
+                            <div class="form-group">
+                                <label for="businessHours" class="form-label">Business Hours</label>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <label class="form-text">Monday - Friday</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="input-group">
+                                            <input type="time" class="form-control" name="weekday_start" value="09:00">
+                                            <span class="input-group-text">to</span>
+                                            <input type="time" class="form-control" name="weekday_end" value="18:00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-text">Saturday</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="input-group">
+                                            <input type="time" class="form-control" name="saturday_start" value="10:00">
+                                            <span class="input-group-text">to</span>
+                                            <input type="time" class="form-control" name="saturday_end" value="16:00">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mt-3">
+                                <label for="appointmentDuration" class="form-label">Appointment Duration</label>
+                                <select class="form-select" id="appointmentDuration" name="appointment_duration">
+                                    <option value="30">30 minutes</option>
+                                    <option value="45">45 minutes</option>
+                                    <option value="60" selected>1 hour</option>
+                                    <option value="90">1.5 hours</option>
+                                    <option value="120">2 hours</option>
+                                </select>
+                                <div class="form-text">Default duration for appointments</div>
+                            </div>
+                            
+                            <div class="form-group mt-3">
+                                <label for="bufferTime" class="form-label">Buffer Time Between Appointments</label>
+                                <select class="form-select" id="bufferTime" name="buffer_time">
+                                    <option value="0">None</option>
+                                    <option value="15" selected>15 minutes</option>
+                                    <option value="30">30 minutes</option>
+                                    <option value="45">45 minutes</option>
+                                </select>
+                                <div class="form-text">Time buffer between consecutive appointments</div>
+                            </div>
+                            
+                            <div class="form-group d-flex align-items-center justify-content-between mt-3">
+                                <div>
+                                    <label class="form-label mb-0">Require Phone Verification</label>
+                                    <p class="form-text mb-0">Send verification code via SMS before confirming appointments</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="require_phone_verification">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    Save Appointment Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
             
             <!-- Advanced Settings (partial example to show the caution box) -->

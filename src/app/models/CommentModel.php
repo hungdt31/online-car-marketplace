@@ -175,10 +175,12 @@ class CommentModel extends Model
 
     public function getComment($id)
     {
-        $sql = "SELECT c.*, u.email AS email 
-                FROM {$this->_table} c 
-                INNER JOIN users u ON c.user_id = u.id 
-                WHERE c.id = :id";
+        $sql = "SELECT c.*, u.email AS email,
+            f.id AS file_id, f.fkey AS file_key
+        FROM {$this->_table} c 
+        INNER JOIN users u ON c.user_id = u.id 
+        LEFT JOIN files f ON c.file_id = f.id
+        WHERE c.id = :id";
         $params = [':id' => $id];
         $result = $this->db->execute($sql, $params, true);
         return $result['data'];

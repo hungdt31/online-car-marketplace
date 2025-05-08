@@ -14,15 +14,23 @@
     <!-- Control Bar -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Search Bar -->
-        <div class="search-wrapper">
+        <div class="search-wrapper m-0">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="searchInput" class="form-control" placeholder="Search posts...">
         </div>
+        <!-- Action Buttons -->
+        <div class="d-flex align-items-center gap-3">
+            <a href="<?= _WEB_ROOT . '/blog-comments' ?>">
+                <button type="button" class="btn btn-outline-primary m-3">
+                    <i class="bi bi-chat-left-dots me-2"></i>View Comments
+                </button>
+            </a>
 
-        <!-- Add New Post Button -->
-        <button type="button" data-bs-toggle="modal" data-bs-target="#addPostModal" class="btn btn-add">
-            <i class="fas fa-plus-circle me-2"></i>Add New Post
-        </button>
+            <!-- Add New Post Button -->
+            <button type="button" data-bs-toggle="modal" data-bs-target="#addPostModal" class="btn btn-add">
+                <i class="fas fa-plus-circle me-2"></i>Add New Post
+            </button>
+        </div>
     </div>
 
     <!-- Table Container -->

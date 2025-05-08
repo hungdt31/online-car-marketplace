@@ -338,7 +338,7 @@
                 <div class="card-body">
                     <div class="row row-cols-2 g-3">
                         <div class="col">
-                            <a href="/blogs-management/add" class="btn btn-light border w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <a href="/blogs-management" class="btn btn-light border w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
                                 <i class="fas fa-plus-circle fa-2x text-primary mb-2"></i>
                                 <span>New Post</span>
                             </a>

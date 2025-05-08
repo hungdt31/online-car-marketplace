@@ -7,7 +7,7 @@ $menuItems = [
     'ShopPage' => ['url' => '/shop', 'name' => 'Shop'],
     'BlogPage' => ['url' => '/blog', 'name' => 'Blog'],
     'ContactPage' => ['url' => '/contact', 'name' => 'Contact us'],
-    'AboutPage' => ['url' => '/about', 'name' => 'About us'],
+    'AboutPage' => ['url' => '/about', 'name' => 'About us']
 ];
 
 $currentUser = SessionFactory::createSession('account');
@@ -16,6 +16,7 @@ if ($currentUser->getProfile()) {
     $userItems = [
         'ProfilePage' => ['url' => '/account', 'icon' => 'fa fa-user', 'title' => 'Profile'],
         'AppointmentsPage' => ['url' => '/account?tab=appointments', 'icon' => 'bi bi-calendar-check-fill', 'title' => 'Appointments'],
+        'HelpPage' => ['url' => '/help', 'icon' => 'fa fa-question-circle', 'title' => 'Help'],
     ];
 } else {
     $userItems = [
@@ -83,8 +84,7 @@ if ($currentUser->getProfile()) {
                 </div>
             </div>
         <?php else: ?>
-            <a href="/auth" class="auth-btn">
-                <i class="fa-solid fa-user me-2"></i>
+            <a href="/auth" class="me-2">
                 <span>Sign In / Sign Up</span>
             </a>
         <?php endif; ?>

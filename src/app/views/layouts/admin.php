@@ -40,10 +40,20 @@
             'link' => _WEB_ROOT . '/categories-management',
         ],
         [
-            'name' => 'Settings',
-            'icon' => 'bi bi-gear',
-            'link' => _WEB_ROOT . '/settings',
-        ]
+            'name' => 'Appointments',
+            'icon' => 'bi bi-bing',
+            'link' => _WEB_ROOT . '/appointments-management',
+        ],
+        [
+            'name' => 'Help',
+            'icon' => 'bi bi-question-circle',
+            'link' => _WEB_ROOT . '/help-question',
+        ],
+        [
+            'name' => 'FAQ',
+            'icon' => 'bi bi-book',
+            'link' => _WEB_ROOT . '/faq',
+        ],
     ]]);
     $this->render('pages/' . $view,  $content);
     ?>

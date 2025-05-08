@@ -213,4 +213,21 @@ class UserModel extends Model {
         $result = $this->db->execute($sql, []);
         return $result['data'];
     }
+    
+    /**
+     * Update user's avatar
+     * 
+     * @param int $userId User ID
+     * @param array $data Data containing avatar_id
+     * @return bool Success status
+     */
+    public function updateUserAvatar($userId, $data) {
+        $sql = "UPDATE $this->_table SET avatar_id = :avatar_id WHERE id = :id";
+        $params = [
+            ':avatar_id' => $data['avatar_id'],
+            ':id' => $userId
+        ];
+        $result = $this->db->execute($sql, $params);
+        return $result['success'];
+    }
 }

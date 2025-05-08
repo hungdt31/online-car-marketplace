@@ -64,6 +64,90 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Comments Section -->
+                <section class="comments-section mb-5">
+                    <h3 class="comments-title mb-4">
+                        <i class="fas fa-comments me-2"></i>Comments
+                        <?php if (!empty($comments)): ?>
+                            <span class="badge bg-primary rounded-pill ms-2"><?= count($comments) ?></span>
+                        <?php endif; ?>
+                    </h3>
+
+                    <!-- Comment Form -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Leave a comment</h5>
+                            <?php 
+                            $currentUser = SessionFactory::createSession('account')->getProfile();
+                            if (isset($currentUser)): ?>
+                                <form id="commentForm" class="comment-form">
+                                    <input type="hidden" name="blog_id" value="<?= $blog['id'] ?>">
+                                    <div class="mb-3">
+                                        <textarea name="content" class="form-control" rows="4" placeholder="Write your comment here..." required></textarea>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-2"></i>Submit Comment
+                                        </button>
+                                    </div>
+                                </form>
+                            <?php else: ?>
+                                <div class="alert alert-info d-flex align-items-center" role="alert">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <div>
+                                        Please <a href="<?= _WEB_ROOT ?>/auth" class="alert-link">login</a> to leave a comment.
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Comments List -->
+                    <div class="comments-container">
+                        <?php if (!empty($comments)): ?>
+                            <?php foreach ($comments as $comment): ?>
+                                <div class="comment-item card shadow-sm mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex mb-3">
+                                            <?php if (!empty($comment['avatar_url'])): ?>
+                                                <img src="<?= htmlspecialchars($comment['avatar_url']) ?>" alt="<?= htmlspecialchars($comment['username']) ?>" class="rounded-circle me-3" width="50" height="50">
+                                            <?php else: ?>
+                                                <div class="comment-avatar-placeholder rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div>
+                                                <h6 class="mb-1"><?= htmlspecialchars($comment['username']) ?></h6>
+                                                <div class="text-muted small">
+                                                    <i class="fas fa-calendar-alt me-1"></i>
+                                                    <?= date('M d, Y g:i A', strtotime($comment['comment_created_at'])) ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="comment-content">
+                                            <p class="mb-2"><?= nl2br(htmlspecialchars($comment['comment_content'])) ?></p>
+                                            <?php if (!empty($comment['file_url'])): ?>
+                                                <div class="comment-attachment mt-2 p-2 bg-light rounded">
+                                                    <a href="<?= htmlspecialchars($comment['file_url']) ?>" target="_blank" class="d-flex align-items-center text-decoration-none">
+                                                        <i class="fas fa-paperclip me-2"></i>
+                                                        <span class="text-primary"><?= htmlspecialchars($comment['file_name']) ?></span>
+                                                    </a>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="text-center my-5 py-5">
+                                <i class="far fa-comments fa-3x mb-3 text-muted"></i>
+                                <h5>No comments yet</h5>
+                                <p class="text-muted">Be the first to share your thoughts on this post!</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </section>
             </article>
         </div>
 
@@ -299,6 +383,44 @@
     #clearSearchHistoryBtn:hover {
         background-color: #e9ecef;
     }
+
+    /* Comments Section Styling */
+    .comments-section {
+        margin-top: 3rem;
+    }
+
+    .comments-title {
+        font-weight: 600;
+        border-bottom: 2px solid #f1f1f1;
+        padding-bottom: 0.75rem;
+    }
+
+    .comment-item {
+        transition: transform 0.2s ease;
+    }
+
+    .comment-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .comment-avatar-placeholder {
+        width: 50px;
+        height: 50px;
+        background-color: #e9ecef;
+        color: #6c757d;
+        font-size: 1.2rem;
+    }
+
+    .comment-content {
+        border-left: 3px solid #f1f1f1;
+        padding-left: 1rem;
+        margin-left: 1.5rem;
+    }
+
+    .comment-attachment {
+        background-color: rgba(13, 110, 253, 0.05);
+        border-left: 3px solid #0d6efd;
+    }
 </style>
 
 <script>
@@ -377,5 +499,58 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize search history
     initSearchHistory();
+
+    // Comment form handling
+    const commentForm = document.getElementById('commentForm');
+    if (commentForm) {
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Create FormData object
+            const formData = new FormData(this);
+            
+            // Show loading indicator
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+
+            // Send AJAX request
+            $.ajax({
+                url: '/user/account/addComment',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // Reset form
+                        commentForm.reset();
+                        
+                        // Show success message
+                        toastr.success('Comment added successfully!');
+                        
+                        // Reload the page to show the new comment
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        // Show error message
+                        toastr.error(response.message || 'Error adding comment');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Show error message
+                    toastr.error('Error adding comment: ' + error);
+                },
+                complete: function() {
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            });
+        });
+    }
 });
 </script>

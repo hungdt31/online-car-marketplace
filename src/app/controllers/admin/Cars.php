@@ -11,8 +11,8 @@ class Cars extends Controller
         $this->car_model = $this->model('CarModel');
         $this->file_model = $this->model('FileModel');
         $this->category_model = $this->model('CategoryModel');
-        $this->jwt = new JwtAuth();
         $this->comment_model = $this->model('CommentModel');
+        $this->jwt = new JwtAuth();
     }
 
     public function index()
@@ -200,6 +200,7 @@ class Cars extends Controller
     {
         if ($_SERVER["REQUEST_METHOD"] === "GET") {
             $car_id = $_GET['id'];
+            $car = $this->car_model->getCar($car_id);
             if (isset($car_id)) {
                 $comments = $this->comment_model->getCommentsById($car_id);
             } else {
@@ -210,7 +211,8 @@ class Cars extends Controller
                 'view' => 'protected/cars/carComments',
                 'content' => [
                     'title' => 'Car Reviews Management',
-                    'comments' => $comments
+                    'comments' => $comments,
+                    'car' => $car
                 ]
             ]);
         }
@@ -236,6 +238,15 @@ class Cars extends Controller
     public function deleteComment($id)
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $comment = $this->comment_model->getComment($id);
+            if (isset($comment['file_key'])) {
+                $aws = new AwsS3Service();
+                $aws->deleteFile($comment['file_key']);
+            }
+            // Delete the file from the database
+            if (isset($comment['file_id'])) {
+                $this->file_model->deleteOne($comment['file_id']);
+            }
             $result = $this->comment_model->deleteComment($id);
             if ($result) {
                 echo json_encode(["success" => true, "message" => "Comment deleted successfully!"]);

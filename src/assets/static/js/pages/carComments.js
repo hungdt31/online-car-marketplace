@@ -80,86 +80,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Xử lý xóa bình luận ---
     const deleteButtons = document.querySelectorAll('.delete-comment');
     deleteButtons.forEach(button => {
+        // bắt đầu sự kiện click
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const commentId = this.getAttribute('data-id');
 
-            Swal.fire({
-                title: 'Bạn có chắc chắn?',
-                text: 'Bạn không thể hoàn tác hành động này!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Thay đổi trạng thái nút để hiển thị đang tải
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-                    this.disabled = true;
+            // Thay đổi trạng thái nút để hiển thị đang tải
+            const originalText = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Đang xử lý...';
+            this.disabled = true;
 
-                    // Gọi API để xóa bình luận
-                    fetch(`/admin/cars/deleteComment/${commentId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Hiển thị toast thông báo thành công
-                                const toast = new bootstrap.Toast(document.getElementById('successToast'));
-                                document.querySelector('#successToast .toast-body').textContent = 'Đã xóa bình luận thành công!';
-                                toast.show();
-
-                                // Xóa dòng khỏi bảng với hiệu ứng fade out
-                                const row = document.querySelector(`tr[data-id="${commentId}"]`);
-                                if (row) {
-                                    row.style.transition = 'opacity 0.5s ease';
-                                    row.style.opacity = '0';
-
-                                    // Cập nhật trạng thái đếm
-                                    const status = row.getAttribute('data-status') || 'pending';
-                                    updateCommentCounts(status, -1);
-                                    updateCommentCounts('total', -1);
-
-                                    setTimeout(() => {
-                                        row.remove();
-
-                                        // Hiển thị thông báo không có kết quả nếu bảng trống
-                                        checkEmptyTable();
-
-                                        // Cập nhật phân trang
-                                        updateTable();
-                                    }, 500);
-                                }
-
-                                // Đóng modal nếu đang mở
-                                const modal = bootstrap.Modal.getInstance(document.getElementById(`viewCommentModal${commentId}`));
-                                if (modal) {
-                                    modal.hide();
-                                }
-                            } else {
-                                // Hiển thị thông báo lỗi
-                                const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-                                document.querySelector('#errorToast .toast-body').textContent = data.message || 'Có lỗi xảy ra';
-                                errorToast.show();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-                            document.querySelector('#errorToast .toast-body').textContent = 'Đã có lỗi xảy ra khi kết nối đến server';
-                            errorToast.show();
-                        })
-                        .finally(() => {
-                            // Khôi phục trạng thái nút
-                            this.innerHTML = originalText;
-                            this.disabled = false;
-                        });
+            // // Gọi API để xóa bình luận với ajax
+            $.ajax({
+                url: `/admin/cars/deleteComment/${commentId}`,
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.success) {
+                        // ghi tiếng Anh
+                        toastr.success(data.message || 'Comment deleted successfully!');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error('An error occurred while connecting to the server.');
+                },
+                complete: function() {
+                    // Khôi phục trạng thái nút
+                    this.innerHTML = originalText;
+                    this.disabled = false;
                 }
             });
         });

@@ -3,11 +3,13 @@ class Home extends Controller{
     public $model_home;
     public $category_model;
     public $car_model;
+    public $faq_model;
     public $data;
     public function __construct() {
         $this->model_home = $this->model('HomeModel');
         $this->category_model = $this->model('CategoryModel');
         $this->car_model = $this->model('CarModel');
+        $this->faq_model = $this->model('FaqModel');
     }
     public function index() {
         $this->renderHome([
@@ -43,9 +45,53 @@ class Home extends Controller{
         echo 'Keyword: '.$keyword;
     }
     public function contact() {
-        $this->renderHome([
+        $breadcrumbs = [
+            ['name' => 'Home', 'url' => _WEB_ROOT],
+            ['name' => 'Contact Us']
+        ];
+        $this->renderGeneral([
             'page_title' => 'Contact us',
-            'view' => 'public/contact'
+            'view' => 'public/contact',
+            'content' => [
+                'header' => [
+                    'title' => 'Contact Us',
+                    'description' => $breadcrumbs
+                ]
+            ]
+        ]);
+    }
+    public function about() {
+        $breadcrumbs = [
+            ['name' => 'Home', 'url' => _WEB_ROOT],
+            ['name' => 'Introducing Carvan Shop']
+        ];
+        $this->renderGeneral([
+            'page_title' => 'About Us',
+            'view' => 'public/about',
+            'content' => [
+                'header' => [
+                    'title' => 'About Us',
+                    'description' => $breadcrumbs
+                ]
+            ]
+        ]);
+    }
+    public function help() {
+        $faqs = $this->faq_model->getAllFaqs();
+        $breadcrumbs = [
+            ['name' => 'Home', 'url' => _WEB_ROOT],
+            ['name' => 'Support Service']
+        ];
+        $this->renderGeneral([
+            'page_title' => 'Help Center',
+            'view' => 'public/help',
+            'content' => [
+                'faqs' => $faqs,
+                'header' => [
+                    'title' => 'How Can We Help You?',
+                    'description' => $breadcrumbs
+                ],
+            ]
         ]);
     }
 }

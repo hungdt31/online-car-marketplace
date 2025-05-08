@@ -97,6 +97,10 @@ class Blog extends Controller
         // Store this blog ID in recently viewed posts
         $this->blog_session->saveRecentPostId($id);
         
+        // Get comments for this blog
+        $blog_comments_model = $this->model('BlogCommentsModel');
+        $comments = $blog_comments_model->getCommentsByBlogId($id);
+        
         $categories = $this->blog_model->getBlogCategories();
         $recentPosts = $this->getRecentBlogPosts();
         $recentKeywords = $this->blog_session->getRecentKeywords();
@@ -122,7 +126,8 @@ class Blog extends Controller
                 'hasRecentlyViewed' => $this->blog_session->hasRecentPosts(),
                 'selectedCategories' => $this->blog_session->getSelectedCategories(),
                 'recentKeywords' => $recentKeywords,
-                'hasRecentKeywords' => $this->blog_session->hasRecentKeywords()
+                'hasRecentKeywords' => $this->blog_session->hasRecentKeywords(),
+                'comments' => $comments
             ]
         ]);
     }
@@ -264,5 +269,85 @@ class Blog extends Controller
         // Otherwise redirect back to blog index
         header('Location: ' . _WEB_ROOT . '/blog');
         exit;
+    }
+    
+    /**
+     * Add a comment to a blog post
+     */
+    public function addComment()
+    {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        $session = SessionFactory::createSession('account');
+        $user = $session->getProfile();
+        
+        if (!$user) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'You must be logged in to comment'
+            ]);
+            return;
+        }
+        
+        // Kiểm tra phương thức yêu cầu
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Invalid request method'
+            ]);
+            return;
+        }
+        
+        // Kiểm tra dữ liệu
+        if (empty($_POST['blog_id']) || empty($_POST['content'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Missing required fields'
+            ]);
+            return;
+        }
+        
+        $data = [
+            'blog_id' => $_POST['blog_id'],
+            'user_id' => $user['id'],
+            'content' => $_POST['content']
+        ];
+        
+        // Xử lý tệp đính kèm nếu có
+        if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+            $fileModel = $this->model('FileModel');
+            $aws = new AwsS3Service();
+            
+            $uploadFile = $aws->uploadFile($_FILES['attachment'], 'comment_attachments');
+            if ($uploadFile) {
+                $addFileStatus = $fileModel->addFile([
+                    'name' => $_FILES['attachment']['name'],
+                    'fkey' => $uploadFile['fileKey'],
+                    'path' => $uploadFile['fileUrl'],
+                    'size' => $_FILES['attachment']['size'],
+                    'type' => $_FILES['attachment']['type']
+                ]);
+                
+                if ($addFileStatus) {
+                    $file = $fileModel->getFile(['fkey' => $uploadFile['fileKey']]);
+                    $data['file_id'] = $file['id'];
+                }
+            }
+        }
+        
+        // Thêm bình luận
+        $blogCommentsModel = $this->model('BlogCommentsModel');
+        $result = $blogCommentsModel->addComment($data);
+        
+        if ($result) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Comment added successfully'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to add comment'
+            ]);
+        }
     }
 }

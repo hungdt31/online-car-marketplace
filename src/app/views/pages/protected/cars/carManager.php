@@ -12,17 +12,25 @@
   </div>
 
   <!-- Control Bar -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
     <!-- Search Bar -->
-    <div class="search-wrapper">
+    <div class="search-wrapper m-0">
       <i class="fas fa-search search-icon"></i>
       <input type="text" id="searchInput" class="form-control" placeholder="Search cars...">
     </div>
 
-    <!-- Add New Car Button -->
-    <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-add">
-      <i class="fas fa-plus-circle me-2"></i>Add New Car
-    </button>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <a href="/admin/cars/comments">
+        <button type="button" class="btn btn-info">
+          <i class="bi bi-chat-dots-fill me-2"></i>View Reviews
+        </button>
+      </a>
+
+      <!-- Add New Car Button -->
+      <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-add">
+        <i class="fas fa-plus-circle me-2"></i>Add New Car
+      </button>
+    </div> 
   </div>
 
   <!-- Table Container -->

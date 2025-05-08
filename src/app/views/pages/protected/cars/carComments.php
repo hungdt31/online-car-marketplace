@@ -1,7 +1,17 @@
-<?php
-// filepath: d:\WORKSPACE\WORKSPACE PHP\docker-php-sample\src\app\views\pages\protected\cars\carComments.php
-?>
 <div class="container-fluid py-4">
+    <?php
+    if (isset($_GET['id'])) {
+        echo ' 
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/cars-management">Cars</a></li>
+                <li class="breadcrumb-item"><a href="/car-assets/' . $_GET['id'] . '">Car Assets</a></li>
+                <li class="breadcrumb-item active" aria-current="page">' . $car['name'] . '</li>
+            </ol>
+        </nav>';
+    }
+    ?>
     <div class="row mb-4">
         <!-- Thống kê -->
         <div class="col-sm-4 mb-xl-0 mb-4">
