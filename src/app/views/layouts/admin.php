@@ -40,6 +40,16 @@
             'link' => _WEB_ROOT . '/admin/categories',
         ],
         [
+            'name' => 'FAQs',
+            'icon' => 'bi bi-question-circle',
+            'link' => _WEB_ROOT . '/admin/faq',
+        ],
+        [
+            'name' => 'Customer Questions',
+            'icon' => 'bi bi-envelope',
+            'link' => _WEB_ROOT . '/admin/help-question',
+        ],
+        [
             'name' => 'Settings',
             'icon' => 'bi bi-gear',
             'link' => _WEB_ROOT . '/admin/settings',

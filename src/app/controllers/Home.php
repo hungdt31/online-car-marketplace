@@ -3,11 +3,13 @@ class Home extends Controller{
     public $model_home;
     public $category_model;
     public $car_model;
+    public $faq_model;
     public $data;
     public function __construct() {
         $this->model_home = $this->model('HomeModel');
         $this->category_model = $this->model('CategoryModel');
         $this->car_model = $this->model('CarModel');
+        $this->faq_model = $this->model('FaqModel');
     }
     public function index() {
         $this->renderUser([
@@ -26,9 +28,13 @@ class Home extends Controller{
         ]);
     }
     public function help() {
+        $faqs = $this->faq_model->getAllFaqs();
         $this->renderUser([
             'page_title' => 'Help Center',
-            'view' => 'public/help'
+            'view' => 'public/help',
+            'content' => [
+                'faqs' => $faqs
+            ]
         ]);
     }
     public function getCarsByCategory() {
@@ -150,15 +156,16 @@ class Home extends Controller{
                         'message' => 'Your question has been sent successfully. We will get back to you soon.'
                     ]);
                 } else {
-                    error_log('Failed to save question to database');
-                    throw new Exception('Failed to save question to database');
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Failed to send your question. Please try again.'
+                    ]);
                 }
             } catch (Exception $e) {
-                error_log('Error in sendQuestion: ' . $e->getMessage());
-                error_log('Stack trace: ' . $e->getTraceAsString());
+                error_log('Exception: ' . $e->getMessage());
                 echo json_encode([
                     'success' => false,
-                    'message' => 'An error occurred while processing your request. Please try again.'
+                    'message' => 'An error occurred. Please try again later.'
                 ]);
             }
         }
