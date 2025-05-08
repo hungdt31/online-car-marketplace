@@ -7,7 +7,7 @@
                 <h2>Browse Our Perfect Cars</h2>
             </div>
             <div class="category-filters">
-                <div class="category-item active" data-category="">All</div>
+                <div class="category-item active">All</div>
                 <?php foreach ($top_category as $category): ?>
                     <div class="category-item" data-category="<?= $category['category_id']; ?>">
                         <?= $category['category_name']; ?>
@@ -15,9 +15,12 @@
                 <?php endforeach; ?>
             </div>
         </div>
+        <p></p>
         <!-- Cars Grid -->
-        <div class="cars-grid" id="carsGridContainer">
-            <!-- Car cards will be loaded dynamically -->
+        <div class="cars-grid">
+            <!-- Car Card 1 -->
+            <!-- Car Card 2 -->
+            <!-- .......... -->
         </div>
     </div>
 </section>

@@ -1,46 +1,64 @@
-.booking-section body {
-    background-color: black;
-    font-family: Arial, sans-serif;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+.booking-section {
+    background-color: #3e6be2; /* nền xanh như ảnh */
+    padding: 40px 20px;
+    color: #fff;
 }
+
 .booking-section .container {
-    width: 600px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-.booking-section h2, p {
-    margin-bottom: 10px;
-}
-.booking-section input, textarea, select, button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 25px;
-    border: none;
-    outline: none;
-}
-.booking-section textarea {
-    height: 100px;
-    border-radius: 15px;
-}
-.booking-section .row {
+
+.booking-section form .row {
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
-.booking-section .row input, .row select {
-    width: 48%;
+
+.booking-section form .row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    width: 100%;
 }
-.booking-section button {
-    background-color: black;
-    color: white;
-    border: 2px solid white;
+
+.booking-section form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    min-height: 100px;
+    margin-bottom: 20px;
+}
+
+.booking-section button[type="submit"] {
+    padding: 12px 30px;
+    font-size: 16px;
+    background-color: #3e6be2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
-.booking-section button:hover {
-    background-color: white;
-    color: black;
+.booking-section form {
+    text-align: center; /* Căn giữa nút submit */
+}
+
+.booking-section button[type="submit"]:hover {
+    background-color: #2f56b3;
+}
+
+.response-message {
+    margin-top: 20px;
+    color: #000;
+    font-weight: 500;
 }

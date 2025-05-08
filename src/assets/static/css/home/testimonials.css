@@ -1,8 +1,8 @@
-body {
+/* body {
     font-family: 'Segoe UI', sans-serif;
     background: #f9f9f9;
     text-align: center;
-}
+} */
 
 .section-header-text-center h4 {
     font-size: 1.5em;
@@ -79,9 +79,9 @@ body {
 
 .testimonial-images {
     flex: 1;
-    display: grid;
+    /* display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
+    grid-gap: 10px; */
 }
 
 .testimonial-images img {
@@ -103,6 +103,7 @@ body {
     margin: 0 auto;
     box-sizing: border-box;
     padding: 0 20px;
+    cursor: pointer;
 }
 
 .avatar {
@@ -114,6 +115,10 @@ body {
     gap: 10px;
     max-width: 250px;
     flex: 1 1 0;
+}
+.avatar:hover {
+    background: #4e6ef1;
+    transition: background 0.3s ease;
 }
 
 .avatar img {
@@ -140,3 +145,11 @@ body {
     font-size: 0.85em;
     margin: 0;
 }
+.testimonial-comment {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 15px;
+    text-align: justify;  /* This will justify the text on both sides */
+    line-height: 1.6;     /* Adjust line height for better readability */
+}
+
