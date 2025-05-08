@@ -305,7 +305,7 @@ class CarModel extends Model
         $params = [];
         $conditions = [];
         $sort = isset($_GET['sort']) ? $_GET['sort'] : 'latest'; // Use isset to avoid undefined index errors
-        
+
         // Base query
         $sql = "SELECT 
                 c.id, c.name, c.location, c.overview, c.price, 
@@ -318,24 +318,24 @@ class CarModel extends Model
                 WHERE (f.type IS NULL OR f.type NOT LIKE '%video%')
                 GROUP BY ca.car_id
             ) f ON c.id = f.car_id";
-            
+
         // Keyword condition
         if (!empty($keyword)) {
             $conditions[] = "(c.name LIKE :keyword OR c.overview LIKE :keyword OR c.location LIKE :keyword)";
             $params[':keyword'] = '%' . $keyword . '%';
         }
-        
+
         // Price range conditions
         if ($minPrice !== null) {
             $conditions[] = "c.price >= :min_price";
             $params[':min_price'] = $minPrice;
         }
-        
+
         if ($maxPrice !== null) {
             $conditions[] = "c.price <= :max_price";
             $params[':max_price'] = $maxPrice;
         }
-        
+
         // Category conditions
         if (!empty($categoryIds) && is_array($categoryIds)) {
             // Create placeholders for category IDs
@@ -345,7 +345,7 @@ class CarModel extends Model
                 $catPlaceholders[] = $placeholder;
                 $params[$placeholder] = $catId;
             }
-            
+
             $sql .= " INNER JOIN (
                         SELECT entity_id, COUNT(DISTINCT category_id) as matched_count
                         FROM category_mappings
@@ -353,16 +353,16 @@ class CarModel extends Model
                         AND category_id IN (" . implode(',', $catPlaceholders) . ")
                         GROUP BY entity_id
                     ) matched ON c.id = matched.entity_id";
-                    
+
             $conditions[] = "matched.matched_count = :category_count";
             $params[':category_count'] = count($categoryIds);
         }
-        
+
         // Add WHERE clause if we have conditions
         if (!empty($conditions)) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-        
+
         // Determine sorting order - sanitize the sort parameter
         switch ($sort) {
             case 'price-asc':
@@ -376,20 +376,20 @@ class CarModel extends Model
                 $sql .= " ORDER BY c.created_at DESC";
                 break;
         }
-        
+
         // Add LIMIT and OFFSET if provided - handle as integers not bound parameters
         if ($limit !== null) {
-            $sql .= " LIMIT " . (int)$limit;
-            
+            $sql .= " LIMIT " . (int) $limit;
+
             if ($offset !== null) {
-                $sql .= " OFFSET " . (int)$offset;
+                $sql .= " OFFSET " . (int) $offset;
             }
         }
-        
+
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }
-    
+
     /**
      * Get the total count of cars matching the search criteria
      * 
@@ -403,28 +403,28 @@ class CarModel extends Model
     {
         $params = [];
         $conditions = [];
-        
+
         // Base query
         $sql = "SELECT COUNT(DISTINCT c.id) as total 
                 FROM $this->_table c";
-                
+
         // Keyword condition
         if (!empty($keyword)) {
             $conditions[] = "(c.name LIKE :keyword OR c.overview LIKE :keyword OR c.location LIKE :keyword)";
             $params[':keyword'] = '%' . $keyword . '%';
         }
-        
+
         // Price range conditions
         if ($minPrice !== null) {
             $conditions[] = "c.price >= :min_price";
             $params[':min_price'] = $minPrice;
         }
-        
+
         if ($maxPrice !== null) {
             $conditions[] = "c.price <= :max_price";
             $params[':max_price'] = $maxPrice;
         }
-        
+
         // Category conditions
         if (!empty($categoryIds)) {
             $sql .= " INNER JOIN (
@@ -434,25 +434,25 @@ class CarModel extends Model
                         AND category_id IN (" . $this->createPlaceholders($categoryIds, 'cat_id') . ")
                         GROUP BY entity_id
                     ) matched ON c.id = matched.entity_id";
-                    
+
             $conditions[] = "matched.matched_count = :category_count";
             $params[':category_count'] = count($categoryIds);
-            
+
             // Add category parameters
             foreach ($categoryIds as $index => $categoryId) {
                 $params[':cat_id' . $index] = $categoryId;
             }
         }
-        
+
         // Add WHERE clause if we have conditions
         if (!empty($conditions)) {
             $sql .= " WHERE " . implode(" AND ", $conditions);
         }
-        
+
         $result = $this->db->execute($sql, $params, true);
-        return isset($result['data']['total']) ? (int)$result['data']['total'] : 0;
+        return isset($result['data']['total']) ? (int) $result['data']['total'] : 0;
     }
-    
+
     /**
      * Get all car categories with counts
      * 
@@ -467,11 +467,11 @@ class CarModel extends Model
             GROUP BY c.id, c.name
             HAVING car_count > 0
             ORDER BY car_count DESC";
-        
+
         $result = $this->db->execute($sql);
         return $result['data'];
     }
-    
+
     /**
      * Get the minimum and maximum price of cars
      * 
@@ -483,21 +483,21 @@ class CarModel extends Model
                 MIN(price) as min_price, 
                 MAX(price) as max_price 
             FROM $this->_table";
-            
+
         $result = $this->db->execute($sql, [], true);
         return [
-            'min' => isset($result['data']['min_price']) ? (float)$result['data']['min_price'] : 0,
-            'max' => isset($result['data']['max_price']) ? (float)$result['data']['max_price'] : 0
+            'min' => isset($result['data']['min_price']) ? (float) $result['data']['min_price'] : 0,
+            'max' => isset($result['data']['max_price']) ? (float) $result['data']['max_price'] : 0
         ];
     }
-    
+
     /**
      * Helper method to create SQL placeholders
      */
     private function createPlaceholders($array, $prefix)
     {
-        return implode(',', array_map(function($i) use ($prefix) { 
-            return ':' . $prefix . $i; 
+        return implode(',', array_map(function ($i) use ($prefix) {
+            return ':' . $prefix . $i;
         }, array_keys($array)));
     }
 
@@ -513,10 +513,10 @@ class CarModel extends Model
         if (empty($carIds)) {
             return [];
         }
-        
+
         // Create placeholders for car IDs
         $placeholders = $this->createPlaceholders($carIds, 'car_id');
-        
+
         $sql = "SELECT 
                 c.id, c.name, c.price,
                 f.url as cover_image_url
@@ -530,13 +530,13 @@ class CarModel extends Model
             ) f ON c.id = f.car_id
             WHERE c.id IN ($placeholders)
             LIMIT :limit";
-        
+
         // Prepare parameters
         $params = [':limit' => $limit];
         foreach ($carIds as $index => $id) {
             $params[':car_id' . $index] = $id;
         }
-        
+
         $result = $this->db->execute($sql, $params);
         return $result['data'];
     }

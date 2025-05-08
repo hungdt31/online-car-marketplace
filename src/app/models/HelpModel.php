@@ -7,18 +7,13 @@ class HelpModel extends Model
         $this->_table = 'help_question';
     }
 
-    public function saveQuestion($email, $name, $phone, $address, $city, $date, $time, $message)
+    public function saveQuestion($name, $email, $question)
     {
-        $sql = "INSERT INTO $this->_table (name, email, phone, address, city, date, time, message) VALUES (:name, :email, :phone, :address, :city, :date, :time, :message)";
+        $sql = "INSERT INTO $this->_table (name, email, question) VALUES (:name, :email, :question)";
         $params = [
             ':name' => $name,
             ':email' => $email,
-            ':phone' => $phone,
-            ':address' => $address,
-            ':city' => $city,
-            ':date' => $date,
-            ':time' => $time,
-            ':message' => $message
+            ':question' => $question
         ];
         $result = $this->db->execute($sql, $params);
         return $result['success'] ?? false;

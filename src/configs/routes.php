@@ -12,7 +12,12 @@ $routes['auth/facebook-redirect'] = 'auth/facebookAuth';
 $routes['cars-management'] = 'admin/cars';
 $routes['car-assets/(:num)'] = 'admin/cars/assets/$1';
 $routes['dashboard'] = 'admin/dashboard';
+$routes['/admin/booking'] = 'admin/cars';
 $routes['blogs-management'] = 'admin/posts';
 $routes['help'] = 'home/help';
 $routes['help/send-question'] = 'help/sendQuestion';
 $routes['product/sendMail'] = 'product/sendMail';
+$routes['/Home/searchCars'] = [
+    'controller' => 'Home',
+    'action' => 'searchCars'
+];

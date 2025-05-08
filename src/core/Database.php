@@ -27,10 +27,10 @@ class Database
             $this->conn = new PDO($dsn, $db_config['user'], $pass, $options);
             // $this->conn = new mysqli($db_config['host'], $db_config['user'], $db_config['pass'], $db_config['db']);
         } catch (Exception $exception) {
-            $data['message'] = "Can\'t connect to Database: ". $exception->getMessage();
+            $data['message'] = "Can\'t connect to Database: " . $exception->getMessage();
             $data['type'] = 'error';
             extract($data);
-            include_once _DIR_ROOT. '/public/errors/index.php';
+            include_once _DIR_ROOT . '/public/errors/index.php';
         }
     }
 
@@ -50,60 +50,59 @@ class Database
         $db_config = array_filter($config['database']);
         return $db_config;
     }
-    public function execute($sql, $params = [], $single = false)
+    public function execute($sql, $params = [], $fetchRow = false)
     {
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute($params); // Truyền tham số để tránh SQL Injection
-            // Nếu là truy vấn SELECT
-            $response = [
-                'success' => true,
-                'message' => 'Execute successfully!'
-            ];
-            if (stripos(trim($sql), 'SELECT') === 0) {
-                if ($single) {
-                    $response['data'] = $stmt->fetch(PDO::FETCH_ASSOC);
-                } else {
-                    $response['data'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Handle both named and positional parameters
+            if (!empty($params)) {
+                foreach ($params as $key => $value) {
+                    // If key is numeric, use positional parameter binding
+                    if (is_int($key)) {
+                        $stmt->bindValue($key + 1, $value, $this->getPDOType($value));
+                    }
+                    // Otherwise use named parameter binding
+                    else {
+                        $stmt->bindValue($key, $value, $this->getPDOType($value));
+                    }
                 }
-            } else {
-                // Nếu là INSERT, UPDATE, DELETE -> Trả về số dòng bị ảnh hưởng
-                $response['rowCount'] = $stmt->rowCount();
-                $response['lastInsertId'] = $this->conn->lastInsertId();
             }
 
-            return $response; 
-        } catch (PDOException $exception) {
-            // Tạo nội dung log chi tiết
-            $errorLog = sprintf(
-                "[%s] SQL Error\n" .
-                "SQL Query: %s\n" .
-                "Parameters: %s\n" .
-                "Error Code: %s\n" .
-                "Error Message: %s\n" .
-                "Stack Trace:\n%s\n" .
-                "----------------------------------------\n",
-                date('Y-m-d H:i:s'),
-                $sql,
-                json_encode($params, JSON_PRETTY_PRINT),
-                $exception->getCode(),
-                $exception->getMessage(),
-                $exception->getTraceAsString()
-            );
-            // Tạo thư mục logs nếu chưa tồn tại
-            $logDir = _DIR_ROOT . '/logs';
-            if (!file_exists($logDir)) {
-                mkdir($logDir, 0777, true);
+            $stmt->execute();
+
+            if ($stmt->columnCount() > 0) {
+                $data = $fetchRow ? $stmt->fetch(PDO::FETCH_ASSOC) : $stmt->fetchAll(PDO::FETCH_ASSOC);
+                return [
+                    'data' => $data,
+                    'success' => true
+                ];
             }
 
-            // Ghi log vào file theo ngày
-            $logFile = $logDir . '/sql_errors_' . date('Y-m-d') . '.log';
-            error_log($errorLog, 3, $logFile);
+            return [
+                'success' => true
+            ];
+
+        } catch (Exception $exception) {
             return [
                 'message' => $exception->getMessage(),
                 'success' => false,
                 'errorCode' => $exception->getCode()
             ];
         }
-    }    
+    }
+
+    private function getPDOType($value)
+    {
+        switch (true) {
+            case is_int($value):
+                return PDO::PARAM_INT;
+            case is_bool($value):
+                return PDO::PARAM_BOOL;
+            case is_null($value):
+                return PDO::PARAM_NULL;
+            default:
+                return PDO::PARAM_STR;
+        }
+    }
 }

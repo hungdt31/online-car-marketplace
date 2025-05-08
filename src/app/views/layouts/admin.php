@@ -13,39 +13,41 @@
 <body id="body-pd">
     <?php
     $this->render('components/Header/Admin/index');
-    $this->render('components/Sidebar/index', ['menu' => [
-        [
-            'name' => 'Dashboard',
-            'icon' => 'bi bi-house',
-            'link' => _WEB_ROOT . '/dashboard',
-        ],
-        [
-            'name' => 'Users',
-            'icon' => 'bi bi-person',
-            'link' => _WEB_ROOT . '/admin/users',
-        ],
-        [
-            'name' => 'Cars',
-            'icon' => 'bi bi-box',
-            'link' => _WEB_ROOT . '/cars-management',
-        ],
-        [
-            'name' => 'Blogs',
-            'icon' => 'bi bi-postcard-heart',
-            'link' => _WEB_ROOT . '/blogs-management',
-        ],
-        [
-            'name' => 'Categories',
-            'icon' => 'bi bi-tags',
-            'link' => _WEB_ROOT . '/admin/categories',
-        ],
-        [
-            'name' => 'Settings',
-            'icon' => 'bi bi-gear',
-            'link' => _WEB_ROOT . '/admin/settings',
+    $this->render('components/Sidebar/index', [
+        'menu' => [
+            [
+                'name' => 'Dashboard',
+                'icon' => 'bi bi-house',
+                'link' => _WEB_ROOT . '/dashboard',
+            ],
+            [
+                'name' => 'Users',
+                'icon' => 'bi bi-person',
+                'link' => _WEB_ROOT . '/admin/users',
+            ],
+            [
+                'name' => 'Cars',
+                'icon' => 'bi bi-box',
+                'link' => _WEB_ROOT . '/cars-management',
+            ],
+            [
+                'name' => 'Blogs',
+                'icon' => 'bi bi-postcard-heart',
+                'link' => _WEB_ROOT . '/blogs-management',
+            ],
+            [
+                'name' => 'Categories',
+                'icon' => 'bi bi-tags',
+                'link' => _WEB_ROOT . '/admin/booking',
+            ],
+            [
+                'name' => 'Settings',
+                'icon' => 'bi bi-gear',
+                'link' => _WEB_ROOT . '/admin/settings',
+            ]
         ]
-    ]]);
-    $this->render('pages/' . $view,  $content);
+    ]);
+    $this->render('pages/' . $view, $content);
     ?>
     <script src="<?php echo _WEB_ROOT ?>/assets/static/js/admin.js"></script>
 </body>

@@ -1,0 +1,236 @@
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: var(--border-radius);
+    color: white;
+}
+
+/* Search Bar Styling */
+.search-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+#searchInput {
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    width: 300px;
+    transition: var(--transition);
+}
+
+#searchInput:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+/* Button Styling */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.btn-add {
+    background: linear-gradient(135deg, var(--accent-color), #2980b9);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.action-buttons .btn {
+    margin: 0 0.25rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-info {
+    background-color: #fff;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+
+.btn-info:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    border: none;
+}
+
+.btn-danger {
+    background-color: white;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.modal-title {
+    font-weight: 600;
+    /* tạo màu chữ gradient */
+    color: var(--secondary-color);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.form-label {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Pagination Styling */
+.pagination {
+    margin-top: 2rem;
+}
+
+.page-link {
+    color: var(--primary-color);
+    border: none;
+    margin: 0 0.25rem;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    transition: var(--transition);
+}
+
+.page-item.active .page-link {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.page-link:hover {
+    background-color: var(--light-bg);
+    color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+/* Price Column */
+.price-column {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Loading States */
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn-loading:after {
+    content: '';
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid;
+    border-radius: 50%;
+    border-color: #fff #fff #fff transparent;
+    animation: button-loading-spinner 1s linear infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+/* Sorting Styles */
+.sortable {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.sortable:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+.sortable i {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    transition: var(--transition);
+}
+
+.sortable.asc i {
+    transform: rotate(180deg);
+    color: var(--accent-color);
+}
+
+.sortable.desc i {
+    color: var(--accent-color);
+}
+
+.sortable:hover i {
+    opacity: 1;
+}
+
+/* Sort Animation */
+.sort-animation {
+    animation: sortMove 0.3s ease;
+}
+
+@keyframes sortMove {
+    0% {
+        opacity: 0.5;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

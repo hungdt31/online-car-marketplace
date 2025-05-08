@@ -54,7 +54,7 @@
         </tr>
       </thead>
       <tbody id="carTableBody">
-        <?php foreach ($list_cars as $car) : ?>
+        <?php foreach ($list_cars as $car): ?>
           <tr class="car-row">
             <td class="align-middle"><?= htmlspecialchars($car['id']) ?></td>
             <td class="car-name align-middle"><?= htmlspecialchars($car['name']) ?></td>
@@ -70,13 +70,16 @@
             <td class="price-column align-middle">$<?= number_format($car['price'], 2) ?></td>
             <td class="text-center align-middle">
               <div class="action-buttons">
-                <button type="button" class="btn btn-info details-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#carDetailModal">
+                <button type="button" class="btn btn-info details-btn" data-id="<?= htmlspecialchars($car['id']) ?>"
+                  data-bs-toggle="modal" data-bs-target="#carDetailModal">
                   <i class="fas fa-eye"></i>
                 </button>
-                <button type="button" class="btn btn-primary edit-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#updateCarModal">
+                <button type="button" class="btn btn-primary edit-btn" data-id="<?= htmlspecialchars($car['id']) ?>"
+                  data-bs-toggle="modal" data-bs-target="#updateCarModal">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-danger delete-btn" data-id="<?= htmlspecialchars($car['id']) ?>" data-bs-toggle="modal" data-bs-target="#deleteCarModal">
+                <button type="button" class="btn btn-danger delete-btn" data-id="<?= htmlspecialchars($car['id']) ?>"
+                  data-bs-toggle="modal" data-bs-target="#deleteCarModal">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -130,7 +133,8 @@
 
           <div class="mb-3">
             <label for="mileage" class="form-label">Mileage</label>
-            <input type="text" class="form-control" id="mileage" name="mileage" placeholder="Enter mileage (e.g., 15 km/l)">
+            <input type="text" class="form-control" id="mileage" name="mileage"
+              placeholder="Enter mileage (e.g., 15 km/l)">
           </div>
 
           <div class="mb-3">
@@ -144,17 +148,20 @@
 
           <div class="mb-3">
             <label for="service_duration" class="form-label">Service Duration</label>
-            <input type="text" class="form-control" id="service_duration" name="service_duration" placeholder="Enter service duration (e.g., 6 months)">
+            <input type="text" class="form-control" id="service_duration" name="service_duration"
+              placeholder="Enter service duration (e.g., 6 months)">
           </div>
 
           <div class="mb-3">
             <label for="body_weight" class="form-label">Body Weight</label>
-            <input type="text" class="form-control" id="body_weight" name="body_weight" placeholder="Enter body weight (e.g., 1200 kg)">
+            <input type="text" class="form-control" id="body_weight" name="body_weight"
+              placeholder="Enter body weight (e.g., 1200 kg)">
           </div>
 
           <div class="mb-3">
             <label for="price" class="form-label">Price</label>
-            <input type="number" class="form-control" id="price" name="price" placeholder="Enter price (e.g., 15000.00)" required step="0.01">
+            <input type="number" class="form-control" id="price" name="price" placeholder="Enter price (e.g., 15000.00)"
+              required step="0.01">
           </div>
 
         </div>
@@ -207,9 +214,9 @@
 </div>
 
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     // thêm xe mới
-    $("#addCarForm").submit(function(event) {
+    $("#addCarForm").submit(function (event) {
       event.preventDefault(); // Ngăn chặn form gửi theo cách thông thường
 
       $.ajax({
@@ -217,38 +224,38 @@
         type: "POST",
         data: $(this).serialize(), // Lấy dữ liệu từ form
         dataType: "json",
-        success: function(response) {
+        success: function (response) {
           if (response.success) {
             toastr.success(response.message);
-            setTimeout(function() {
+            setTimeout(function () {
               location.reload(); // Load lại trang sau khi hiển thị thông báo
             }, 1000); // Chờ 1 giây để người dùng thấy thông báo
           } else {
             toastr.error(response.message);
           }
         },
-        error: function() {
+        error: function () {
           alert("Failed to add car. Please try again.");
         },
       });
     });
     // xem chi tiết xe
-    $(".details-btn").click(function() {
+    $(".details-btn").click(function () {
       var carId = $(this).data("id"); // Lấy ID của xe
       $.ajax({
         url: "/admin/cars/getCar/" + carId, // Gọi API lấy thông tin xe
         type: "GET",
         dataType: "html",
-        success: function(response) {
+        success: function (response) {
           $('#carDetail').html(response);
         },
-        error: function() {
+        error: function () {
           toastr.error("Failed to get car details.");
         }
       });
     });
     // chỉnh sửa thông tin xe
-    $(".edit-btn").click(function() {
+    $(".edit-btn").click(function () {
       var carId = $(this).data("id"); // Lấy ID của xe
       $.ajax({
         url: "/admin/cars/getCar/" + carId, // Gọi API lấy thông tin xe
@@ -257,22 +264,22 @@
           'getToUpdate': true
         },
         dataType: "html",
-        success: function(response) {
+        success: function (response) {
           $('#updateCar').html(response);
         },
-        error: function() {
+        error: function () {
           toastr.error("Failed to get car details.");
         }
       });
     });
     // xóa xe
-    $(".delete-btn").click(function() {
+    $(".delete-btn").click(function () {
       var carId = $(this).data("id"); // Lấy ID của xe
       var deleteButton = document.getElementById("deleteCarForm").querySelector("button[type='submit']");
       deleteButton.setAttribute("data-id", carId); // Gán ID vào nút xác nhận xóa
     });
   });
-  document.getElementById("updateCarForm").addEventListener("submit", function(event) {
+  document.getElementById("updateCarForm").addEventListener("submit", function (event) {
     event.preventDefault(); // Ngăn trang load lại
 
     let formData = new FormData(this);
@@ -284,7 +291,7 @@
     xhr.open("POST", `/admin/cars/editCar/${id}`, true);
 
     // Khi request hoàn thành
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (xhr.status === 200) {
         try {
           let response = JSON.parse(xhr.responseText);
@@ -305,13 +312,13 @@
     };
 
     // Xử lý lỗi mạng
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       toastr.error("Error! " + xhr.statusText);
     };
 
     xhr.send(formData);
   });
-  document.getElementById("deleteCarForm").addEventListener("submit", function(event) {
+  document.getElementById("deleteCarForm").addEventListener("submit", function (event) {
     event.preventDefault(); // Ngăn trang load lại
 
     let formData = new FormData(this);
@@ -323,7 +330,7 @@
     xhr.open("POST", `/admin/cars/deleteCar/${id}`, true);
 
     // Khi request hoàn thành
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (xhr.status === 200) {
         try {
           let response = JSON.parse(xhr.responseText);
@@ -344,18 +351,18 @@
     };
 
     // Xử lý lỗi mạng
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       toastr.error("Error! " + xhr.statusText);
     };
 
     xhr.send(formData);
   });
-  document.getElementById("searchInput").addEventListener("keyup", function() {
+  document.getElementById("searchInput").addEventListener("keyup", function () {
     var filter = this.value.toLowerCase();
     var rows = document.querySelectorAll("#carTableBody tr");
     var found = false;
 
-    rows.forEach(function(row) {
+    rows.forEach(function (row) {
       var name = row.querySelector(".car-name").textContent.toLowerCase();
       if (name.includes(filter)) {
         row.style.display = "";
@@ -367,7 +374,7 @@
 
     document.getElementById("noResultsMessage").classList.toggle("d-none", found);
   });
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     var rowsPerPage = 5; // Số xe mỗi trang
     var rows = document.querySelectorAll(".car-row");
     var searchInput = document.getElementById("searchInput");
@@ -402,7 +409,7 @@
         li.classList.add("page-item");
         if (i === currentPage) li.classList.add("active");
         li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-        li.addEventListener("click", function(e) {
+        li.addEventListener("click", function (e) {
           e.preventDefault();
           currentPage = i;
           updateTable();
@@ -416,7 +423,7 @@
   });
 
   // Sorting functionality
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     let sortState = {
       column: null,
       direction: 'asc'
@@ -517,7 +524,7 @@
 
     // Enhance the existing updateTable function to maintain sorting
     const originalUpdateTable = updateTable;
-    updateTable = function() {
+    updateTable = function () {
       originalUpdateTable();
       if (sortState.column) {
         sortTable(sortState.column);

@@ -36,14 +36,80 @@ class Home extends Controller
             'view' => 'public/help'
         ]);
     }
+    public function searchCars()
+    {
+        // Get search parameters
+        $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+        $fuelType = isset($_GET['fuel_type']) ? trim($_GET['fuel_type']) : '';
+        $location = isset($_GET['location']) ? trim($_GET['location']) : '';
+
+        // Search using CarModel
+        $conditions = [];
+        $params = [];
+
+        if (!empty($keyword)) {
+            $conditions[] = "(name LIKE :keyword OR overview LIKE :keyword)";
+            $params[':keyword'] = '%' . $keyword . '%';
+        }
+
+        if (!empty($fuelType)) {
+            $conditions[] = "fuel_type = :fuel_type";
+            $params[':fuel_type'] = $fuelType;
+        }
+
+        if (!empty($location)) {
+            $conditions[] = "location LIKE :location";
+            $params[':location'] = '%' . $location . '%';
+        }
+
+        $sql = "SELECT c.*, 
+                (SELECT url FROM files f 
+                 JOIN car_assets ca ON f.id = ca.file_id 
+                 WHERE ca.car_id = c.id AND (f.type NOT LIKE '%video%' OR f.type IS NULL)
+                 LIMIT 1) as url
+                FROM cars c";
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $result = $this->car_model->db->execute($sql, $params);
+        $cars = $result['data'] ?? [];
+
+        $html = '';
+        if (!empty($cars)) {
+            ob_start();
+            foreach ($cars as $car) {
+                RenderSystem::renderOne('components', 'Home/carCard', $car);
+            }
+            $html = ob_get_clean();
+        }
+
+        // Return JSON response
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'data' => $cars,
+            'html' => $html
+        ]);
+        exit;
+    }
     public function getCarsByCategory()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $arrayIds = [];
-            if (isset($_POST['category_id'])) {
+            if (isset($_POST['category_id']) && !empty($_POST['category_id'])) {
                 $arrayIds = [$_POST['category_id']];
             }
             $data = $this->car_model->getCarsByCategories($arrayIds);
+
+            if (empty($data)) {
+                echo '<div class="text-center py-5">
+                        <div class="text-muted">No cars found in this category</div>
+                      </div>';
+                return;
+            }
+
             foreach ($data as $value) {
                 RenderSystem::renderOne('components', 'Home/carCard', $value);
             }
@@ -173,4 +239,5 @@ class Home extends Controller
             }
         }
     }
+
 }

@@ -12,6 +12,7 @@
 }
 
 .title-wrapper .subtitle {
+    margin-top: 100px;
     color: #666;
     font-size: 14px;
     margin-bottom: 8px;
@@ -23,6 +24,7 @@
 }
 
 .category-filters {
+    margin-top: 100px;
     display: flex;
     gap: 16px;
 }
