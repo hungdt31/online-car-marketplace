@@ -19,3 +19,4 @@ $routes['categories-management'] = 'admin/categories';
 $routes['blogs-management/details/(:num)'] = 'admin/posts/detail/$1';
 $routes['users-management'] = 'admin/users/index';
 $routes['settings'] = 'admin/dashboard/settings';
+$routes['car-comments'] = 'admin/cars/comments';

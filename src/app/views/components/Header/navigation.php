@@ -12,6 +12,7 @@ $menuItems = [
 
 $currentUser = SessionFactory::createSession('account');
 if ($currentUser->getProfile()) {
+    $currentUser->getProfile()['role'] == 'admin' ? $userItems['AdminPage'] = ['url' => '/dashboard', 'icon' => 'bi bi-kanban','title' => 'Dashboard'] :
     $userItems = [
         'ProfilePage' => ['url' => '/account', 'icon' => 'fa fa-user', 'title' => 'Profile'],
         'AppointmentsPage' => ['url' => '/account?tab=appointments', 'icon' => 'bi bi-calendar-check-fill', 'title' => 'Appointments'],

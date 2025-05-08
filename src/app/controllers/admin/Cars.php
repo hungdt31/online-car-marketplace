@@ -5,12 +5,14 @@ class Cars extends Controller
     public $file_model;
     public $category_model;
     public $jwt;
+    public $comment_model;
     public function __construct()
     {
         $this->car_model = $this->model('CarModel');
         $this->file_model = $this->model('FileModel');
         $this->category_model = $this->model('CategoryModel');
         $this->jwt = new JwtAuth();
+        $this->comment_model = $this->model('CommentModel');
     }
 
     public function index()
@@ -123,7 +125,7 @@ class Cars extends Controller
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Get JSON data from request body
             $jsonData = json_decode(file_get_contents('php://input'), true);
-            
+
             // Validate data
             if (!isset($jsonData['overview']) || !isset($jsonData['capabilities'])) {
                 echo json_encode([
@@ -190,6 +192,101 @@ class Cars extends Controller
                     "success" => false,
                     "message" => $message
                 ]);
+            }
+        }
+    }
+
+    public function comments()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "GET") {
+            $car_id = $_GET['id'];
+            if (isset($car_id)) {
+                $comments = $this->comment_model->getCommentsById($car_id);
+            } else {
+                $comments = $this->comment_model->getAll();
+            }
+            $this->renderAdmin([
+                'page_title' => 'Car Comments',
+                'view' => 'protected/cars/carComments',
+                'content' => [
+                    'title' => 'Car Reviews Management',
+                    'comments' => $comments
+                ]
+            ]);
+        }
+    }
+
+    public function changeStatusComment($id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $status = $_POST['status'] ?? null;
+            if (empty($status)) {
+                echo json_encode(["success" => false, "message" => "Status is required."]);
+                return;
+            }
+            $result = $this->comment_model->changeStatusComment($id, $status);
+            if ($result) {
+                echo json_encode(["success" => true, "message" => "Comment approved successfully!"]);
+            } else {
+                echo json_encode(["success" => false, "message" => "Failed to approve comment."]);
+            }
+        }
+    }
+
+    public function deleteComment($id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $result = $this->comment_model->deleteComment($id);
+            if ($result) {
+                echo json_encode(["success" => true, "message" => "Comment deleted successfully!"]);
+            } else {
+                echo json_encode(["success" => false, "message" => "Failed to delete comment."]);
+            }
+        }
+    }
+
+    public function replyToComment()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if (isset($_POST['comment_id']) && isset($_POST['reply_content'])) {
+                $id = $_POST['comment_id'];
+                $reply = $_POST['reply_content'];
+                $result = $this->comment_model->replyToComment($id, $reply);
+                if ($result) {
+                    if ($_POST['notify_user'] == "on") {
+                        $comment = $this->comment_model->getComment($id);
+                        $subject = "Reply to your comment";
+                        $message = $_POST['reply_content'];
+                        // Notify user about the reply
+                        $response = Mailer::send(
+                            [
+                                'address' => getenv('EMAIL_USERNAME'),
+                                'name' => 'Admin'
+                            ],
+                            [
+                                'address' => $comment['email'],
+                                'name' => 'User'
+                            ],
+                            [
+                                'address' => $comment['email'],
+                            ],
+                            $subject,
+                            $message
+                        );
+                        if ($response['success']) {
+                            echo json_encode(["success" => true, "message" => "Reply added and user notified successfully!"]);
+                            return;
+                        } else {
+                            echo json_encode(["success" => false, "message" => "Reply added but failed to notify user."]);
+                            return;
+                        }
+                    }
+                    echo json_encode(["success" => true, "message" => "Reply added successfully!"]);
+                } else {
+                    echo json_encode(["success" => false, "message" => "Failed to add reply."]);
+                }
+            } else {
+                echo json_encode(["success" => false, "message" => "Reply are required."]);
             }
         }
     }

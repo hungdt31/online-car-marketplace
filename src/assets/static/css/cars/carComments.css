@@ -1,0 +1,112 @@
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.avatar-lg {
+    width: 64px;
+    height: 64px;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.car-model-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.comment-ellipsis {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.icon-shape {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(310deg, #7928ca, #ff0080);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(310deg, #f53939, #fbcf33);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(310deg, #2dce89, #2dceb0);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(310deg, #1171ef, #11cdef);
+}
+
+/* Cải thiện giao diện cho mobile */
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .card-header>div:not(:first-child) {
+        margin-top: 1rem;
+    }
+}
+
+/* CSS cho bộ lọc */
+.advanced-filters {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 10px !important;
+}
+
+#toggleFilterBtn {
+    transition: all 0.2s;
+}
+
+.form-select,
+.form-control {
+    box-shadow: none !important;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: #86b7fe;
+}
+
+.input-group-text {
+    color: #6c757d;
+}
+
+/* Tạo viền sáng cho input khi focus */
+.input-group:focus-within {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    border-radius: 0.25rem;
+}
+
+/* Style cho nút Clear */
+#clearSearch {
+    border-left: none;
+}
+
+#clearSearch:hover {
+    background-color: #f8f9fa;
+    color: #dc3545;
+}

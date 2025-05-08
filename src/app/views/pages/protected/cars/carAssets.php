@@ -25,10 +25,16 @@
         </div>
 
         <!-- Right Side: Add Button -->
-        <button class="btn btn-outline-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#uploadModal">
-            <i class="bi bi-plus-lg me-2"></i>
-            Add New Media
-        </button>
+        <div class="d-flex gap-2">
+            <a href="/admin/cars/comments?id=<?= $car_id ?>" class="btn btn-outline-info d-flex align-items-center">
+                <i class="fas fa-comments me-2"></i>
+                View Reviews
+            </a>
+            <button class="btn btn-outline-primary d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <i class="bi bi-plus-lg me-2"></i>
+                Add New Media
+            </button>
+        </div>
     </div>
 
     <!-- Categories Section -->
