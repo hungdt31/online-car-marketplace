@@ -35,9 +35,9 @@
             'link' => _WEB_ROOT . '/blogs-management',
         ],
         [
-            'name' => 'Categories',
-            'icon' => 'bi bi-tags',
-            'link' => _WEB_ROOT . '/admin/categories',
+            'name' => 'Appointments',
+            'icon' => 'bi bi-calendar-check',
+            'link' => _WEB_ROOT . '/admin/appointments',
         ],
         [
             'name' => 'Settings',

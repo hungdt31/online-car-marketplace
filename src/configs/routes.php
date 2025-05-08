@@ -16,3 +16,7 @@ $routes['blogs-management'] = 'admin/posts';
 $routes['help'] = 'home/help';
 $routes['help/send-question'] = 'help/sendQuestion';
 $routes['product/sendMail'] = 'product/sendMail';
+$routes['admin/appointments'] = 'admin/appointments/index';
+$routes['admin/appointments/add'] = 'admin/appointments/add';
+$routes['admin/appointments/confirm/(:num)'] = 'admin/appointments/confirm/$1';
+$routes['admin/appointments/cancel/(:num)'] = 'admin/appointments/cancel/$1';
