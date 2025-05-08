@@ -15,9 +15,30 @@
                 ?>
             </div>
         </div>
-        <a href="#" class="nav_link">
+        <a href="#" class="nav_link" id="out-btn">
             <i class="bi bi-box-arrow-right"></i>
             <span class="nav_name">SignOut</span>
         </a>
     </nav>
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Logout button functionality
+        $('#out-btn').click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/auth/logout',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            window.location.href = '/auth';
+                        }, 2000);
+                    }
+                }
+            });
+        });
+    });
+</script>

@@ -283,6 +283,7 @@ global $latestClosingTime;
             RenderSystem::renderOne('components', 'Shop/schedule', [
                 'car_id' => $info['id'],
                 'user_id' => $profile['id'],
+                'branches' => $branches,
             ]);
             ?>
 

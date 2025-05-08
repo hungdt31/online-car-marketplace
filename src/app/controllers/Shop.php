@@ -6,6 +6,7 @@ class Shop extends Controller{
     protected $user_model;
     protected $shop_session;
     protected $appointment_model;
+    protected $branch_model;
     public $data = [];
     
     public function __construct() {
@@ -14,6 +15,7 @@ class Shop extends Controller{
         $this->file_model = $this->model('FileModel');
         $this->user_model = $this->model('UserModel');
         $this->appointment_model = $this->model('AppointmentModel');
+        $this->branch_model = $this->model('BranchModel');
         $this->shop_session = SessionFactory::createSession('shop');
     }
     
@@ -118,6 +120,7 @@ class Shop extends Controller{
         }
         
         $car = $this->car_model->getAdvancedCar($id);
+        $branches = $this->branch_model->findAll();
         
         if (!$car) {
             header('Location: ' . _WEB_ROOT . '/shop');
@@ -143,7 +146,8 @@ class Shop extends Controller{
                     'title' => $car['name'],
                     'description' => $breadcrumbs
                 ],
-                'info' => $car
+                'info' => $car,
+                'branches' => $branches
             ]
         ]);
     }
@@ -335,6 +339,13 @@ class Shop extends Controller{
 
     public function schedule() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($_POST['user_id'] == '') {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Please login to schedule an appointment.'
+                ]);
+                return;
+            }
             // Save appointment to database
             $result = $this->appointment_model->create($_POST);
             

@@ -64,3 +64,21 @@ $(document).on("shown.bs.modal", ".modal", function () {
 $(document).on("click", ".modal-content", function (e) {
   e.stopPropagation();
 });
+
+$(document).ready(function() {
+    $('.signout-btn').click(function() {
+        $.ajax({
+            type: 'POST',
+            url: '/auth/logout',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    toastr.success(response.message);
+                    setTimeout(function() {
+                        window.location.href = '/auth';
+                    }, 2000);
+                }
+            }
+        });
+    });
+});

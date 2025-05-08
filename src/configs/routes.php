@@ -34,3 +34,4 @@ $routes['appointments-management'] = 'admin/appointments/index';
 $routes['admin/appointments/add'] = 'admin/appointments/add';
 $routes['admin/appointments/confirm/(:num)'] = 'admin/appointments/confirm/$1';
 $routes['admin/appointments/cancel/(:num)'] = 'admin/appointments/cancel/$1';
+$routes['branches'] = 'admin/branches/index';

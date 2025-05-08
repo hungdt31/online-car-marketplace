@@ -9,7 +9,8 @@ class AppointmentModel extends Model {
             SELECT a.*, 
                    c.name, c.location, c.overview, c.fuel_type, c.mileage, 
                    c.drive_type, c.price, c.avg_rating,
-                   f.url AS car_image
+                   f.url AS car_image,
+                   b.name AS branch_name, b.address AS branch_address, b.phone AS branch_phone
             FROM {$this->_table} a
             LEFT JOIN cars c ON a.car_id = c.id
             LEFT JOIN (
@@ -18,6 +19,7 @@ class AppointmentModel extends Model {
                 JOIN files f ON ca.file_id = f.id
                 GROUP BY ca.car_id
             ) f ON c.id = f.car_id
+            LEFT JOIN branches b ON a.branch_id = b.id
             WHERE " . ($user_id ? "a.user_id = :user_id" : "1=1") . "
             ORDER BY a.created_at DESC
         ";
@@ -52,13 +54,15 @@ class AppointmentModel extends Model {
         return $result['data'];
     }
     public function create($data) {
-        $sql = "INSERT INTO {$this->_table} (user_id, car_id, date, purpose, notes) VALUES (:user_id, :car_id, :date, :purpose, :notes)";
+        $sql = "INSERT INTO {$this->_table} (user_id, car_id, date, purpose, notes, branch_id) VALUES (:user_id, :car_id, :date, :purpose, :notes, :branch_id)";
+         // Prepare the SQL statement
         $params = [
             ':user_id' => $data['user_id'],
             ':car_id' => $data['car_id'],
             ':date' => $data['date'],
             ':purpose' => $data['purpose'],
             ':notes' => $data['notes'],
+            ':branch_id' => $data['branch_id']
         ];
         $result = $this->db->execute($sql, $params);
         return $result['success'];

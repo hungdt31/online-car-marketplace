@@ -133,7 +133,9 @@
                                             data-price="<?= htmlspecialchars($appointment['price'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                             data-location="<?= htmlspecialchars($appointment['location'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#appointmentDetailsModal">
+                                            data-bs-target="#appointmentDetailsModal"
+                                            data-branch="<?= htmlspecialchars($appointment['branch_address'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                            >
                                             <i class="fas fa-eye"></i>
                                         </button>
 
@@ -265,6 +267,14 @@
                                 </div>
                                 <div class="col-sm-8">
                                     <p id="modal-location" class="mb-1 fw-medium"></p>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-4">
+                                    <label class="text-muted">Branch:</label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p id="modal-branch" class="mb-1 fw-medium"></p>
                                 </div>
                             </div>
                         </div>
@@ -454,6 +464,7 @@
             const mileage = $(this).data('mileage') || 'Not specified';
             const price = $(this).data('price') || '0.00';
             const location = $(this).data('location') || 'Not specified';
+            const branch = $(this).data('branch') || 'Not specified';
 
             // Fill modal with car details
             $('#modal-car').text(car);
@@ -463,6 +474,7 @@
             $('#modal-mileage').text(mileage);
             $('#modal-price').text('$' + Number(price).toLocaleString());
             $('#modal-location').text(location);
+            $('#modal-branch').text(branch);
 
             // Fill modal with appointment details
             $('#modal-date').text(date);

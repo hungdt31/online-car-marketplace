@@ -10,6 +10,12 @@
                             <p class="mb-0 opacity-75">
                                 <i class="fas fa-envelope me-2"></i><?= htmlspecialchars($payload['email'], ENT_QUOTES, 'UTF-8') ?>
                             </p>
+                            <a href="/branches" class="btn btn-light btn-sm mt-2">
+                                Go to Branches
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm mt-2" id="logout-btn">
+                                <i class="bi bi-box-arrow-right"></i> Log out
+                            </button>
                         </div>
                         <div class="text-end">
                             <p class="mb-0"><?= date('l, F j, Y') ?></p>

@@ -19,6 +19,16 @@
             </div>
 
             <div class="mb-3">
+                <label for="brand_id" class="form-label">Address</label>
+                 <select class="form-select" id="branch_id" name="branch_id" required>
+                    <option value="" selected disabled>Select Branch</option>
+                    <?php foreach ($data['branches'] as $branch) : ?>
+                        <option value="<?= $branch['id'] ?>"><?= htmlspecialchars($branch['address']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
                 <label for="purpose" class="form-label">Purpose</label>
                 <select class="form-select" id="purpose" name="purpose" required>
                     <option value="" selected disabled>Select purpose</option>
@@ -72,6 +82,8 @@
         formDataObj.forEach((value, key) => {
             formDataForAjax[key] = value;
         });
+
+        console.log(formDataForAjax); // Debugging line
 
         // Show loading state
         const submitBtn = $(this).find('button[type="submit"]');
