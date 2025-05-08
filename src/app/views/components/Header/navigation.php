@@ -7,7 +7,8 @@ $menuItems = [
     'ShopPage' => ['url' => '/shop', 'name' => 'Shop'],
     'BlogPage' => ['url' => '/blog', 'name' => 'Blog'],
     'ContactPage' => ['url' => '/contact', 'name' => 'Contact us'],
-    'AboutPage' => ['url' => '/about', 'name' => 'About us']
+    'AboutPage' => ['url' => '/about', 'name' => 'About us'],
+    'HelpPage' => ['url' => '/help', 'name' => 'Help'],
 ];
 
 $currentUser = SessionFactory::createSession('account');
@@ -20,7 +21,7 @@ if ($currentUser->getProfile()) {
     ];
 } else {
     $userItems = [
-        'SignIn' => ['url' => '/auth', 'name' => 'Sign In / Sign Up'],
+        'SignIn' => ['url' => '/auth', 'name' => 'Sign In / Sign Up']
     ];
 }
 ?>

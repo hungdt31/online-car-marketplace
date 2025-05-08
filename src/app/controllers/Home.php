@@ -47,7 +47,7 @@ class Home extends Controller{
     public function contact() {
         $breadcrumbs = [
             ['name' => 'Home', 'url' => _WEB_ROOT],
-            ['name' => 'Contact Us']
+            ['name' => 'Keep in Touch']
         ];
         $this->renderGeneral([
             'page_title' => 'Contact us',

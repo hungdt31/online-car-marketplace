@@ -327,7 +327,7 @@
                 <div class="contact-card">
                     <img src="<?= _WEB_ROOT ?>/assets/static/images/contact.avif" alt="car" width="350px" height="250px" class="rounded-pill mb-3">
                     <div class="contact-card-info">
-                        <h3>Premium Car Rental Service</h3>
+                        <h3>Premium Car For Purchasing</h3>
                         <p>Experience quality service with our modern fleet</p>
                         <a href="#" class="btn btn-light mt-2">Learn More</a>
                     </div>
