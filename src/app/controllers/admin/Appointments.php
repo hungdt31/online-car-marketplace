@@ -73,4 +73,14 @@ class Appointments extends Controller
             'message' => $result ? 'Appointment cancelled successfully' : 'Failed to cancel appointment'
         ]);
     }
+    public function contact() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $result = $this->appointmentModel->createContact($_POST);
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => 'Contact created successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to create contact']);
+            }
+        }
+    }
 } 

@@ -103,4 +103,25 @@ class AppointmentModel extends Model {
     
         return $result['success'] ?? false;
     }
+    public function createContact($data) {
+        // Build note text with proper concatenation and null coalescing
+        $name = $data['name'] ?? 'Unknown';
+        $email = $data['email'] ?? 'no email';
+        $phone = $data['phone'] ?? 'no phone';
+        $message = $data['message'] ?? 'no message';
+        
+        $notes = 'Customer name ' . $name . ' with ' . $email . ' - ' . $phone . ' said: ' . $message;
+        $purpose = $data['subject'] ?? 'Contact';
+        
+        $sql = "INSERT INTO {$this->_table} (date, purpose, status, notes) VALUES (NOW(), :purpose, 'pending', :notes)";
+        
+        // Prepare the SQL statement
+        $params = [
+            ':purpose' => $purpose,
+            ':notes' => $notes
+        ];
+        
+        $result = $this->db->execute($sql, $params);
+        return $result['success'] ?? false;
+    }
 }

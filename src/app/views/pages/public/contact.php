@@ -480,9 +480,7 @@
 <script>
     document.getElementById("emailForm").addEventListener("submit", function (event) {
         event.preventDefault();
-
-        let formData = new FormData(this);
-        let xhr = new XMLHttpRequest();
+        
         let submitText = document.getElementById("submit-text");
         let submitLoader = document.getElementById("submit-loader");
         let submitButton = this.querySelector("button[type='submit']");
@@ -494,32 +492,43 @@
         submitLoader.classList.remove("d-none");
         responseMessage.className = "response-message d-none";
 
-        xhr.open("POST", "product/sendMail", true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                submitButton.disabled = false;
-                submitText.classList.remove("d-none");
-                submitLoader.classList.add("d-none");
-
-                responseMessage.classList.remove("d-none");
-                
-                if (xhr.status === 200) {
-                    responseMessage.innerHTML = "Email has been sent successfully!";
+        // console.log("Form submitted", new FormData(this));
+        $.ajax({
+            url: "admin/appointments/contact",
+            type: "POST",
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            success: function(response) {
+                // console.log("Response:", response);
+                if (response.success) {
+                    responseMessage.innerHTML = "Contact has been sent successfully!";
                     responseMessage.className = "response-message response-success";
                     document.getElementById("emailForm").reset();
                 } else {
-                    responseMessage.innerHTML = "Failed to send email. Please try again later!";
+                    responseMessage.innerHTML = "Failed to send contact. Please try again later!";
                     responseMessage.className = "response-message response-error";
                 }
+            },
+            error: function() {
+                // Show error message
+                responseMessage.innerHTML = "Failed to send email. Please try again later!";
+                responseMessage.className = "response-message response-error";
+            },
+            complete: function() {
+                // Reset button state regardless of success/failure
+                submitButton.disabled = false;
+                submitText.classList.remove("d-none");
+                submitLoader.classList.add("d-none");
+                responseMessage.classList.remove("d-none");
                 
                 // Automatically hide the message after 5 seconds
                 setTimeout(function() {
                     responseMessage.classList.add("d-none");
                 }, 5000);
             }
-        };
-
-        xhr.send(formData);
+        });
     });
 
     // Animation on scroll

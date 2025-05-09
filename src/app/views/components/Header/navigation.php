@@ -26,10 +26,20 @@ if ($currentUser->getProfile()) {
 }
 ?>
 <div class="nav">
-    <button class="toggle-nav">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <div class="overlay"></div>
+    <div class="menu-dropdown">
+        <button class="menu-dropdown-toggle">
+            <i class="fa-solid fa-bars me-2"></i>
+            <span>Menu</span>
+        </button>
+        <div class="menu-dropdown-menu">
+            <?php foreach ($menuItems as $item): ?>
+                <a href="<?= $item['url'] ?>" class="menu-dropdown-item <?= $currentUrl === $item['url'] ? 'active' : '' ?>">
+                    <?= $item['name'] ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    
     <div class="sys-nav">
         <?php foreach ($menuItems as $item): ?>
             <!-- So sánh URL hiện tại với URL của mục, nếu trùng thì thêm class "active" -->
@@ -147,9 +157,15 @@ if ($currentUser->getProfile()) {
         color: white;
         border: none;
         display: none;
-        background-color: transparent;
+        background-color: rgba(255, 255, 255, 0.1);
         cursor: pointer;
         z-index: 1000;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .toggle-nav:hover {
+        background-color: rgba(255, 255, 255, 0.2);
     }
 
     .nav a.active {
@@ -202,7 +218,7 @@ if ($currentUser->getProfile()) {
     .user-avatar {
         width: 32px;
         height: 32px;
-        border-radius: 50%;
+        border-radius: 8px;
         background-color: rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
@@ -272,7 +288,7 @@ if ($currentUser->getProfile()) {
     .user-avatar-large {
         width: 48px;
         height: 48px;
-        border-radius: 50%;
+        border-radius: 10px;
         background-color: #4E6CFB;
         display: flex;
         align-items: center;
@@ -314,11 +330,13 @@ if ($currentUser->getProfile()) {
         font-weight: normal !important;
         position: relative;
         /* Tạo context cho pseudo-elements */
+        margin: 2px 8px;
+        border-radius: 8px;
     }
 
     .user-dropdown-item:hover {
         background-color: rgba(78, 108, 251, 0.1) !important;
-        border-radius: 0 !important;
+        color: #4E6CFB !important;
     }
 
     .user-dropdown-item i {
@@ -370,15 +388,98 @@ if ($currentUser->getProfile()) {
         color: white !important;
     }
 
+    /* Menu Dropdown Styles */
+    .menu-dropdown {
+        position: relative;
+        display: none;
+    }
+
+    .menu-dropdown-toggle {
+        display: flex;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: white;
+        font-weight: 600;
+    }
+
+    .menu-dropdown-toggle:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .menu-dropdown-toggle i {
+        margin-right: 8px;
+    }
+
+    .menu-dropdown-menu {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 50px;
+        background-color: white;
+        border-radius: 12px;
+        min-width: 320px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        overflow: hidden;
+        z-index: 1000;
+        padding: 8px;
+        display: none;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+    }
+
+    .menu-dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        color: #333 !important;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-weight: 500 !important;
+        margin: 2px;
+        border-radius: 8px;
+        justify-content: center;
+    }
+
+    .menu-dropdown-item:hover {
+        background-color: rgba(78, 108, 251, 0.1) !important;
+        color: #4E6CFB !important;
+    }
+
+    .menu-dropdown-item.active {
+        background-color: #4E6CFB !important;
+        color: white !important;
+    }
+
+    .menu-dropdown.active .menu-dropdown-menu {
+        display: grid;
+        animation: fadeInDown 0.3s ease forwards;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px) translateX(-50%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) translateX(-50%);
+        }
+    }
+
     @media screen and (max-width: 768px) {
         .nav {
-            justify-content: flex-end;
+            justify-content: space-between;
+            padding: 15px 15px;
         }
 
         .toggle-nav {
-            display: block;
-            position: relative;
-            z-index: 1000;
+            display: none;
         }
 
         .overlay.active {
@@ -387,53 +488,22 @@ if ($currentUser->getProfile()) {
 
         .sys-nav {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(78, 108, 251, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            z-index: 999;
-            transform: translateX(0);
-            transition: all 0.3s ease;
         }
 
-        .sys-nav.active {
-            display: flex;
+        .menu-dropdown {
+            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .user-nav {
-            display: none;
-            position: fixed;
-            top: 20px;
-            /* Đặt ở trên cùng */
-            right: 70px;
-            /* Cách nút toggle */
-            background-color: transparent;
-            flex-direction: row;
-            justify-content: flex-end;
-            gap: 20px;
-            z-index: 999;
-            margin-left: 0;
-        }
-
-        .user-nav.active {
             display: flex;
-        }
-
-        body.menu-active {
-            overflow: hidden;
         }
 
         .user-dropdown-toggle {
             padding: 6px;
-            border-radius: 50%;
+            border-radius: 8px;
         }
 
         .user-avatar {
@@ -445,19 +515,21 @@ if ($currentUser->getProfile()) {
         }
 
         .user-dropdown-menu {
-            position: fixed;
-            top: 70px;
-            left: 10%;
-            right: 10%;
-            width: 80%;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 250px;
             max-height: 80vh;
             overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.08);
+            padding: 8px 0;
         }
 
         @media (hover: none) {
-            .user-dropdown-item {
-                padding: 14px 15px;
-                /* Tăng kích thước vùng có thể click */
+            .user-dropdown-item,
+            .menu-dropdown-item {
+                padding: 16px 20px;
             }
         }
     }
@@ -485,6 +557,11 @@ if ($currentUser->getProfile()) {
                 // Cập nhật vị trí trước khi hiển thị
                 updateDropdownPosition();
                 userDropdown.classList.toggle('active');
+                
+                // Đóng menu dropdown nếu đang mở
+                if (menuDropdown && menuDropdown.classList.contains('active')) {
+                    menuDropdown.classList.remove('active');
+                }
             });
 
             // Cập nhật vị trí khi resize cửa sổ
@@ -522,52 +599,41 @@ if ($currentUser->getProfile()) {
             });
         }
 
-        // Phần code xử lý mobile menu giữ nguyên...
-        const toggleNavBtn = document.querySelector('.toggle-nav');
-        if (toggleNavBtn) {
-            toggleNavBtn.addEventListener('click', function() {
-                document.querySelector('.sys-nav').classList.toggle('active');
-                document.querySelector('.user-nav').classList.toggle('active');
-                document.querySelector('.overlay').classList.toggle('active');
-                document.body.classList.toggle('menu-active');
+        // Xử lý menu dropdown
+        const menuDropdown = document.querySelector('.menu-dropdown');
+        if (menuDropdown) {
+            const menuToggle = menuDropdown.querySelector('.menu-dropdown-toggle');
+            const menuDropdownMenu = menuDropdown.querySelector('.menu-dropdown-menu');
 
-                // Đóng user dropdown nếu đang mở khi toggle mobile menu
-                if (userDropdown && userDropdown.classList.contains('active')) {
-                    userDropdown.classList.remove('active');
-                }
-            });
-        }
-
-        // Đóng menu khi click vào overlay
-        const overlay = document.querySelector('.overlay');
-        if (overlay) {
-            overlay.addEventListener('click', function() {
-                document.querySelector('.sys-nav').classList.remove('active');
-                document.querySelector('.user-nav').classList.remove('active');
-                this.classList.remove('active');
-                document.body.classList.remove('menu-active');
-
+            menuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                menuDropdown.classList.toggle('active');
+                
                 // Đóng user dropdown nếu đang mở
                 if (userDropdown && userDropdown.classList.contains('active')) {
                     userDropdown.classList.remove('active');
                 }
             });
-        }
 
-        // Đóng menu khi click vào các liên kết trong menu
-        const sysNavLinks = document.querySelectorAll('.sys-nav a');
-        sysNavLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                // Chỉ áp dụng cho mobile view
-                if (window.innerWidth <= 768) {
-                    document.querySelector('.sys-nav').classList.remove('active');
-                    document.querySelector('.user-nav').classList.remove('active');
-                    document.querySelector('.overlay').classList.remove('active');
-                    document.body.classList.remove('menu-active');
+            // Đóng dropdown khi click bên ngoài
+            document.addEventListener('click', function(e) {
+                if (!menuDropdown.contains(e.target)) {
+                    menuDropdown.classList.remove('active');
                 }
             });
-        });
+            
+            // Đảm bảo các liên kết trong dropdown hoạt động đúng
+            const menuItems = menuDropdown.querySelectorAll('.menu-dropdown-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        }
     });
+    
     $(document).ready(function() {
         $('#signout-btn').click(function() {
             $.ajax({

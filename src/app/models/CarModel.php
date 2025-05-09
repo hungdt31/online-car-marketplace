@@ -139,7 +139,7 @@ class CarModel extends Model
             LEFT JOIN users u ON com.user_id = u.id
             LEFT JOIN files f1 ON u.avatar_id = f1.id -- JOIN để lấy avatar người dùng
             LEFT JOIN files f2 ON com.file_id = f2.id -- JOIN để lấy file của bình luận
-            WHERE com.car_id = :id";
+            WHERE com.car_id = :id and com.status = 'approved'";
 
         $commentsResult = $this->db->execute($commentsSql, $params)['data'];
         $comments = [];
