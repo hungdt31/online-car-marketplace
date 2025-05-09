@@ -99,7 +99,7 @@ $currentTab = $_GET['tab'] ?? 'profile';
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveAvatarBtn" disabled>Save Changes</button>
+                <button type="button" class="btn btn-primary" id="saveAvatarBtn">Save Changes</button>
             </div>
         </div>
     </div>
@@ -216,10 +216,22 @@ $currentTab = $_GET['tab'] ?? 'profile';
             $('#avatarModal').modal('show');
         });
 
+        // Thêm vào đoạn code xử lý mở modal
+        $('#avatarModal').on('shown.bs.modal', function() {
+            // Đảm bảo input file luôn được enable khi modal hiển thị
+            $('#avatarFile').prop('disabled', false);
+            
+            // Reset giá trị input để người dùng có thể chọn lại file (nếu cần)
+            $('#avatarFile').val('');
+            
+            // Disable nút Save Changes cho đến khi người dùng chọn file
+            $('#saveAvatarBtn').prop('disabled', true);
+        });
+
         // Handle file input change
         $('#avatarFile').change(function() {
             const file = this.files[0];
-            
+
             // Validate file type and size
             if (file) {
                 if (!file.type.match('image.*')) {

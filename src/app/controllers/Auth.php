@@ -96,7 +96,8 @@ class Auth extends Controller
                 'username' => $_POST['username'],
                 'email' => $_POST['email'],
                 'password' => $_POST['password'],
-                'role' => 'user'
+                'role' => 'user',
+                'provider' => 'credential',
             ]);
             echo json_encode([
                 'success' => !empty($response['success']),

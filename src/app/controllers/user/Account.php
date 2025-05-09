@@ -6,12 +6,14 @@ class Account extends Controller
     private $user_model;
     private $appointments_model;
     private $blog_comments_model;
+    private $file_model;
     public function __construct()
     {
         $this->jwt = new JwtAuth();
         $this->user_model = $this->model('UserModel');
         $this->appointments_model = $this->model('AppointmentModel');
         $this->blog_comments_model = $this->model('BlogCommentsModel');
+        $this->file_model = $this->model('FileModel');
     }
     public function index()
     {
@@ -261,8 +263,18 @@ class Account extends Controller
             return;
         }
         
-        // Upload file to AWS S3 or server storage
         $aws = new AwsS3Service();
+        
+        // Delete old avatar if exists
+        if (!empty($user['avatar_id'])) {
+            $rs = $this->file_model->getFile(['id' => $user['avatar_id']]);
+            if ($rs) {
+                $aws->deleteFile($rs['fkey']);
+                $this->file_model->deleteOne($user['avatar_id']);
+            }
+        }
+        
+        // Upload file to AWS S3 or server storage
         $uploadResult = $aws->uploadFile($file, 'avatars');
         
         if (!$uploadResult) {
@@ -274,7 +286,6 @@ class Account extends Controller
         }
         
         // Save file information to database
-        $fileModel = $this->model('FileModel');
         $fileData = [
             'name' => $file['name'],
             'fkey' => $uploadResult['fileKey'],
@@ -283,7 +294,7 @@ class Account extends Controller
             'type' => $file['type']
         ];
         
-        $fileStatus = $fileModel->addFile($fileData);
+        $fileStatus = $this->file_model->addFile($fileData);
         
         if (!$fileStatus) {
             echo json_encode([
@@ -294,7 +305,7 @@ class Account extends Controller
         }
         
         // Get the file ID
-        $newFile = $fileModel->getFile(['fkey' => $uploadResult['fileKey']]);
+        $newFile = $this->file_model->getFile(['fkey' => $uploadResult['fileKey']]);
         
         if (!$newFile) {
             echo json_encode([
@@ -302,12 +313,6 @@ class Account extends Controller
                 'message' => 'Failed to retrieve file information'
             ]);
             return;
-        }
-        
-        // Delete old avatar if exists
-        if (!empty($user['avatar_id'])) {
-            // The file delete would typically happen here if needed
-            // $fileModel->deleteFile($user['avatar_id']);
         }
         
         // Update user's avatar
