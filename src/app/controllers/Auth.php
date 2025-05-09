@@ -84,6 +84,14 @@ class Auth extends Controller
                 ]);
                 exit();
             }
+            // kiểm tra xem password có đủ 8 ký tự và có ít nhất 1 ký tự đặc biệt không, có số không
+            if (!preg_match('/^(?=.*[!@#$%^&*])(?=.*[0-9]).{8,}$/', $_POST['password'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Password must be at least 8 characters long and contain at least one special character and one number'
+                ]);
+                exit();
+            }
             $response = $this->user_model->createOne([
                 'username' => $_POST['username'],
                 'email' => $_POST['email'],

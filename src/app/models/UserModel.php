@@ -82,7 +82,7 @@ class UserModel extends Model {
         if (isset($result['errorCode'])) {
             switch ($result['errorCode']) {
                 case '23000':
-                    $result['message'] = 'Email already exists';
+                    $result['message'] = 'Email or username already exists';
                     break;
                 default:
                     $result['message'] = 'Something went wrong';

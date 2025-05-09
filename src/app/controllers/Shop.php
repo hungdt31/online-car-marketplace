@@ -278,7 +278,7 @@ class Shop extends Controller{
                         if ($addCmtStatus) {
                             echo json_encode([
                                 "success" => true,
-                                "message" => "Comment added successfully!",
+                                "message" => "Comment added successfully. Please wait for admin to approve!",
                                 "data" => $data
                             ]);
                         } else {
@@ -304,7 +304,7 @@ class Shop extends Controller{
                 if ($addCmtStatus) {
                     echo json_encode([
                         "success" => true,
-                        "message" => "Comment added successfully!"
+                        "message" => "Comment added successfully. Please wait for admin to approve!"
                     ]);
                 } else {
                     echo json_encode([

@@ -10,6 +10,15 @@
                 <li class="breadcrumb-item active" aria-current="page">' . $car['name'] . '</li>
             </ol>
         </nav>';
+    } else {
+        echo ' 
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/cars-management">Cars</a></li>
+                <li class="breadcrumb-item active" aria-current="page">All Reviews</li>
+            </ol>
+        </nav>';
     }
     ?>
     <div class="row mb-4">

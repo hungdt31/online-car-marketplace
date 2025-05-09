@@ -20,7 +20,7 @@
     </div>
 
     <div class="d-flex align-items-center gap-3 flex-wrap">
-      <a href="/admin/cars/comments">
+      <a href="/cars-management/comments">
         <button type="button" class="btn btn-info">
           <i class="bi bi-chat-dots-fill me-2"></i>View Reviews
         </button>

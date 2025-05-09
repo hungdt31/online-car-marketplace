@@ -27,7 +27,7 @@ RenderSystem::render('components',[
                     </div>
                     <h3>Premium Vehicles</h3>
                     <p>Browse our extensive collection of luxury and high-performance vehicles from top manufacturers worldwide.</p>
-                    <a href="/cars" class="btn-service">Explore Inventory</a>
+                    <a href="#" class="btn-service">Explore Inventory</a>
                 </div>
             </div>
             
@@ -38,7 +38,7 @@ RenderSystem::render('components',[
                     </div>
                     <h3>Financing Options</h3>
                     <p>Flexible financing solutions tailored to your budget with competitive rates and convenient terms.</p>
-                    <a href="/financing" class="btn-service">Learn More</a>
+                    <a href="#" class="btn-service">Learn More</a>
                 </div>
             </div>
             
@@ -49,7 +49,7 @@ RenderSystem::render('components',[
                     </div>
                     <h3>After-Sales Support</h3>
                     <p>Comprehensive maintenance packages and extended warranty options for your peace of mind.</p>
-                    <a href="/services" class="btn-service">Our Services</a>
+                    <a href="#" class="btn-service">Our Services</a>
                 </div>
             </div>
         </div>
@@ -136,7 +136,7 @@ RenderSystem::render('components',[
         
         <div class="row mt-4">
             <div class="col-12 text-center">
-                <a href="/testimonials" class="btn btn-primary btn-lg">Read More Reviews</a>
+                <a href="/shop" class="btn btn-primary btn-lg">Read More Reviews</a>
             </div>
         </div>
     </div>

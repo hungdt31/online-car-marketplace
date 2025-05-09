@@ -106,9 +106,17 @@
                                     <?= ucfirst($appointment['status']) ?>
                                 </span>
                             </td>
-                            <td><?= htmlspecialchars($appointment['purpose']) ?></td>
                             <td>
-                                <div class="text-truncate" style="max-width: 150px;" title="<?= htmlspecialchars($appointment['notes']) ?>">
+                                <div class="text-truncate clickable-text" style="max-width: 150px; cursor: pointer;" 
+                                     data-content="<?= htmlspecialchars($appointment['purpose']) ?>"
+                                     data-title="Purpose">
+                                    <?= htmlspecialchars($appointment['purpose']) ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-truncate clickable-text" style="max-width: 150px; cursor: pointer;" 
+                                     data-content="<?= htmlspecialchars($appointment['notes']) ?>"
+                                     data-title="Notes">
                                     <?= htmlspecialchars($appointment['notes']) ?>
                                 </div>
                             </td>
@@ -202,12 +210,42 @@
     </div>
 </div>
 
+<!-- Modal cho hiển thị nội dung đầy đủ -->
+<div class="modal fade" id="contentModal" tabindex="-1" aria-labelledby="contentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="contentModalLabel">Chi tiết</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="modalContent"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 $(document).ready(function() {
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    
+    // Xử lý click vào nội dung truncated để hiển thị đầy đủ
+    $('.clickable-text').click(function() {
+        var content = $(this).data('content');
+        var title = $(this).data('title');
+        $('#contentModalLabel').text(title);
+        $('#modalContent').text(content);
+        
+        // Hiển thị modal
+        var contentModal = new bootstrap.Modal(document.getElementById('contentModal'));
+        contentModal.show();
     });
     
     // Auto-submit filter when status changes

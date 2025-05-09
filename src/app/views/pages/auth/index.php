@@ -31,6 +31,326 @@ if (isset($_GET['code'])) {
 	}
 }
 ?>
+
+<style>
+/* CSS chung cho tất cả kích thước màn hình */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    height: 100vh;
+    background: #f6f6f6;
+    display: flex;
+    flex-direction: column;
+}
+
+.alert {
+    margin-bottom: 0 !important;
+}
+
+#container {
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    flex: 1;
+}
+
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.form-container form {
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
+    text-align: center;
+}
+
+.social-container {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: 100%;
+}
+
+.social-container a {
+    border: 1px solid #DDDDDD;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    flex: 1;
+    text-decoration: none;
+    color: #333;
+    margin: 0;
+}
+
+.social-container a:hover {
+    background-color: #f0f0f0;
+}
+
+input {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.ghost-btn {
+    border-radius: 20px;
+    border: 1px solid #FFFFFF;
+    background-color: transparent;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.ghost-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.ghost-btn:active {
+    transform: scale(0.95);
+}
+
+.ghost-btn:focus {
+    outline: none;
+}
+
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+.overlay {
+    /* background: #1e88e5;
+    background: -webkit-linear-gradient(to right, #2196F3, #1e88e5);
+    background: linear-gradient(to right, #2196F3, #1e88e5); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 0;
+    color: #FFFFFF;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.overlay-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.overlay-left {
+    transform: translateX(-20%);
+}
+
+.overlay-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+#container.right-panel-active .sign-in-container {
+    transform: translateX(100%);
+}
+
+#container.right-panel-active .sign-up-container {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: show 0.6s;
+}
+
+#container.right-panel-active .overlay-container {
+    transform: translateX(-100%);
+}
+
+#container.right-panel-active .overlay {
+    transform: translateX(50%);
+}
+
+#container.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+
+#container.right-panel-active .overlay-right {
+    transform: translateX(20%);
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.mobile-switcher {
+    display: none;
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.mobile-switcher a {
+    color: #1e88e5;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+@keyframes show {
+    0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+    
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+/* Responsive CSS cho điện thoại và tablet */
+@media only screen and (max-width: 768px) {
+    #container {
+        width: 100%;
+        margin: 0;
+        min-height: 100vh;
+        height: 100vh;
+        box-shadow: none;
+    }
+    
+    .overlay-container {
+        display: none;
+    }
+    
+    .form-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        transition: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sign-in-container, .sign-up-container {
+        width: 100%;
+        transform: none !important;
+        left: 0;
+    }
+    
+    .sign-up-container {
+        display: none;
+    }
+    
+    .form-container form {
+        padding: 30px 20px;
+        height: auto;
+        max-width: 400px;
+        width: 100%;
+    }
+    
+    .social-container {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .social-container a {
+        flex: 1;
+        margin: 0;
+    }
+    
+    #signin-group-btn, #signup-group-btn {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+    
+    #signin-group-btn button, #signup-group-btn button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .mobile-switcher {
+        display: block;
+    }
+    
+    input, .password-container {
+        width: 100%;
+    }
+    
+    /* Button style cho mobile */
+    .mobile-switcher a {
+        padding: 8px 15px;
+        border: 1px solid #1e88e5;
+        border-radius: 20px;
+        background-color: transparent;
+        margin-top: 10px;
+        display: inline-block;
+    }
+}
+</style>
+
 <?php if ($notice): ?>
 	<div class="alert alert-<?php echo $notice['status'] ?> alert-dismissible mb-0" role="alert">
 		<div>
@@ -73,6 +393,9 @@ if (isset($_GET['code'])) {
 				<button type="submit" id="signUpBtn" class="btn btn-primary" style="min-width: 150px;">Submit</button>
 			</div>
 			<div class="loader" id="loader-sign-up" style="display: none;"></div>
+            <div class="mobile-switcher">
+                <p>Already have an account? <a href="#" id="mobile-signin">Sign In</a></p>
+            </div>
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
@@ -111,6 +434,9 @@ if (isset($_GET['code'])) {
 			</div>
 
 			<div class="loader" id="loader-sign-in" style="display: none;"></div>
+            <div class="mobile-switcher">
+                <p>Don't have an account? <a href="#" id="mobile-signup">Sign Up</a></p>
+            </div>
 		</form>
 	</div>
 	<div class="overlay-container">
@@ -137,6 +463,48 @@ if (isset($_GET['code'])) {
 <script>
 	// using ajax to submit form
 	$(document).ready(function() {
+		// Mobile switcher functionality
+		$('#mobile-signin').click(function(e) {
+			e.preventDefault();
+			$('.sign-up-container').hide();
+			$('.sign-in-container').show();
+		});
+		
+		$('#mobile-signup').click(function(e) {
+			e.preventDefault();
+			$('.sign-in-container').hide();
+			$('.sign-up-container').show();
+		});
+		
+		// Check screen size and apply mobile view if needed
+		function checkMobileView() {
+			if ($(window).width() <= 768) {
+				// On mobile views
+				$('#container').removeClass('right-panel-active');
+				if ($('#container').hasClass('show-signup')) {
+					$('.sign-in-container').hide();
+					$('.sign-up-container').show();
+				} else {
+					$('.sign-up-container').hide();
+					$('.sign-in-container').show();
+				}
+			} else {
+				// On desktop views
+				$('.sign-in-container, .sign-up-container').show();
+				// Restore proper active state
+				if ($('#container').hasClass('show-signup')) {
+					$('#container').addClass('right-panel-active');
+				} else {
+					$('#container').removeClass('right-panel-active');
+				}
+			}
+		}
+		
+		// Run on page load and window resize
+		checkMobileView();
+		$(window).resize(checkMobileView);
+		
+		// Form submissions
 		$('#form-sign-in').submit(function(e) {
 			e.preventDefault();
 			var form = $(this);
@@ -145,7 +513,7 @@ if (isset($_GET['code'])) {
 			loader.style.display = 'block';
 			btn.hidden = true;
 
-			// Trì hoãn 1.5 giây trước khi gửi request
+			// Trì hoãn 1 giây trước khi gửi request
 			setTimeout(function() {
 				$.ajax({
 					type: 'POST',
@@ -169,6 +537,7 @@ if (isset($_GET['code'])) {
 				});
 			}, 1000);
 		});
+		
 		$('#form-sign-up').submit(function(e) {
 			e.preventDefault();
 			var form = $(this);
@@ -215,6 +584,7 @@ if (isset($_GET['code'])) {
 			toastr.info('Sign up form cleared');
 		});
 	});
+	
 	document.addEventListener("DOMContentLoaded", function() {
 		document.getElementById("gg-sign-up").addEventListener("click", function() {
 			document.cookie = "authType=signup"; // Lưu trạng thái đăng ký
@@ -240,10 +610,24 @@ if (isset($_GET['code'])) {
 
 	signUpButton.addEventListener('click', () => {
 		container.classList.add("right-panel-active");
+		container.classList.add("show-signup");
+		
+		// Check if we're on mobile, manually show/hide containers
+		if (window.innerWidth <= 768) {
+			document.querySelector('.sign-in-container').style.display = 'none';
+			document.querySelector('.sign-up-container').style.display = 'block';
+		}
 	});
 
 	signInButton.addEventListener('click', () => {
 		container.classList.remove("right-panel-active");
+		container.classList.remove("show-signup");
+		
+		// Check if we're on mobile, manually show/hide containers
+		if (window.innerWidth <= 768) {
+			document.querySelector('.sign-up-container').style.display = 'none';
+			document.querySelector('.sign-in-container').style.display = 'block';
+		}
 	});
 
 	togglePasswordButtons.forEach(toggleButton => {
@@ -254,7 +638,6 @@ if (isset($_GET['code'])) {
 			if (passwordInput) {
 				// Toggle the type attribute
 				const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-				console.log('Toggling password input type to:', type);
 				passwordInput.setAttribute('type', type);
 
 				// Toggle the eye icon

@@ -26,7 +26,7 @@
 
         <!-- Right Side: Add Button -->
         <div class="d-flex gap-2">
-            <a href="/admin/cars/comments?id=<?= $car_id ?>" class="btn btn-outline-info d-flex align-items-center">
+            <a href="/cars-management/comments?id=<?= $car_id ?>" class="btn btn-outline-info d-flex align-items-center">
                 <i class="fas fa-comments me-2"></i>
                 View Reviews
             </a>
