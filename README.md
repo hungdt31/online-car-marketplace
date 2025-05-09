@@ -17,8 +17,18 @@
 - Chạy chương trình (theo dõi các thay đổi file) với lệnh `docker composer watch`.
 - Dừng và loại bỏ các container `docker composer down`.
 
+## Cơ sở dữ liệu
+
+- Liên hệ: koikoidth12@gmail.com
+- MySQL: đăng nhập phpadmin với tài khoản username `example` và password (lấy từ folder db)
+- Tài khoản mẫu để đăng nhập theo phương thức credential:
+    - Admin: charlie@example.com (admin123)
+    - User: 
+        - bob@example.com (user123$D)
+        - koikoidth12@gmail.com (abc123$D)
+
 ## Tài liệu tham khảo
 
 - A simple PHP web application example for [Docker's PHP Language Guide](https://docs.docker.com/language/php/).
 - [https://topdev.vn/blog/mo-hinh-mvc-trong-php/](https://topdev.vn/blog/mo-hinh-mvc-trong-php/)
-- Playlist hướng dẫn: [Hoàng An Unicode](https://www.youtube.com/watch?v=5lyugYFJXzk&list=PL8y3hWbcppt0nl_IU1-PbRxKm69dn_Nix)
+- Playlist tham khảo: [Hoàng An Unicode](https://www.youtube.com/watch?v=5lyugYFJXzk&list=PL8y3hWbcppt0nl_IU1-PbRxKm69dn_Nix)
